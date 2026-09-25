@@ -1,0 +1,203 @@
+name: Database Backup
+
+on:
+  schedule:
+    - cron: '0 3 * * 0' # Sunday 03:00 UTC
+  workflow_dispatch:
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+
+    env:
+      BACKUP_REPO: Car Agency Appautomotores/Car Agency App-backups
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.BACKUP_REPO_SSH_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan github.com >> ~/.ssh/known_hosts
+          echo "::add-mask::${{ secrets.BACKUP_REPO_SSH_KEY }}"
+
+      - name: Clone backup repository
+        run: |
+          git clone git@github.com:${{ env.BACKUP_REPO }}.git /tmp/backup-repo
+          echo "Backup repo cloned successfully."
+
+      - name: Install PostgreSQL client
+        run: sudo apt-get update && sudo apt-get install -y postgresql-client
+
+      - name: Generate database backup
+        id: dump
+        run: |
+          echo "::add-mask::${{ secrets.DATABASE_URL }}"
+          START_TIME=$(date +%s)
+          echo "start_time=$START_TIME" >> "$GITHUB_OUTPUT"
+
+          DATE=$(date -u +%Y-%m-%d)
+          BRANCH=${{ github.ref_name }}
+          SHORT_SHA=$(echo "${{ github.sha }}" | cut -c1-7)
+          BACKUP_FILE="${DATE}-${BRANCH}-${SHORT_SHA}.sql.gz"
+
+          echo "date=$DATE" >> "$GITHUB_OUTPUT"
+          echo "branch=$BRANCH" >> "$GITHUB_OUTPUT"
+          echo "short_sha=$SHORT_SHA" >> "$GITHUB_OUTPUT"
+          echo "backup_file=$BACKUP_FILE" >> "$GITHUB_OUTPUT"
+
+          pg_dump "${{ secrets.DATABASE_URL }}" | gzip -n > "/tmp/${BACKUP_FILE}"
+          DUMP_EXIT=$?
+          echo "dump_exit=$DUMP_EXIT" >> "$GITHUB_OUTPUT"
+
+          if [ $DUMP_EXIT -ne 0 ]; then
+            echo "::error::pg_dump failed with exit code $DUMP_EXIT"
+            exit 1
+          fi
+
+          echo "Backup generated: ${BACKUP_FILE}"
+
+      - name: Validate backup
+        id: validate
+        run: |
+          BACKUP_FILE="/tmp/${{ steps.dump.outputs.backup_file }}"
+
+          # Check dump exit code
+          if [ "${{ steps.dump.outputs.dump_exit }}" -ne 0 ]; then
+            echo "::error::pg_dump failed with exit code ${{ steps.dump.outputs.dump_exit }}"
+            exit 1
+          fi
+
+          # Check file exists
+          if [ ! -f "$BACKUP_FILE" ]; then
+            echo "::error::Backup file not found: $BACKUP_FILE"
+            exit 1
+          fi
+
+          # Check file size > 0
+          if [ ! -s "$BACKUP_FILE" ]; then
+            echo "::error::Backup file is empty: $BACKUP_FILE"
+            exit 1
+          fi
+
+          # Check gzip integrity
+          if ! gzip -t "$BACKUP_FILE"; then
+            echo "::error::Backup file failed gzip integrity check: $BACKUP_FILE"
+            exit 1
+          fi
+
+          echo "Backup validation passed."
+
+      - name: Generate metadata
+        id: metadata
+        run: |
+          DATE="${{ steps.dump.outputs.date }}"
+          BRANCH="${{ steps.dump.outputs.branch }}"
+          SHORT_SHA="${{ steps.dump.outputs.short_sha }}"
+          PG_VERSION=$(pg_dump --version | head -1 | awk '{print $3}')
+          CREATED_AT=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+
+          METADATA_FILE="/tmp/${DATE}-${BRANCH}-${SHORT_SHA}.json"
+
+          cat > "$METADATA_FILE" <<EOF
+          {
+            "database": "Car Agency App",
+            "createdAt": "${CREATED_AT}",
+            "branch": "${BRANCH}",
+            "gitSha": "${SHORT_SHA}",
+            "pgVersion": "${PG_VERSION}",
+            "workflow": "database-backup.yml"
+          }
+          EOF
+
+          echo "metadata_file=$METADATA_FILE" >> "$GITHUB_OUTPUT"
+          echo "Metadata generated: ${METADATA_FILE}"
+
+      - name: Deduplication check
+        id: dedup
+        run: |
+          NEW_FILE="/tmp/${{ steps.dump.outputs.backup_file }}"
+          NEW_HASH=$(sha256sum "$NEW_FILE" | awk '{print $1}')
+
+          # Find the latest existing backup in backup repo
+          LATEST=$(ls -1t /tmp/backup-repo/*.sql.gz 2>/dev/null | head -n 1)
+
+          if [ -z "$LATEST" ]; then
+            echo "No previous backup found — will commit."
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          else
+            OLD_HASH=$(sha256sum "$LATEST" | awk '{print $1}')
+            if [ "$NEW_HASH" = "$OLD_HASH" ]; then
+              echo "Backup is identical to $(basename "$LATEST") — skipping commit."
+              rm -f "$NEW_FILE" "${{ steps.metadata.outputs.metadata_file }}"
+              echo "changed=false" >> "$GITHUB_OUTPUT"
+            else
+              echo "Backup differs from $(basename "$LATEST") — will commit."
+              echo "changed=true" >> "$GITHUB_OUTPUT"
+            fi
+          fi
+
+      - name: Publish to backup repository
+        if: steps.dedup.outputs.changed == 'true'
+        run: |
+          mv "/tmp/${{ steps.dump.outputs.backup_file }}" /tmp/backup-repo/
+          mv "${{ steps.metadata.outputs.metadata_file }}" /tmp/backup-repo/
+
+          # Retention: keep last 12 backups + matching metadata
+          cd /tmp/backup-repo
+          ls -1t *.sql.gz 2>/dev/null | tail -n +13 | while read f; do
+            rm -f "$f" "${f%.sql.gz}.json"
+          done
+          echo "Retention complete — $(ls -1 *.sql.gz 2>/dev/null | wc -l) backups retained."
+
+      - name: Commit and push
+        if: steps.dedup.outputs.changed == 'true'
+        run: |
+          cd /tmp/backup-repo
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add .
+          git commit -m "db: backup ${{ steps.dump.outputs.date }}"
+          git push origin main
+
+      - name: Log summary
+        if: always()
+        run: |
+          BACKUP_FILE="${{ steps.dump.outputs.backup_file }}"
+          STATUS="SUCCESS"
+          if [ "${{ steps.validate.outcome }}" != "success" ] || [ "${{ steps.dedup.outputs.changed }}" = "false" ]; then
+            if [ "${{ steps.validate.outcome }}" != "success" ]; then
+              STATUS="FAILED"
+            else
+              STATUS="SKIPPED"
+            fi
+          fi
+
+          SIZE="N/A"
+          if [ -f "/tmp/${BACKUP_FILE}" ]; then
+            SIZE=$(du -h "/tmp/${BACKUP_FILE}" | cut -f1)
+          elif [ -f "/tmp/backup-repo/${BACKUP_FILE}" ]; then
+            SIZE=$(du -h "/tmp/backup-repo/${BACKUP_FILE}" | cut -f1)
+          fi
+
+          END_TIME=$(date +%s)
+          START_TIME=${{ steps.dump.outputs.start_time }}
+          DURATION="N/A"
+          if [ -n "$START_TIME" ]; then
+            DURATION="$((END_TIME - START_TIME))s"
+          fi
+
+          echo "## Backup Summary" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Field | Value |" >> "$GITHUB_STEP_SUMMARY"
+          echo "|-------|-------|" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Database | Car Agency App |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Filename | ${BACKUP_FILE} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Size | ${SIZE} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Duration | ${DURATION} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Status | ${STATUS} |" >> "$GITHUB_STEP_SUMMARY"
