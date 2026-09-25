@@ -1,0 +1,3 @@
+-- Add TARJETA_CREDITO and PERMUTA to PaymentMethod
+ALTER TYPE "PaymentMethod" ADD VALUE 'TARJETA_CREDITO';
+ALTER TYPE "PaymentMethod" ADD VALUE 'PERMUTA';

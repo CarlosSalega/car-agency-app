@@ -1,0 +1,2 @@
+-- Add BY_APPOINTMENT to CarStatus
+ALTER TYPE "CarStatus" ADD VALUE 'BY_APPOINTMENT';

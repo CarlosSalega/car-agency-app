@@ -1,0 +1,240 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  COLLABORATOR
+}
+
+enum CarType {
+  SUV
+  SEDAN
+  HATCHBACK
+  PICKUP
+  COUPE
+}
+
+enum CarStatus {
+  AVAILABLE
+  BY_APPOINTMENT
+  RESERVED
+  SOLD
+  INACTIVE
+}
+
+enum FuelType {
+  GASOLINE
+  DIESEL
+  CNG
+  HYBRID
+  ELECTRIC
+  OTHER
+}
+
+enum Transmission {
+  MANUAL
+  AUTOMATIC
+}
+
+enum Currency {
+  ARS
+  USD
+}
+
+enum PaymentMethod {
+  CONTADO
+  BNA_MAS
+  CREDITO_PRENDARIO
+  TARJETA_CREDITO
+  PERMUTA
+}
+
+enum LinkTreeCategory {
+  CONTACT
+  SOCIAL
+}
+
+model User {
+  id             String    @id @default(uuid())
+  name           String?
+  email          String    @unique
+  emailVerified  DateTime?
+  image          String?
+  role           Role      @default(COLLABORATOR)
+  isActive       Boolean   @default(true)
+  hashedPassword String?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  accounts       Account[]
+  sessions       Session[]
+  cars           Car[]     @relation("UserCars")
+  logs           Log[]
+  createdBrands  Brand[]   @relation("UserBrands")
+  createdModels  Model[]   @relation("UserModels")
+  createdSellers Seller[]  @relation("UserSellers")
+}
+
+model Account {
+  id                String  @id @default(uuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id])
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(uuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id])
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model Brand {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  models      Model[]
+  cars        Car[]
+  createdById String
+  createdBy   User     @relation("UserBrands", fields: [createdById], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Model {
+  id          String   @id @default(uuid())
+  name        String
+  brand       Brand    @relation(fields: [brandId], references: [id])
+  brandId     String
+  cars        Car[]
+  createdById String
+  createdBy   User     @relation("UserModels", fields: [createdById], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([name, brandId])
+}
+
+model Seller {
+  id          String   @id @default(uuid())
+  firstName   String
+  lastName    String
+  phone       String   @unique
+  email       String?  @unique
+  isActive    Boolean  @default(true)
+  cars        Car[]
+  createdById String
+  createdBy   User     @relation("UserSellers", fields: [createdById], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([isActive])
+  @@index([createdById])
+}
+
+model Car {
+  id             String          @id @default(uuid())
+  title          String
+  slug           String          @unique
+  brandId        String
+  brand          Brand           @relation(fields: [brandId], references: [id])
+  modelId        String
+  model          Model           @relation(fields: [modelId], references: [id])
+  sellerId       String?
+  seller         Seller?         @relation(fields: [sellerId], references: [id])
+  year           Int
+  kilometers     Int
+  type           CarType
+  fuelType       FuelType
+  transmission   Transmission
+  currency       Currency        @default(ARS)
+  images         String[]
+  status         CarStatus       @default(AVAILABLE)
+  showBadge      Boolean         @default(false)
+  paymentMethods PaymentMethod[] @default([])
+  price          Int
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  version        String?
+  color          String?
+  patent         String?         @unique
+  description    String?
+  soldAt         DateTime?
+  deletedAt      DateTime?
+  userId         String?
+  user           User?           @relation("UserCars", fields: [userId], references: [id])
+  visits         Visit[]
+
+  @@index([userId])
+  @@index([status])
+  @@index([brandId])
+  @@index([modelId])
+  @@index([sellerId])
+}
+
+model Log {
+  id        String   @id @default(uuid())
+  action    String
+  entity    String
+  entityId  String?
+  metadata  String?
+  createdAt DateTime @default(now())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+model Visit {
+  id        String   @id @default(uuid())
+  carId     String
+  car       Car      @relation(fields: [carId], references: [id])
+  createdAt DateTime @default(now())
+  ip        String?
+  userAgent String?
+}
+
+model LinkTreeLink {
+  id        String           @id @default(uuid())
+  category  LinkTreeCategory
+  label     String
+  href      String
+  iconKey   String?
+  sortOrder Int              @default(0)
+  isActive  Boolean          @default(true)
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+
+  @@index([category, isActive, sortOrder])
+}
+
+model Settings {
+  id          String   @id @default(uuid())
+  key         String   @unique
+  value       String
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
