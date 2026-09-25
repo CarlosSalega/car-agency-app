@@ -1,0 +1,27 @@
+export const brands = [
+  "Fiat",
+  "Ford",
+  "Chevrolet",
+  "Toyota",
+  "Volkswagen",
+  "Renault",
+  "Peugeot",
+  "Honda",
+  "Nissan",
+  "BMW",
+  "Mercedes-Benz",
+  "Audi",
+  "Hyundai",
+  "Kia",
+  "Jeep",
+  "Mazda",
+  "Subaru",
+  "Mazda",
+  "Mitsubishi",
+  "Suzuki",
+  "Dodge",
+  "Chrysler",
+  "Tesla",
+] as const;
+
+export type Brand = (typeof brands)[number];

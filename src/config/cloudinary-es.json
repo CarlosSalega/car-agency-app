@@ -1,0 +1,113 @@
+{
+  "es": {
+    "or": "o",
+    "back": "Atrás",
+    "advanced": "Avanzado",
+    "close": "Cerrar",
+    "no_results": "Sin resultados",
+    "search_placeholder": "Buscar...",
+    "queue": {
+      "title_uploading": "Subiendo archivos...",
+      "title_finished": "Subida completada",
+      "title_errors": "Errores en archivos"
+    },
+    "menu": {
+      "files": "Mis archivos",
+      "web": "Desde URL",
+      "camera": "Cámara",
+      "gdrive": "Google Drive",
+      "dropbox": "Dropbox",
+      "facebook": "Facebook",
+      "instagram": "Instagram",
+      "shutterstock": "Shutterstock"
+    },
+    "local": {
+      "browse": "Seleccionar",
+      "main_title": "Subir archivos",
+      "dd_title_single": "Arrastrá una imagen aquí",
+      "dd_title_multi": "Arrastrá tus imágenes aquí",
+      "drop_title_single": "Soltá para subir",
+      "drop_title_multiple": "Soltá todos para subir",
+      "note": "Formatos soportados: JPG, PNG, GIF, WEBP"
+    },
+    "url": {
+      "title": "Subir desde URL",
+      "input_placeholder": "Pegar URL de la imagen",
+      "upload_btn": "Subir desde URL"
+    },
+    "camera": {
+      "title": "Cámara",
+      "capture_btn": "Tomar foto",
+      "retake_btn": "Reintentar",
+      "cancel_btn": "Cancelar",
+      "upload_btn": "Usar esta foto",
+      "allow": "Debés permitir acceso a la cámara"
+    },
+    "crop": {
+      "title": "Recortar imagen",
+      "crop_btn": "Aplicar recorte",
+      "reset_btn": "Restablecer",
+      "rotate_left": "Girar izquierda",
+      "rotate_right": "Girar derecha",
+      "flip_horizontal": "Voltear horizontal",
+      "flip_vertical": "Voltear vertical"
+    },
+    "preview": {
+      "title": "Vista previa",
+      "download_btn": "Descargar",
+      "edit_btn": "Editar",
+      "delete_btn": "Eliminar"
+    },
+    "status": {
+      "uploading": "Subiendo...",
+      "success": "Subida completa",
+      "error": "Error al subir",
+      "retry": "Reintentar",
+      "abort": "Cancelar"
+    },
+    "errors": {
+      "file_too_large": "El archivo es demasiado grande",
+      "invalid_format": "Formato no permitido",
+      "max_files": "Máximo de archivos alcanzado",
+      "min_files": "Debés subir al menos un archivo",
+      "file_select": "No se pudo seleccionar el archivo",
+      "upload_failed": "Falló la subida",
+      "camera_error": "No se pudo acceder a la cámara",
+      "url_invalid": "La URL no es válida"
+    },
+    "footer": {
+      "terms": "Términos",
+      "privacy": "Privacidad",
+      "powered_by": "Desarrollado por Cloudinary"
+    },
+    "pagination": {
+      "load_more": "Cargar más",
+      "page": "Página",
+      "of": "de"
+    },
+    "toolbar": {
+      "sort": "Ordenar",
+      "filter": "Filtrar",
+      "clear_filter": "Limpiar filtros",
+      "select_all": "Seleccionar todos",
+      "deselect_all": "Deseleccionar"
+    },
+    "buttons": {
+      "yes": "Sí",
+      "no": "No",
+      "ok": "Aceptar",
+      "cancel": "Cancelar",
+      "confirm": "Confirmar",
+      "continue": "Continuar",
+      "upload": "Subir",
+      "remove": "Eliminar",
+      "save": "Guardar"
+    },
+    "messages": {
+      "preparing_upload": "Preparando archivos...",
+      "processing": "Procesando...",
+      "waiting": "Esperando...",
+      "done": "Listo"
+    }
+  }
+}

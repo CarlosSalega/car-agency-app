@@ -1,0 +1,63 @@
+import {
+  LayoutDashboard,
+  Car,
+  Users,
+  Settings,
+  LogOut,
+  Globe,
+} from "lucide-react";
+
+import { AdminNavItem } from "@/types/navigation";
+
+export const ADMIN_NAVIGATION: AdminNavItem[] = [
+  {
+    id: "public",
+    label: "Sitio público",
+    href: "/",
+    icon: Globe,
+    showInHeader: true,
+    showInDropdown: true,
+  },
+  {
+    id: "dashboard",
+    label: "Panel",
+    href: "/admin",
+    icon: LayoutDashboard,
+    showInHeader: true,
+    showInDropdown: true,
+  },
+  {
+    id: "cars",
+    label: "Vehículos",
+    href: "/admin/cars",
+    icon: Car,
+    showInHeader: true,
+    showInDropdown: true,
+  },
+  {
+    id: "users",
+    label: "Usuarios",
+    href: "/admin/users",
+    icon: Users,
+    roles: ["ADMIN"],
+    showInHeader: true,
+    showInDropdown: true,
+  },
+  {
+    id: "config",
+    label: "Configuración",
+    href: "/admin/config",
+    icon: Settings,
+    roles: ["ADMIN"],
+    showInHeader: true,
+    showInDropdown: true,
+  },
+  {
+    id: "logout",
+    label: "Cerrar sesión",
+    action: "logout",
+    icon: LogOut,
+    showInHeader: true,
+    showInDropdown: true,
+  },
+];
