@@ -1,7 +1,6 @@
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
-import { GeistMono } from "geist/font/mono";
-import { GeistSans } from "geist/font/sans";
+import { Afacad, Adamina, Fira_Code } from "next/font/google";
 import Script from "next/script";
 
 import { Toaster } from "@/components/ui/sonner";
@@ -9,6 +8,30 @@ import { siteMetadata } from "@/data/metadata";
 import { MetaPixelProvider } from "@/lib/meta-pixel";
 
 import "./globals.css";
+
+/**
+ * Fonts come from the community theme. The previous pair was Geist Sans and
+ * Geist Mono via the `geist` package, which is no longer referenced by
+ * `globals.css`; `font-serif` is new and the theme uses it.
+ *
+ * `Adamina` publishes a single weight, so it has to be requested explicitly.
+ * `Afacad` and `Fira_Code` are variable fonts and take the whole axis range.
+ */
+const fontSans = Afacad({
+  subsets: ["latin"],
+  variable: "--font-sans",
+});
+
+const fontSerif = Adamina({
+  subsets: ["latin"],
+  weight: "400",
+  variable: "--font-serif",
+});
+
+const fontMono = Fira_Code({
+  subsets: ["latin"],
+  variable: "--font-mono",
+});
 
 export const metadata = {
   ...siteMetadata,
@@ -31,7 +54,9 @@ export default function RootLayout({
 
   return (
     <html lang="es-AR">
-      <body className={`font-sans ${GeistSans.variable} ${GeistMono.variable}`}>
+      <body
+        className={`font-sans antialiased ${fontSans.variable} ${fontSerif.variable} ${fontMono.variable}`}
+      >
         {pixelId ? (
           <Script
             id="meta-pixel-script"
