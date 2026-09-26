@@ -218,7 +218,7 @@ export function ModelsConfig({
                 <Select
                   value={selectedBrandId}
                   onValueChange={(value) =>
-                    setValue("brandId", value, {
+                    setValue("brandId", value ?? "", {
                       shouldValidate: true,
                       shouldDirty: true,
                     })

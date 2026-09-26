@@ -388,7 +388,7 @@ export function LinkTreeLinksConfig({
                   <Select
                     value={selectedIconKey ?? "none"}
                     onValueChange={(v) =>
-                      setValue("iconKey", v, {
+                      setValue("iconKey", v ?? undefined, {
                         shouldValidate: true,
                         shouldDirty: true,
                       })

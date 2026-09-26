@@ -86,7 +86,10 @@ export function CarFormFields({
         </FormField>
 
         <FormField label="Marca" error={errors.brandId} errorId="brandId-error">
-          <Select value={formData.brandId || ""} onValueChange={onBrandChange}>
+          <Select
+            value={formData.brandId || ""}
+            onValueChange={(brandId) => onBrandChange(brandId ?? "")}
+          >
             <SelectTrigger
               aria-invalid={!!errors.brandId}
               aria-describedby="brandId-error"
@@ -112,7 +115,7 @@ export function CarFormFields({
           <Select
             value={formData.modelId || ""}
             onValueChange={(value) =>
-              setValue("modelId", value, {
+              setValue("modelId", value ?? "", {
                 shouldValidate: true,
                 shouldDirty: true,
               })
@@ -377,10 +380,14 @@ export function CarFormFields({
             value={formData.sellerId || ""}
             onValueChange={(value) => {
               const NO_SELLER = "__no_seller__";
-              setValue("sellerId", value === NO_SELLER ? "" : value, {
-                shouldDirty: true,
-                shouldValidate: true,
-              });
+              setValue(
+                "sellerId",
+                value === NO_SELLER || value === null ? "" : value,
+                {
+                  shouldDirty: true,
+                  shouldValidate: true,
+                },
+              );
             }}
           >
             <SelectTrigger

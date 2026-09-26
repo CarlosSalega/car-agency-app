@@ -130,36 +130,52 @@ are documented for manual QA.
 
 ## Progress
 
-- [x] T1 — Preflight and baseline complete: clean tree on a fresh branch,
-      `shadcn info` captured, baseline `build` exit 0 / `tsc` exit 0 / 36 tests, and
+- [x] T1 — Preflight and baseline: clean tree on a fresh branch, `shadcn info`
+      captured, baseline `build` exit 0 / `tsc` exit 0 / 36 tests, and
       `@base-ui/react` 1.8.0 installed alongside Radix.
-- [ ] T2 — Delete the dead `avatar` wrapper. Not started.
-- [ ] T3 — Migrate `label`. Not started.
-- [ ] T4 — Migrate `button`. Not started.
-- [ ] T5 — Migrate `badge`, `tabs`. Not started.
-- [ ] T6 — Migrate `dialog`, `sheet`. Not started.
-- [ ] T7 — Migrate `dropdown-menu`. Not started.
-- [ ] T8 — Migrate `select`. Not started.
-- [ ] T9 — Remove Radix deps, flip `components.json`. Not started.
-- [ ] T10 — Full verification and `.migration/` reports. Not started.
+- [x] T2 — Deleted the dead `avatar` wrapper. It had zero importers; the only
+      `Avatar` in the project is a local function in `Reviews.tsx`.
+- [x] T3 — `label` migrated to a native `<label>`.
+- [x] T4 — `button` migrated to `@base-ui/react/button`, with the
+      project-specific variants preserved and 6 `asChild` call sites rewritten.
+- [x] T5 — `badge` migrated to `useRender` + `mergeProps`; `tabs` migrated with
+      `Tab` / `Panel` and the `data-active` and `aria-disabled` class rewrites.
+- [x] T6 — `dialog` and `sheet` migrated with `Backdrop` / `Popup` and
+      transition-based enter/exit animations. 5 `asChild` call sites rewritten.
+- [x] T7 — `dropdown-menu` migrated to `Menu` with a `Positioner`, including the
+      prop-type change needed for `align`. 5 `asChild` call sites rewritten.
+- [x] T8 — `select` migrated with `List`, `ScrollUpArrow` and
+      `alignItemWithTrigger`. 10 call sites updated for the new `| null` value.
+- [x] T9 — The eight `@radix-ui/*` packages removed. `VisuallyHidden` in
+      `car-detail-gallery.tsx` replaced with `sr-only`.
+- [x] T10 — Full verification and the `.migration/` reports.
 
 ## Verification evidence
 
-Baseline only, captured before any wrapper was touched:
+Baseline before any change: `build` exit 0, `tsc` exit 0, 36 tests, ESLint 35
+problems (11 errors, 24 warnings).
 
+After the migration:
+
+- `grep -rn 'from "@radix-ui' src prisma` returns nothing.
+- `node -e` over `package.json` confirms no `radix` dependency remains; only
+  `@base-ui/react` 1.8.0.
 - `pnpm build` exit 0.
-- `pnpm exec tsc --noEmit` exit 0.
-- `pnpm test` 5 files, 36 tests pass.
-- `eslint src` 35 problems (11 errors, 24 warnings), all pre-existing.
-- `@base-ui/react` 1.8.0 installed; Radix packages still present, as required
-  until the last wrapper is migrated.
-- `grep -rn "@radix-ui" src prisma` still reports the nine wrappers, as
-  expected at this stage.
+- `pnpm exec tsc --noEmit` after the build exit 0.
+- `pnpm test` 5 files, 36 tests pass — same as the baseline.
+- `pnpm exec prettier --check .` exit 0.
+- `pnpm exec eslint src` 35 problems (11 errors, 24 warnings) — **unchanged from
+  the pre-migration baseline**.
 
-No post-migration verification exists yet. It is recorded here as each task
-completes.
+The pre-commit hook installed in PR #3 fired during this work and blocked a
+commit on formatting, which is the first time it has been exercised.
+
+`components.json` still reads `style: "new-york"`. Per the skill this is flagged,
+not fixed: a future `shadcn add` would resolve to Radix variants again, and
+switching to a `base-*` style would re-style the whole app. That decision belongs
+to the user. See `.migration/project.md`.
 
 ## Next step
 
-T2 and T3: delete the dead `avatar` wrapper, then migrate `label` to a native
-`<label>`. Open a PR once the wrappers are done and verified.
+Open a PR. Merging is the user's decision. The destructive seed still requires
+separate authorization and was not run.
