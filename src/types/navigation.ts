@@ -1,4 +1,4 @@
-import { Role } from "@prisma/client";
+import type { Role } from "@generated/prisma/enums";
 import { LucideIcon } from "lucide-react";
 
 export type NavAction = "logout";

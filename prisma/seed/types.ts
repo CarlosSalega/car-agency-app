@@ -6,7 +6,7 @@ import type {
   LinkTreeCategory,
   Role,
   Transmission,
-} from "@prisma/client";
+} from "@generated/prisma/client";
 
 export interface SeedUser {
   key: string;

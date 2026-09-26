@@ -1,6 +1,6 @@
 import type { CarInput } from "@/lib/validations/car";
 import type { BrandWithModels } from "@/types/car-form";
-import type { Model } from "@prisma/client";
+import type { Model } from "@generated/prisma/client";
 import type { UseFormSetValue } from "react-hook-form";
 
 import { useMemo, useState } from "react";

@@ -1,6 +1,11 @@
 "use client";
 
-import type { Brand, LinkTreeLink, Model, Seller } from "@prisma/client";
+import type {
+  Brand,
+  LinkTreeLink,
+  Model,
+  Seller,
+} from "@generated/prisma/client";
 
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";

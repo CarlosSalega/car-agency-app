@@ -1,6 +1,6 @@
 "use client";
 
-import type { Brand } from "@prisma/client";
+import type { Brand } from "@generated/prisma/client";
 
 import { Edit, Trash2, Plus } from "lucide-react";
 import React, { useState } from "react";

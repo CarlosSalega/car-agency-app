@@ -1,4 +1,4 @@
-import { Prisma } from "@prisma/client";
+import type { Prisma } from "@generated/prisma/client";
 import type {
   Brand,
   Model,
@@ -9,15 +9,23 @@ import type {
   Currency,
   CarStatus,
   PaymentMethod,
-} from "@prisma/client";
+} from "@generated/prisma/client";
+import type { CarGetPayload } from "@generated/prisma/models/Car";
 
-export const carWithRelations = Prisma.validator<Prisma.CarDefaultArgs>()({
+/**
+ * Prisma 7 removed `Prisma.validator` and `Prisma.<Model>GetPayload`. The
+ * payload type is now exported per model from the generated model file, and the
+ * select/include argument is constrained with `satisfies` instead.
+ *
+ * The resulting type is unchanged: car plus brand, model and seller.
+ */
+export const carWithRelations = {
   include: {
     brand: true,
     model: true,
     seller: true,
   },
-});
+} satisfies Prisma.CarDefaultArgs;
 
 export interface BrandWithModels extends Brand {
   models: Model[];
@@ -48,6 +56,6 @@ export type SellerOption = Pick<
   "id" | "firstName" | "lastName" | "phone" | "email" | "isActive"
 >;
 
-export type CarWithRelations = Prisma.CarGetPayload<typeof carWithRelations>;
+export type CarWithRelations = CarGetPayload<typeof carWithRelations>;
 export type CreateCarPayload = CarPayload;
 export type UpdateCarPayload = Partial<CarPayload>;

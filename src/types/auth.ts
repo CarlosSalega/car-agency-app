@@ -1,4 +1,4 @@
-import { Role } from "@prisma/client";
+import type { Role } from "@generated/prisma/enums";
 
 export interface AuthUser {
   name: string | null;

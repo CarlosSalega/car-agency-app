@@ -4,7 +4,7 @@ import {
   Currency,
   FuelType,
   Transmission,
-} from "@prisma/client";
+} from "@generated/prisma/client";
 import type { SeedCar } from "./types";
 
 const description =

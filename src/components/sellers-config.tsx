@@ -1,6 +1,6 @@
 "use client";
 
-import type { Seller } from "@prisma/client";
+import type { Seller } from "@generated/prisma/client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AlertCircle, Plus } from "lucide-react";

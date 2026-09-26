@@ -3,7 +3,7 @@
 import type { UserWithCount } from "@/types/users";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Role } from "@prisma/client";
+import { Role } from "@generated/prisma/enums";
 import { AlertCircle } from "lucide-react";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";

@@ -1,4 +1,4 @@
-import type { Car } from "@prisma/client";
+import type { Car } from "@generated/prisma/client";
 import Link from "next/link";
 import { SearchX } from "lucide-react";
 

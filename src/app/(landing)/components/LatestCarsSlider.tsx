@@ -3,7 +3,7 @@
 import { useRef, useState, useCallback, useEffect } from "react";
 import { ChevronLeft, ChevronRight, ArrowRight } from "lucide-react";
 import { CarCard } from "@/components/cars/car-card";
-import { getPublicLatestCars } from "@/lib/queries/cars";
+import type { getPublicLatestCars } from "@/lib/queries/cars";
 import Link from "next/link";
 
 type Car = Awaited<ReturnType<typeof getPublicLatestCars>>[number];

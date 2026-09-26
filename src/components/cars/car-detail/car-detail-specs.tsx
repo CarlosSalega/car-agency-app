@@ -1,4 +1,9 @@
-import type { Car, Brand, Model, PaymentMethod } from "@prisma/client";
+import type {
+  Car,
+  Brand,
+  Model,
+  PaymentMethod,
+} from "@generated/prisma/client";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
