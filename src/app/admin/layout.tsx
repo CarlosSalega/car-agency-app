@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-
-import { getSession } from "@/lib/auth";
-import { AdminHeader, AdminLoadingFallback } from "@/components/admin";
 import { Suspense } from "react";
+
+import { AdminLoadingFallback, AdminShell } from "@/components/admin";
+import { getSession } from "@/lib/auth";
 
 export const metadata: Metadata = {
   robots: {
@@ -30,6 +30,9 @@ export default async function AdminLayout({
       redirect("/admin/login");
     }
 
+    // Returned before the shell, so the login page has no sidebar. The
+    // `x-pathname` special case and the cookie exemption in `proxy.ts` both
+    // still apply.
     return children;
   }
 
@@ -38,9 +41,8 @@ export default async function AdminLayout({
   }
 
   return (
-    <>
-      <AdminHeader user={session.user} />
+    <AdminShell user={session.user}>
       <Suspense fallback={<AdminLoadingFallback />}>{children}</Suspense>
-    </>
+    </AdminShell>
   );
 }

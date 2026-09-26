@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { ADMIN_NAVIGATION } from "@/data/admin-navigation";
 import { isActiveRoute } from "@/lib/constants/navigation";
+import { logout } from "@/lib/auth/logout";
 import { cn } from "@/lib/utils";
 
 interface AdminDropdownProps {
@@ -26,15 +27,6 @@ interface AdminDropdownProps {
 
 export function AdminDropdown({ user }: AdminDropdownProps) {
   const pathname = usePathname();
-
-  const handleLogout = async () => {
-    try {
-      await fetch("/api/auth/logout", { method: "POST" });
-      window.location.href = "/";
-    } catch (error) {
-      console.error("Error al cerrar sesión", error);
-    }
-  };
 
   return (
     <DropdownMenu>
@@ -79,7 +71,7 @@ export function AdminDropdown({ user }: AdminDropdownProps) {
             return (
               <DropdownMenuItem
                 key={item.id}
-                onClick={handleLogout}
+                onClick={logout}
                 className="focus:text-background space-y-2 px-4 py-2"
               >
                 {Icon && <Icon className="focus:text-background mr-2 size-4" />}

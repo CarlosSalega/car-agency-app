@@ -147,35 +147,72 @@ exactly what an automated test would fake.
 ## Progress
 
 - [x] T1 — Baseline recorded: clean tree on a fresh branch, `build` exit 0,
-      `tsc` exit 0, 36 tests, ESLint 35 problems, and the current admin shell
-      structure mapped.
-- [ ] T2 — Sidebar CSS tokens. Not started.
-- [ ] T3 — Five missing Base UI primitives. Not started.
-- [ ] T4 — `sidebar.tsx`. Not started.
-- [ ] T5 — Navigation components. Not started.
-- [ ] T6 — Layout restructure. Not started.
-- [ ] T7 — `components.json` note. Not started.
-- [ ] T8 — Verification. Not started.
+      `tsc` exit 0, 36 tests, ESLint 35 problems, and the admin shell mapped.
+- [x] T2 — Defined the three dangling `--sidebar-*` tokens. All eight
+      `--color-sidebar-*` references now resolve.
+- [x] T3 — Added `collapsible`, `tooltip`, `separator`, `skeleton` and
+      `breadcrumb` on Base UI, via a delegated writer.
+- [x] T4 — Wrote `sidebar.tsx`, plus `src/hooks/use-mobile.ts`.
+- [x] T5 — Wrote `admin-sidebar.tsx` consuming `ADMIN_NAVIGATION`, branching on
+      `action` versus `href`.
+- [x] T6 — Restructured `layout.tsx` into `AdminShell`; removed the now-orphaned
+      `admin-header.tsx` and `admin-navigation.tsx`.
+- [x] T7 — Recorded the Base UI note in `src/components/ui/README.md` and fixed
+      the stale `components.json` tailwind path.
+- [x] T8 — Full verification below.
 
 ## Verification evidence
 
-Baseline only, captured before any change:
+Baseline: `build` exit 0, `tsc` exit 0, 36 tests, ESLint 35 problems (11 errors,
+24 warnings).
+
+After:
 
 - `pnpm build` exit 0.
-- `pnpm exec tsc --noEmit` exit 0.
-- `pnpm test` 5 files, 36 tests pass.
-- `pnpm exec eslint src` 35 problems (11 errors, 24 warnings), all pre-existing.
-- `globals.css` defines only five of the eight `--sidebar-*` tokens;
-  `--sidebar-accent`, `--sidebar-accent-foreground` and `--sidebar-ring` are
-  mapped in `@theme inline` but never defined.
-- `grep -cE "^\.dark" src/app/globals.css` returns 0.
-- `src/app/admin/layout.tsx` renders a fragment, not a shell.
-- `AdminNavigation` is `hidden md:flex`, so there is no mobile admin navigation.
+- `pnpm exec tsc --noEmit` after the build exit 0.
+- `pnpm test` 5 files, 36 tests pass — same as the baseline.
+- `pnpm exec prettier --check .` exit 0.
+- `pnpm exec eslint src` 35 problems — **unchanged**.
+- All eight `--color-sidebar-*` tokens in `@theme inline` now resolve to a
+  defined variable in `:root`.
 
-No post-change verification exists yet. It is recorded here as each task
-completes.
+Three findings worth keeping:
+
+1. **Base UI 1.8.0 has no `breadcrumb` primitive at all.** Not a renamed part:
+   there is no `breadcrumb` subpath and no mention of "breadcrumb" in the
+   package. The wrapper is built on the native elements Radix's breadcrumb
+   rendered underneath, with `useRender` for the polymorphic link.
+2. **Base UI has no `sidebar` primitive either.** The shadcn block is a
+   composition over `Button`, `Separator`, `Sheet` and `Tooltip` plus a local
+   context and two CSS custom properties. That is why the file is large.
+3. **Two claims in the migration skill are wrong**, found by reading the emitted
+   types rather than trusting the reference: collapsible does not expose
+   `data-disabled` (`CollapsibleRootState` has the field but the attribute is
+   not emitted on the parts), and the panel height variable is
+   `--collapsible-panel-height`, not the documented accordion value.
+
+Deliberate omissions, documented in the files:
+
+- `sidebar.tsx` implements 14 of the upstream block's 25 exports. The admin has
+  six items with no search field, no submenus, no badges and no rail.
+- The `floating` and `inset` variants were not ported: their padding, shadow and
+  ring classes are tuned for the upstream palette.
+- `Sidebar` is a client component; the layout stays a server component and
+  passes the resolved session user down.
+
+`AdminHeader` and `AdminNavigation` were deleted rather than left orphaned. The
+logout handler moved to `src/lib/auth/logout.ts` because the sidebar's
+`logout` action needed it too, and duplicating a fetch plus a redirect across two
+call sites is two places to change when the endpoint moves.
+
+`AdminLoadingFallback` moved from `min-h-[calc(100vh-6rem)]` to `4rem`, because it
+assumed the old full-width `h-24` header and the shell's bar is now `h-16`.
+
+**Not covered by any automated check:** keyboard navigation of the sidebar,
+focus return after the mobile sheet closes, the Cmd/Ctrl+B shortcut, and whether
+the collapsed icon rail reads correctly. These need a browser.
 
 ## Next step
 
-T2: define the three missing `--sidebar-*` tokens so the sidebar's hover, active
-and focus states resolve instead of falling back to unset variables.
+Open a PR. Merging is the user's decision. The dashboard content is a separate
+task, and the 12 staged vehicles are still blocked on real commercial data.
