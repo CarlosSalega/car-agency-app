@@ -19,7 +19,7 @@ function isImageRequest(pathname: string, url: string): boolean {
   return pathname.startsWith("/_next/image") || url.includes("cloudinary.com");
 }
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   const requestHeaders = new Headers(request.headers);

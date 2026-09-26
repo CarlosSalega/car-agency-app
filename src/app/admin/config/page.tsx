@@ -4,18 +4,11 @@ import { ConfigTabs } from "@/components/config-tabs";
 import { prisma } from "@/lib/db";
 import { requireAuthSession } from "@/lib/auth";
 
-interface ConfigPageProps {
-  // Next.js 15 delivers `searchParams` as a Promise; the generated route
-  // contract in `.next/types` requires that shape.
-  searchParams: Promise<{
-    tab?: string;
-    page?: string;
-  }>;
-}
-
 export const dynamic = "force-dynamic";
 
-export default async function ConfigPage({ searchParams }: ConfigPageProps) {
+export default async function ConfigPage({
+  searchParams,
+}: PageProps<"/admin/config">) {
   const params = await searchParams;
   const tab =
     params?.tab === "models"

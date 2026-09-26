@@ -48,11 +48,7 @@ function buildFilters(params: {
   return filters;
 }
 
-export default async function AutosPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
-}) {
+export default async function AutosPage({ searchParams }: PageProps<"/autos">) {
   const params = await searchParams;
   const page = Number(params.page) || 1;
   const limit = 12;

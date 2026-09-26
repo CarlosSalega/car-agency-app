@@ -5,9 +5,7 @@ import { getAdminCarForEdit } from "@/lib/queries/cars";
 
 export default async function EditCarPage({
   params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
+}: Pick<PageProps<"/admin/cars/[id]/edit">, "params">) {
   const { id } = await params;
 
   const car = await getAdminCarForEdit(id);

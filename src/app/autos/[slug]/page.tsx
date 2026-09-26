@@ -32,9 +32,7 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({
   params,
-}: {
-  params: Promise<{ slug: string }>;
-}): Promise<Metadata> {
+}: Pick<PageProps<"/autos/[slug]">, "params">): Promise<Metadata> {
   const { slug } = await params;
 
   const car = await getPublicCarBySlug(slug);
@@ -99,9 +97,7 @@ export async function generateMetadata({
 
 export default async function CarDetailPage({
   params,
-}: {
-  params: Promise<{ slug: string }>;
-}) {
+}: Pick<PageProps<"/autos/[slug]">, "params">) {
   const { slug } = await params;
 
   const car = await getPublicCarBySlug(slug);
