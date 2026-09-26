@@ -58,12 +58,23 @@ const buttonVariants = cva(
  * is needed. The `asChild` prop is intentionally gone rather than kept as an
  * alias: keeping it would let un-migrated call sites keep compiling, which hides
  * the migration from the type checker.
+ *
+ * **`nativeButton` is derived from `render`.** Base UI's Button defaults
+ * `nativeButton` to `true` and logs a console error when the rendered element is
+ * not a real `<button>`, because claiming button semantics on an anchor breaks
+ * form submission and assistive technology. Every call site that renders a
+ * `next/link` through `render` hit that warning.
+ *
+ * Deriving it here rather than passing `nativeButton={false}` at each call site
+ * fixes all of them at once and keeps future `render` call sites correct by
+ * default. An explicit `nativeButton` still wins.
  */
 function Button({
   className,
   variant,
   size,
   render,
+  nativeButton,
   ...props
 }: React.ComponentProps<typeof ButtonPrimitive> &
   VariantProps<typeof buttonVariants>) {
@@ -71,6 +82,7 @@ function Button({
     <ButtonPrimitive
       data-slot="button"
       className={cn(buttonVariants({ variant, size, className }))}
+      nativeButton={nativeButton ?? !render}
       render={render}
       {...props}
     />

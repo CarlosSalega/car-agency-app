@@ -8,6 +8,7 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuGroup,
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
@@ -56,15 +57,20 @@ export function AdminDropdown({ user }: AdminDropdownProps) {
       />
 
       <DropdownMenuContent align="end" className="w-64">
-        <DropdownMenuLabel>
-          <div className="flex flex-col space-y-2 px-2">
-            <p className="text-sm font-medium">{user.name}</p>
-            <p className="text-muted-foreground text-xs">{user.email}</p>
-            <p className="text-muted-foreground text-xs capitalize">
-              {user.role.toLowerCase()}
-            </p>
-          </div>
-        </DropdownMenuLabel>
+        {/* Base UI's GroupLabel reads MenuGroupContext and throws without a
+            group parent. Radix's Label did not require one, so the wrapper
+            alone would crash. The user identity block is a natural group. */}
+        <DropdownMenuGroup>
+          <DropdownMenuLabel>
+            <div className="flex flex-col space-y-2 px-2">
+              <p className="text-sm font-medium">{user.name}</p>
+              <p className="text-muted-foreground text-xs">{user.email}</p>
+              <p className="text-muted-foreground text-xs capitalize">
+                {user.role.toLowerCase()}
+              </p>
+            </div>
+          </DropdownMenuLabel>
+        </DropdownMenuGroup>
 
         <DropdownMenuSeparator />
 

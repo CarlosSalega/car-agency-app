@@ -173,6 +173,15 @@ function DropdownMenuRadioItem({
   );
 }
 
+/**
+ * **Requires a `DropdownMenuGroup` (or `DropdownMenuRadioGroup`) parent.**
+ *
+ * Radix's `Label` worked anywhere inside a menu. Base UI's `GroupLabel` is a
+ * group part, so it reads `MenuGroupContext` and **throws at runtime** when it
+ * has no group parent. That narrowing is not visible in the type system, so it
+ * has to be documented here or it crashes the first consumer that uses the
+ * label on its own.
+ */
 function DropdownMenuLabel({
   className,
   inset,
