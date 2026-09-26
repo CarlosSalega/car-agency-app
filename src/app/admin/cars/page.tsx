@@ -6,9 +6,11 @@ import { Button } from "@/components/ui/button";
 import { getAdminCarsCount, getAdminCarsList } from "@/lib/queries/cars";
 
 interface AdminCarsPageProps {
-  searchParams: {
+  // Next.js 15 delivers `searchParams` as a Promise; the generated route
+  // contract in `.next/types` requires that shape.
+  searchParams: Promise<{
     page?: string;
-  };
+  }>;
 }
 
 const ITEMS_PER_PAGE = 12;

@@ -5,10 +5,12 @@ import { prisma } from "@/lib/db";
 import { requireAuthSession } from "@/lib/auth";
 
 interface ConfigPageProps {
-  searchParams: {
+  // Next.js 15 delivers `searchParams` as a Promise; the generated route
+  // contract in `.next/types` requires that shape.
+  searchParams: Promise<{
     tab?: string;
     page?: string;
-  };
+  }>;
 }
 
 export const dynamic = "force-dynamic";
