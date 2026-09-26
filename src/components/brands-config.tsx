@@ -202,12 +202,14 @@ export function BrandsConfig({
     <div>
       <div className="mb-4 flex justify-end">
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
-          <DialogTrigger asChild>
-            <Button onClick={openCreate}>
-              <Plus className="mr-2 size-4" />
-              Agregar Marca
-            </Button>
-          </DialogTrigger>
+          <DialogTrigger
+            render={
+              <Button onClick={openCreate}>
+                <Plus className="mr-2 size-4" />
+                Agregar Marca
+              </Button>
+            }
+          />
           <DialogContent>
             <DialogHeader>
               <DialogTitle>
