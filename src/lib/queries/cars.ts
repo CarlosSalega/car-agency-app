@@ -1,5 +1,10 @@
 import { unstable_cache } from "next/cache";
-import type { CarType, FuelType, Prisma, Transmission } from "@prisma/client";
+import type {
+  CarType,
+  FuelType,
+  Prisma,
+  Transmission,
+} from "@generated/prisma/client";
 import { prisma } from "@/lib/db";
 import { prismaSafe } from "@/lib/prisma-safe";
 import { stableStringify, CACHE_REVALIDATE, CACHE_TAGS } from "@/lib/cache";

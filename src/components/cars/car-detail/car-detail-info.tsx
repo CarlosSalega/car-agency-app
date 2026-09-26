@@ -1,4 +1,4 @@
-import type { Car, Brand, Model } from "@prisma/client";
+import type { Car, Brand, Model } from "@generated/prisma/client";
 
 import { Badge } from "@/components/ui/badge";
 import { getCarBadge } from "@/components/status-badges";

@@ -1,4 +1,4 @@
-import { Role } from "@prisma/client";
+import { Role } from "@generated/prisma/client";
 import type { SeedUser } from "./types";
 
 export const seedUsers: SeedUser[] = [

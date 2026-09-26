@@ -1,5 +1,5 @@
 import crypto from "node:crypto";
-import type { PrismaClient } from "@prisma/client";
+import type { PrismaClient } from "@generated/prisma/client";
 import { brands } from "@/data/brands";
 import { modelsByBrand } from "@/data/modelsByBrand";
 import { hashPassword } from "@/lib/hash-password";

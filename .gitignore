@@ -11,6 +11,9 @@ yarn-error.log*
 .atl/
 *.tsbuildinfo
 next-env.d.ts
+
+# Prisma generated client (Prisma 7 writes it here instead of node_modules)
+/prisma/generated/
 .claude
 .agents
 skills-lock.json

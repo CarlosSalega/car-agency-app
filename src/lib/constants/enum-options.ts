@@ -1,3 +1,7 @@
+// Enum values come from `enums.ts`, not `client.ts`. `client.ts` re-exports the
+// enums but also the Prisma runtime, whose first import is `node:module`.
+// Pulling that into a browser chunk fails the build, so anything that needs an
+// enum as a value must come from the dependency-free `enums` module.
 import {
   CarType,
   FuelType,
@@ -5,7 +9,7 @@ import {
   Currency,
   CarStatus,
   PaymentMethod,
-} from "@prisma/client";
+} from "@generated/prisma/enums";
 
 export const CAR_TYPE_OPTIONS = [
   { value: CarType.SEDAN, label: "Sedán" },

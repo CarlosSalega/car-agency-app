@@ -21,6 +21,9 @@ pnpm-lock.yaml
 # Prisma schema is formatted by `prisma format`, not Prettier
 prisma/schema.prisma
 
+# Generated Prisma client — emitted code, never hand-formatted
+prisma/generated/
+
 # Binary and vector assets
 *.ico
 *.png

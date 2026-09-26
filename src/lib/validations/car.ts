@@ -1,3 +1,4 @@
+// Enum values, not types: see the note in `src/lib/constants/enum-options.ts`.
 import {
   CarType,
   FuelType,
@@ -5,7 +6,7 @@ import {
   Currency,
   CarStatus,
   PaymentMethod,
-} from "@prisma/client";
+} from "@generated/prisma/enums";
 import { z } from "zod";
 
 const CarTypeEnum = z.nativeEnum(CarType);

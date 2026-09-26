@@ -1,4 +1,4 @@
-import { LinkTreeCategory } from "@prisma/client";
+import { LinkTreeCategory } from "@generated/prisma/client";
 import type { SeedLinkTreeLink } from "./types";
 
 export const seedLinkTreeLinks: SeedLinkTreeLink[] = [

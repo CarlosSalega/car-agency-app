@@ -1,7 +1,7 @@
 "use client";
 import type { CarInput } from "@/lib/validations/car";
 import type { BrandWithModels, SellerOption } from "@/types/car-form";
-import type { Model, Car, PaymentMethod } from "@prisma/client";
+import type { Model, Car, PaymentMethod } from "@generated/prisma/client";
 import type {
   UseFormRegister,
   UseFormSetValue,
