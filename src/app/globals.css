@@ -93,6 +93,15 @@
   --sidebar-primary-foreground: oklch(40% 0 0);
   --sidebar-border: oklch(30% 0 0);
 
+  /* These three were mapped in @theme inline below but never defined, so they
+     resolved to nothing. Nothing consumed them until the admin sidebar landed,
+     which is why the gap was invisible. Values follow the scale already used by
+     the sidebar tokens above: accent is one step darker than the panel, so a
+     hover inverts to white text the same way sidebar-primary does. */
+  --sidebar-accent: oklch(45% 0 0);
+  --sidebar-accent-foreground: oklch(100% 0 0);
+  --sidebar-ring: oklch(85% 0 0);
+
   --radius: 0rem;
 }
 
