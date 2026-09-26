@@ -14,14 +14,14 @@ export function ViewButton({ href, label = "Ver" }: ViewButtonProps) {
       className="hover:text-background hover:bg-info"
       variant="ghost"
       size="icon"
-      asChild
+      render={
+        <Link href={href}>
+          <Eye className="size-5" />
+        </Link>
+      }
       title={label}
       aria-label={label}
-    >
-      <Link href={href}>
-        <Eye className="size-5" />
-      </Link>
-    </Button>
+    />
   );
 }
 
@@ -42,14 +42,14 @@ export function EditButton({
         className="hover:text-background hover:bg-warning"
         variant="ghost"
         size="icon"
-        asChild
+        render={
+          <Link href={href}>
+            <Edit className="size-5" />
+          </Link>
+        }
         title={label}
         aria-label={label}
-      >
-        <Link href={href}>
-          <Edit className="size-5" />
-        </Link>
-      </Button>
+      />
     );
   }
 

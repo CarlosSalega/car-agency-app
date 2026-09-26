@@ -55,9 +55,9 @@ export function CarGrid({
           </p>
         </div>
         {emptyAction ? (
-          <Button asChild>
-            <Link href={emptyAction.href}>{emptyAction.label}</Link>
-          </Button>
+          <Button
+            render={<Link href={emptyAction.href}>{emptyAction.label}</Link>}
+          />
         ) : null}
       </div>
     );
