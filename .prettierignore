@@ -1,0 +1,48 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Build output and caches
+.next/
+out/
+build/
+dist/
+.turbo/
+*.tsbuildinfo
+
+# Generated files — rewritten by the toolchain, never hand-formatted
+next-env.d.ts
+pnpm-lock.yaml
+
+# No parser is available for these; Prettier only reports them as errors
+.gitignore
+*.sql
+
+# Prisma schema is formatted by `prisma format`, not Prettier
+prisma/schema.prisma
+
+# Binary and vector assets
+*.ico
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.webp
+*.avif
+*.woff
+*.woff2
+
+# Local tooling and agent directories (untracked, not part of the project)
+.atl/
+.agents/
+.claude/
+.vscode/
+.idea/
+
+# Logs and coverage
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+coverage/

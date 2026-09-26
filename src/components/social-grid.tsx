@@ -25,10 +25,12 @@ export function SocialGrid({ links }: { links: SocialLinkItem[] }) {
             }
             aria-label={link.label}
             title={link.label}
-            className="bg-primary text-background hover:bg-primary/90 flex size-16 items-center justify-center rounded-lg transition-transform duration-150 hover:scale-105 focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+            className="bg-primary text-background hover:bg-primary/90 focus-visible:ring-ring flex size-16 items-center justify-center rounded-lg transition-transform duration-150 hover:scale-105 focus-visible:ring-2 focus-visible:outline-none"
           >
             <span className="flex items-center [&_svg]:size-6">
-              {icon ?? <span className="px-2 text-center text-xs">{link.label}</span>}
+              {icon ?? (
+                <span className="px-2 text-center text-xs">{link.label}</span>
+              )}
             </span>
           </Link>
         );

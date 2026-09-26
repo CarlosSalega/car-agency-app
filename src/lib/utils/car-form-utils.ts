@@ -21,9 +21,7 @@ export function carToFormValues(car?: CarWithRelations): Partial<CarInput> {
     currency: car.currency || "ARS",
     description: car.description || "",
     images: Array.isArray(car.images) ? car.images : [],
-    paymentMethods: Array.isArray(car.paymentMethods)
-      ? car.paymentMethods
-      : [],
+    paymentMethods: Array.isArray(car.paymentMethods) ? car.paymentMethods : [],
     status: car.status || "AVAILABLE",
   };
 }

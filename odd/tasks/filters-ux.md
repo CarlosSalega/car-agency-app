@@ -22,7 +22,7 @@ out.
 - `Essential Text Truncation` (Critical): distinguishing names need complete
   access; clamping them "only to make cards uniform" is a Critical violation. A
   flat two-column grid inside 280px would truncate `Marca`/`Modelo`, which is
-  where the label *is* the information.
+  where the label _is_ the information.
 - `overflow-menu` (MD): when actions exceed available space, use overflow instead
   of cramming.
 - `submit-feedback` (High): confirm submission status with loading then
@@ -76,8 +76,8 @@ Out:
    - `${currentYear - 4} – ${currentYear - 1}` -> `minYear = currentYear - 4`, `maxYear = currentYear - 1`
    - `${currentYear - 9} – ${currentYear - 5}` -> `minYear = currentYear - 9`, `maxYear = currentYear - 5`
    - `Antes de ${currentYear - 9}` -> `maxYear = currentYear - 10`
-   The Select's initial value is derived by matching the URL `minYear`/`maxYear`
-   against those ranges; unmatched legacy params fall back to `Todas`.
+     The Select's initial value is derived by matching the URL `minYear`/`maxYear`
+     against those ranges; unmatched legacy params fall back to `Todas`.
 5. Remove only the price **minimum** input. Keep `Entrega hasta (ARS)` as a single
    numeric `Input` with `inputMode="numeric"`.
 6. Apply feedback: `useTransition` around `router.push`; the button is `disabled`
@@ -94,18 +94,18 @@ Out:
 ## Checklist
 
 - [x] F1 `page.tsx`: sidebar to 320px, compute `currentYear`, pass `currentYear`
-  to `SearchFilters` and `MobileFiltersSheet`, pass `total` and `emptyAction` to
-  `CarGrid`.
+      to `SearchFilters` and `MobileFiltersSheet`, pass `total` and `emptyAction` to
+      `CarGrid`.
 - [x] F2 `search-filters.tsx`: title, `currentYear` prop, year range Select,
-  remove year min/max state and the price minimum input, two-column rows for the
-  four short fields, `inputMode="numeric"`, label/id associations.
+      remove year min/max state and the price minimum input, two-column rows for the
+      four short fields, `inputMode="numeric"`, label/id associations.
 - [x] F3 `search-filters.tsx`: `useTransition` pending state on the apply button.
 - [x] F4 `car-grid.tsx`: optional `total` prop rendering the live result count,
-  optional `emptyAction` prop rendering the escape link.
+      optional `emptyAction` prop rendering the escape link.
 - [x] F5 `mobile-filters-sheet.tsx`: `currentYear` prop forwarded, `sr-only` title
-  synced.
+      synced.
 - [x] F6 Verify: `vitest`, `eslint` on touched files, `tsc --noEmit`, and SSR
-  checks against the running dev server.
+      checks against the running dev server.
 - [x] F7 Commit (`6aba437`).
 - [x] F8 Mirror this document to Engram.
 
@@ -158,12 +158,12 @@ Both were introduced by the delegated writer and fixed before the commit:
   - SSR: title present, `Entrega Mínima` = 0, `minPrice` in the form = 0,
     `type="number"` = 1, sidebar `320px` present, `24 vehículos encontrados`,
     empty-state `Limpiar filtros` present, `minYear=2022&maxYear=2025` -> `1 vehículo
-    encontrado` (singular form correct).
+encontrado` (singular form correct).
   - Field ids: 7 unique per instance, each with a matching `for`; no duplicates.
   - Native risk assessment (`gentle-ai review assess`, RDD off): medium, 4 changed
     paths, 327 changed lines.
 - 2026-09-18: commit created (local only, not pushed): `6aba437 feat(filters):
-  restructure autos filter panel with feedback and result count`.
+restructure autos filter panel with feedback and result count`.
 
 ## Follow-up change — year as two controlled inputs (user override)
 
@@ -179,15 +179,15 @@ removes the bucket problem described in the finding below — there are no bucke
 left to balance.
 
 - [x] F9 Remove the year range Select: drop `buildYearRanges`,
-  `resolveYearRangeValue` and the now-unused `currentYear` prop from
-  `SearchFilters`, `MobileFiltersSheet` and `page.tsx`.
+      `resolveYearRangeValue` and the now-unused `currentYear` prop from
+      `SearchFilters`, `MobileFiltersSheet` and `page.tsx`.
 - [x] F10 Add two controlled year inputs (`Año desde` / `Año hasta`): digits only,
-  `maxLength` 4, `inputMode="numeric"`, valid only when exactly 4 digits and within
-  1950-2035, `aria-invalid` on a completed invalid value or an inverted range,
-  plus persistent helper text and an inline error wired through `aria-describedby`.
+      `maxLength` 4, `inputMode="numeric"`, valid only when exactly 4 digits and within
+      1950-2035, `aria-invalid` on a completed invalid value or an inverted range,
+      plus persistent helper text and an inline error wired through `aria-describedby`.
 - [x] F11 Apply the same controlled digit-only pattern to `Entrega hasta`. This
-  supersedes the earlier `type="number"` correction: stripping non-digits removes
-  the `NaN` path outright.
+      supersedes the earlier `type="number"` correction: stripping non-digits removes
+      the `NaN` path outright.
 - [x] F12 Verify (eslint, tsc, tests, SSR + headless) and commit (`68fe314`).
 
 Decisions taken while implementing:
@@ -221,22 +221,22 @@ Verification evidence (all re-run by the orchestrator):
 ## Revision — single year input (owner correction, supersedes F10)
 
 The owner rejected the two-input version as poor UX: one single controlled input,
-valid year range 1935-2035, and the field filters *from* that year (the owner's
+valid year range 1935-2035, and the field filters _from_ that year (the owner's
 explicit choice). F10 above is superseded; the two-input, inverted-range logic is
 gone.
 
 - [x] F13 Replace the year pair with a single `Año` input (`minYear` only):
-  digits only, `maxLength` 4, `inputMode="numeric"`, valid only when 4 digits and
-  within 1935-2035, `aria-invalid` on blur, helper text stating both the direction
-  and the valid range. Drop `cn` (no longer used here) and all `maxYear` UI state.
+      digits only, `maxLength` 4, `inputMode="numeric"`, valid only when 4 digits and
+      within 1935-2035, `aria-invalid` on blur, helper text stating both the direction
+      and the valid range. Drop `cn` (no longer used here) and all `maxYear` UI state.
 - [x] F14 Verify and commit (`402dba4`).
 - [x] F15 Remove the year helper text entirely (owner decision). The `<p>` and its
-  `aria-describedby` binding are gone, so the field is announced by its label
-  alone. Verified: no `year-help` idref, no helper copy in SSR, eslint / tsc /
-  vitest green. Commit `64b2c28`.
+      `aria-describedby` binding are gone, so the field is announced by its label
+      alone. Verified: no `year-help` idref, no helper copy in SSR, eslint / tsc /
+      vitest green. Commit `64b2c28`.
 
 Deliberate decision to record, so it is not "helpfully" restored later: the helper
-existed to state (a) that the field filters *from* the typed year and (b) the valid
+existed to state (a) that the field filters _from_ the typed year and (b) the valid
 1935-2035 range. The owner chose to lose both signals rather than carry two lines
 of `text-xs` in a 320px sidebar. The range is still enforced in code
 (`isValidYear`); it is simply no longer advertised. A text input ignores the native
@@ -269,18 +269,18 @@ The owner reported that the mobile sheet stretched to the viewport width on tabl
 and that its gray parent (the sheet container) was not rounded.
 
 - [x] F16 Contain the panel: replace `h-dvh` with
-  `mx-auto max-h-[90dvh] w-full max-w-md`, so it is content-height, capped, and
-  centered. Measured live via CDP at 860 / 768 / 375: panel 448px centered at 860
-  and 768, and 375px (full width) at 375, so phones are untouched. Commit `ee238d1`.
+      `mx-auto max-h-[90dvh] w-full max-w-md`, so it is content-height, capped, and
+      centered. Measured live via CDP at 860 / 768 / 375: panel 448px centered at 860
+      and 768, and 375px (full width) at 375, so phones are untouched. Commit `ee238d1`.
 - [x] F17 Reserve space above the title for the close button. **Reverted by the owner**
-  (commit `5674563`). Re-measured after the revert: the close button and `Limpiar` have
-  **0 overlap** anyway, because the white card's own `p-6` padding already pushes the
-  title row down to y 72 while the close button ends at y 56. The earlier claim that
-  this space was load-bearing was an inference, never measured on the original state —
-  the 256px2 collision existed only in the intermediate `SheetHeader p-0` state. The
-  revert loses nothing and makes the panel 32px shorter.
+      (commit `5674563`). Re-measured after the revert: the close button and `Limpiar` have
+      **0 overlap** anyway, because the white card's own `p-6` padding already pushes the
+      title row down to y 72 while the close button ends at y 56. The earlier claim that
+      this space was load-bearing was an inference, never measured on the original state —
+      the 256px2 collision existed only in the intermediate `SheetHeader p-0` state. The
+      revert loses nothing and makes the panel 32px shorter.
 - [x] F18 Round the sheet container (`rounded-lg`) so it frames the filter card
-  instead of showing square corners behind it. Commit `f426eec`.
+      instead of showing square corners behind it. Commit `f426eec`.
 
 Note on the close button: it is a child of the sheet container (the gray parent). After
 the revert it occupies y 16-56 and the white card starts at y 48, so its bottom 8px
@@ -300,15 +300,15 @@ action goes below the title, the close button takes the slot the clear button us
 occupy, and it must be a bare icon.
 
 - [x] F19 `SearchFilters` gains an optional `headerAction` slot rendered on the title
-  row's right side; `Limpiar` moves to its own row below the title. The desktop sidebar
-  gets the same header because the component is shared — reviewed, and it reads better
-  there too.
+      row's right side; `Limpiar` moves to its own row below the title. The desktop sidebar
+      gets the same header because the component is shared — reviewed, and it reads better
+      there too.
 - [x] F20 The sheet hides the built-in absolute `SheetClose` (`[&>button]:hidden`) and
-  supplies its own close button through `headerAction`, so the X lands exactly in the
-  title row instead of floating over the card. `SheetHeader` padding dropped to `p-0`
-  now that nothing has to clear an absolutely positioned button.
+      supplies its own close button through `headerAction`, so the X lands exactly in the
+      title row instead of floating over the card. `SheetHeader` padding dropped to `p-0`
+      now that nothing has to clear an absolutely positioned button.
 - [x] F21 The close button is `variant="ghost"` + `rounded-none`: no border, no gray
-  `bg-background`, no circle. Hit area stays 36x36 (above the WCAG 2.2 AA 24px minimum).
+      `bg-background`, no circle. Hit area stays 36x36 (above the WCAG 2.2 AA 24px minimum).
 
 Measured effect on height: content went from 688 to 708px because `Limpiar` gained its
 own row. At 860x900 there is still no internal scroll; at 860x669 it scrolls, which the

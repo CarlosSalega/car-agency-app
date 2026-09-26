@@ -1,4 +1,11 @@
-import { Car, CheckCircle, Clock, CalendarClock, DollarSign, Eye } from "lucide-react";
+import {
+  Car,
+  CheckCircle,
+  Clock,
+  CalendarClock,
+  DollarSign,
+  Eye,
+} from "lucide-react";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 

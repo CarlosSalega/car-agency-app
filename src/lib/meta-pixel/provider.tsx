@@ -42,7 +42,9 @@ export function MetaPixelProvider({ children }: MetaPixelProviderProps) {
     track("PageView");
   }, [pathname]);
 
-  return <TrackContext.Provider value={track}>{children}</TrackContext.Provider>;
+  return (
+    <TrackContext.Provider value={track}>{children}</TrackContext.Provider>
+  );
 }
 
 /**

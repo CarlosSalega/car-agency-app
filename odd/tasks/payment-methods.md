@@ -17,6 +17,7 @@ Buyers can't see which payment methods each car accepts. The info lives outside 
 ## Scope
 
 In:
+
 - `prisma/schema.prisma` (new `PaymentMethod` enum + `paymentMethods` array on `Car`)
 - `src/lib/validations/car.ts` (array validation, min 1)
 - `src/types/car-form.ts`, `src/lib/utils/car-form-utils.ts` (payload + defaults + mapping)
@@ -26,6 +27,7 @@ In:
 - `src/components/cars/car-detail/car-detail-specs.tsx` (new section between grid and Descripción)
 
 Out:
+
 - `car-detail-info.tsx` (unused duplicate, not wired to page) — only touch if it becomes live.
 - Changing URL contracts, filters, or search by payment method.
 - Dropping `showBadge` column in Neon prod (separate authorization, unrelated).
