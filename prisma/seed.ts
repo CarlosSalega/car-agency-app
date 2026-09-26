@@ -11,7 +11,12 @@ import {
   matchImagesForCar,
   uploadLocalImage,
 } from "./seed/images";
-import { imageManifest, validateImageManifest } from "./seed/image-manifest";
+import {
+  imageManifest,
+  matchesStagedGroup,
+  partitionImageAssets,
+  validateImageManifest,
+} from "./seed/image-manifest";
 import { seedCars } from "./seed/cars";
 import { seedLinkTreeLinks } from "./seed/link-tree";
 import { seedSellers } from "./seed/sellers";
@@ -29,9 +34,17 @@ import type { ImageSummary, SeedSummary } from "./seed/types";
 const imagesDir = `${process.cwd()}/public/autos`;
 
 function printImageSummary(summary: ImageSummary): void {
-  console.log(`   Unmatched image files: ${summary.unmatchedFiles.length}`);
-  if (summary.unmatchedFiles.length > 0)
-    console.log(`      ${summary.unmatchedFiles.join(", ")}`);
+  console.log(`   Staged assets: ${summary.stagedFiles.length} files`);
+  for (const group of summary.stagedAssets) {
+    const count = summary.stagedFiles.filter((file) =>
+      matchesStagedGroup(file, group.vehicleKey),
+    ).length;
+    if (count > 0)
+      console.log(`      ${group.label}: ${count} (${group.reason})`);
+  }
+  console.log(`   Unclaimed files: ${summary.orphanFiles.length}`);
+  if (summary.orphanFiles.length > 0)
+    console.log(`      ${summary.orphanFiles.join(", ")}`);
   console.log(`   Upload failures: ${summary.uploadFailures.length}`);
   if (summary.uploadFailures.length > 0) {
     for (const failure of summary.uploadFailures)
@@ -69,6 +82,15 @@ async function main(): Promise<void> {
       admin.id,
     );
     const localFiles = indexLocalImages(imagesDir);
+    const partition = partitionImageAssets(imageManifest, localFiles);
+
+    if (partition.orphans.length > 0) {
+      throw new Error(
+        `Unclaimed image files: ${partition.orphans.join(", ")}. ` +
+          "Add them to an image manifest entry or to a staged asset group.",
+      );
+    }
+
     const placeholderKey = await uploadLocalImage(
       getPlaceholderPath(),
       "placeholder",
@@ -79,7 +101,9 @@ async function main(): Promise<void> {
       modelsCreated: Object.keys(modelMap).length,
       images: {
         matchedFiles: [],
-        unmatchedFiles: [],
+        stagedAssets: imageManifest.stagedAssets,
+        stagedFiles: partition.staged,
+        orphanFiles: partition.orphans,
         uploadFailures: [],
         placeholderCars: [],
       },
@@ -108,9 +132,6 @@ async function main(): Promise<void> {
         consumedFiles.add(file);
         return localFiles.includes(file);
       });
-      summary.images.unmatchedFiles.push(
-        ...localFiles.filter((file) => !consumedFiles.has(file)),
-      );
       summary.images.matchedFiles.push(...matchedFiles);
 
       const keys: string[] = [];
@@ -163,9 +184,6 @@ async function main(): Promise<void> {
       summary.carsCreated += 1;
     }
 
-    summary.images.unmatchedFiles = [
-      ...new Set(summary.images.unmatchedFiles),
-    ].filter((file) => !consumedFiles.has(file));
     await prisma.log.create({
       data: {
         action: "SEED_EXECUTED",

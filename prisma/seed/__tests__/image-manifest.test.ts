@@ -1,6 +1,12 @@
+import path from "node:path";
 import { describe, expect, it } from "vitest";
-import { imageManifest, validateImageManifest } from "../image-manifest";
-import { matchImagesForCar } from "../images";
+import {
+  imageManifest,
+  matchesStagedGroup,
+  partitionImageAssets,
+  validateImageManifest,
+} from "../image-manifest";
+import { indexLocalImages, matchImagesForCar } from "../images";
 
 const files = [
   "toyota_corolla_1.webp",
@@ -58,7 +64,93 @@ describe("seed image manifest", () => {
           { carKey: "same", files: ["image.webp"] },
           { carKey: "same", files: ["image.webp"] },
         ],
+        stagedAssets: [],
       }),
     ).toEqual(["Duplicate car key: same", "Duplicate image file: image.webp"]);
+  });
+
+  it("detects duplicate and overlapping staged vehicle keys", () => {
+    expect(
+      validateImageManifest({
+        entries: [{ carKey: "car", files: ["toyota_hilux_1.webp"] }],
+        stagedAssets: [
+          { vehicleKey: "toyota_hilux", label: "A", reason: "r" },
+          { vehicleKey: "toyota_hilux", label: "B", reason: "r" },
+        ],
+      }),
+    ).toEqual([
+      "Duplicate staged vehicle key: toyota_hilux",
+      "Staged vehicle toyota_hilux overlaps claimed file toyota_hilux_1.webp",
+    ]);
+  });
+
+  it("has a valid manifest", () => {
+    expect(validateImageManifest(imageManifest)).toEqual([]);
+  });
+});
+
+describe("staged asset groups", () => {
+  it("requires a separator so a prefix cannot swallow a longer name", () => {
+    expect(matchesStagedGroup("toyota_corolla_1.webp", "toyota_corolla")).toBe(
+      true,
+    );
+    expect(
+      matchesStagedGroup("toyota_corollacross_1.webp", "toyota_corolla"),
+    ).toBe(false);
+    expect(matchesStagedGroup("toyota_corolla.webp", "toyota_corolla")).toBe(
+      true,
+    );
+    expect(matchesStagedGroup("corolla_1.webp", "toyota_corolla")).toBe(false);
+  });
+
+  it("separates claimed files, staged files and true orphans", () => {
+    const partition = partitionImageAssets(imageManifest, [
+      ...files,
+      "toyota_hilux_1.webp",
+      "mystery_vehicle_9.webp",
+    ]);
+
+    expect(partition.claimed).toContain("toyota_corolla_1.webp");
+    expect(partition.staged).toEqual([
+      "toyota_corollacross_1.webp",
+      "toyota_hilux_1.webp",
+    ]);
+    expect(partition.orphans).toEqual([
+      "unknown_vehicle.webp",
+      "mystery_vehicle_9.webp",
+    ]);
+  });
+
+  it("keeps claimed files out of staged groups even when a prefix overlaps", () => {
+    const manifest = {
+      entries: [{ carKey: "corolla", files: ["toyota_corolla_1.webp"] }],
+      stagedAssets: [
+        { vehicleKey: "toyota_corolla", label: "Toyota Corolla", reason: "r" },
+      ],
+    };
+
+    const partition = partitionImageAssets(manifest, [
+      "toyota_corolla_1.webp",
+      "toyota_corolla_2.webp",
+    ]);
+
+    expect(partition.claimed).toEqual(["toyota_corolla_1.webp"]);
+    expect(partition.staged).toEqual(["toyota_corolla_2.webp"]);
+    expect(partition.orphans).toEqual([]);
+  });
+
+  // Guards the real asset folder: a photo dropped in for a vehicle that is
+  // neither published nor declared staged fails here instead of silently
+  // going unused at seed time.
+  it("accounts for every image file in public/autos", () => {
+    const available = indexLocalImages(
+      path.join(process.cwd(), "public", "autos"),
+    );
+    const partition = partitionImageAssets(imageManifest, available);
+
+    expect(partition.orphans).toEqual([]);
+    expect(partition.claimed.length + partition.staged.length).toBe(
+      available.length,
+    );
   });
 });
