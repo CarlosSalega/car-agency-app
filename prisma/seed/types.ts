@@ -60,8 +60,37 @@ export interface ImageManifestEntry {
   files: string[];
 }
 
+/**
+ * A group of local assets that no catalog entry claims yet. Declaring them
+ * turns "this file is unused" from a silent runtime observation into an
+ * explicit, reviewable decision.
+ */
+export interface StagedAssetGroup {
+  /**
+   * Filename prefix identifying the vehicle, without the trailing separator or
+   * the numeric suffix — e.g. `chevrolet_cruze` for `chevrolet_cruze_1.webp`.
+   */
+  vehicleKey: string;
+  /** Human-readable vehicle name, used in the seed report. */
+  label: string;
+  /** Why these assets are intentionally not used by the current catalog. */
+  reason: string;
+}
+
 export interface ImageManifest {
   entries: ImageManifestEntry[];
+  stagedAssets: StagedAssetGroup[];
+}
+
+/**
+ * How the files found in `public/autos` divide up. `orphans` is the only
+ * category that represents real drift: a file that is neither claimed by the
+ * catalog nor declared as staged.
+ */
+export interface ImageAssetPartition {
+  claimed: string[];
+  staged: string[];
+  orphans: string[];
 }
 
 export interface ImageUploadFailure {
@@ -71,7 +100,9 @@ export interface ImageUploadFailure {
 
 export interface ImageSummary {
   matchedFiles: string[];
-  unmatchedFiles: string[];
+  stagedAssets: StagedAssetGroup[];
+  stagedFiles: string[];
+  orphanFiles: string[];
   uploadFailures: ImageUploadFailure[];
   placeholderCars: string[];
 }
