@@ -14,7 +14,8 @@ export const META_PIXEL_EVENTS = {
   SEARCH: "Search",
 } as const;
 
-export type MetaPixelEvent = (typeof META_PIXEL_EVENTS)[keyof typeof META_PIXEL_EVENTS];
+export type MetaPixelEvent =
+  (typeof META_PIXEL_EVENTS)[keyof typeof META_PIXEL_EVENTS];
 
 /** Payload for `ViewContent` events on vehicle detail pages. */
 export interface ViewContentData {
@@ -48,8 +49,14 @@ export type EventDataMap = {
  * Type-safe tracking function. The second argument is omitted when the event
  * has no payload, and required when it does — the conditional rest tuple
  * enforces this at the call site without overloads.
+ *
+ * `[EventDataMap[E]] extends [undefined]` is written as a single-element tuple
+ * on purpose: a naked `EventDataMap[E] extends undefined ? ... : ...` distributes
+ * over the union of every event payload and yields `[] | [T]`, which is not
+ * assignable to `[T]`. Wrapping the checked type in a tuple suppresses
+ * distribution, so the rest parameter resolves to exactly `[]` or `[data: T]`.
  */
 export type TrackFunction = <E extends MetaPixelEvent>(
   event: E,
-  ...args: EventDataMap[E] extends undefined ? [] : [EventDataMap[E]]
+  ...args: [EventDataMap[E]] extends [undefined] ? [] : [data: EventDataMap[E]]
 ) => void;

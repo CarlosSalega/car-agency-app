@@ -24,12 +24,18 @@ declare global {
  * The function is intentionally infallible: per R5, a failed tracking call
  * must never throw, log, or surface to the user.
  */
-export const track: TrackFunction = (event, data) => {
+export const track: TrackFunction = <E extends MetaPixelEvent>(
+  event: E,
+  ...args: [EventDataMap[E]] extends [undefined] ? [] : [data: EventDataMap[E]]
+) => {
   if (typeof window === "undefined") return;
   if (!window.fbq) return;
   if (!process.env.NEXT_PUBLIC_META_PIXEL_ID) return;
 
-  // Cast keeps the strict overload on `fbq` (which expects a single
-  // `EventDataMap[MetaPixelEvent]`) compatible with our generic call site.
-  window.fbq("track", event, data as EventDataMap[MetaPixelEvent] | undefined);
+  // The rest tuple is `[] | [data]` depending on `E`, so the payload has to be
+  // widened before it reaches `fbq`, whose signature takes the non-generic
+  // `EventDataMap[MetaPixelEvent] | undefined`.
+  const data = args[0] as EventDataMap[MetaPixelEvent] | undefined;
+
+  window.fbq("track", event, data);
 };
