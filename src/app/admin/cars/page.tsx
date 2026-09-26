@@ -5,23 +5,15 @@ import { CarsTable } from "@/components/cars";
 import { Button } from "@/components/ui/button";
 import { getAdminCarsCount, getAdminCarsList } from "@/lib/queries/cars";
 
-interface AdminCarsPageProps {
-  // Next.js 15 delivers `searchParams` as a Promise; the generated route
-  // contract in `.next/types` requires that shape.
-  searchParams: Promise<{
-    page?: string;
-  }>;
-}
-
 const ITEMS_PER_PAGE = 12;
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminCarsPage({
   searchParams,
-}: AdminCarsPageProps) {
+}: PageProps<"/admin/cars">) {
   const params = await searchParams;
-  const currentPage = Number(params?.page) || 1;
+  const currentPage = Number(params.page) || 1;
   const skip = (currentPage - 1) * ITEMS_PER_PAGE;
 
   const totalCars = await getAdminCarsCount();
