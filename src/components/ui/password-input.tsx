@@ -27,7 +27,7 @@ function PasswordInput({
         disabled={disabled}
         className={cn(
           "text-muted-foreground hover:text-foreground absolute top-1/2 right-3 -translate-y-1/2",
-          "focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none rounded-sm",
+          "focus-visible:ring-ring rounded-sm focus-visible:ring-2 focus-visible:outline-none",
           disabled && "pointer-events-none opacity-50",
         )}
         aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}

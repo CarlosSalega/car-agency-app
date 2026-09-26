@@ -63,7 +63,8 @@ function looksLikePlatformLimitBody(rawText: string): boolean {
 
 function looksLikeJsonParseError(message: string): boolean {
   return (
-    message.includes("Unexpected token") || message.includes("is not valid JSON")
+    message.includes("Unexpected token") ||
+    message.includes("is not valid JSON")
   );
 }
 
@@ -222,7 +223,7 @@ function SortableThumbnail({
         onClick={() => onRemove(imageKey)}
         onPointerDown={(event) => event.stopPropagation()}
         aria-label={`Eliminar imagen ${position}`}
-        className="bg-destructive text-destructive-foreground hover:bg-destructive/90 absolute top-1 right-1 flex size-5 items-center justify-center rounded-full opacity-0 transition-opacity group-hover:opacity-100 group-focus-within:opacity-100 focus-visible:opacity-100"
+        className="bg-destructive text-destructive-foreground hover:bg-destructive/90 absolute top-1 right-1 flex size-5 items-center justify-center rounded-full opacity-0 transition-opacity group-focus-within:opacity-100 group-hover:opacity-100 focus-visible:opacity-100"
       >
         <X className="size-3" aria-hidden="true" />
       </button>
@@ -421,9 +422,9 @@ export function ImageUpload({ value, onChange }: ImageUploadProps) {
         >
           <SortableContext items={value} strategy={rectSortingStrategy}>
             <p id={instructionsId} className="sr-only">
-              Para reordenar con el teclado: enfoca una foto, pulsa Espacio
-              para levantarla, usa las flechas para moverla y pulsa Espacio
-              para soltarla. La primera imagen es la portada.
+              Para reordenar con el teclado: enfoca una foto, pulsa Espacio para
+              levantarla, usa las flechas para moverla y pulsa Espacio para
+              soltarla. La primera imagen es la portada.
             </p>
             <div
               role="group"
@@ -458,7 +459,8 @@ export function ImageUpload({ value, onChange }: ImageUploadProps) {
       {value.length === 0 && (
         <div className="bg-card flex h-32 items-center justify-center rounded-lg border-2 border-dashed">
           <p className="text-muted-foreground text-sm">
-            No hay imágenes. Haz clic en &quot;Subir imágenes&quot; para agregar.
+            No hay imágenes. Haz clic en &quot;Subir imágenes&quot; para
+            agregar.
           </p>
         </div>
       )}

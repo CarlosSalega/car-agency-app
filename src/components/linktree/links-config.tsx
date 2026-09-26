@@ -32,7 +32,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { LINKTREE_ICON_KEYS, LINKTREE_ICON_LABELS, renderLinkTreeIcon } from "@/data/contact";
+import {
+  LINKTREE_ICON_KEYS,
+  LINKTREE_ICON_LABELS,
+  renderLinkTreeIcon,
+} from "@/data/contact";
 
 import { DeleteButton, EditButton } from "../admin/admin-action-buttons";
 
@@ -88,7 +92,7 @@ export function LinkTreeLinksConfig({
     setValue,
     watch,
     formState: { errors, isSubmitting },
-  } =   useForm<LinkFormValues>({
+  } = useForm<LinkFormValues>({
     resolver: zodResolver(linkFormSchema),
     defaultValues: {
       label: "",
@@ -465,7 +469,11 @@ export function LinkTreeLinksConfig({
                 >
                   Cancelar
                 </Button>
-                <Button type="submit" disabled={isSubmitting} className="min-w-32">
+                <Button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="min-w-32"
+                >
                   {isSubmitting
                     ? "Guardando..."
                     : editing

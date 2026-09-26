@@ -338,7 +338,7 @@ export function CarFormFields({
                   onChange={() => togglePaymentMethod(option.value)}
                   aria-invalid={!!errors.paymentMethods}
                   aria-describedby="paymentMethods-error"
-                  className="size-4 shrink-0 cursor-pointer accent-primary"
+                  className="accent-primary size-4 shrink-0 cursor-pointer"
                 />
                 <Label htmlFor={checkboxId} className="cursor-pointer">
                   {option.label}

@@ -122,8 +122,8 @@ export default function NavbarClient({ user }: NavbarClientProps) {
             aria-current={ctaActive ? "page" : undefined}
             className={
               ctaActive
-                ? "relative text-sm font-medium tracking-tight uppercase text-background transition-colors"
-                : "rounded-md bg-secondary px-4 py-2 text-sm font-medium tracking-tight uppercase text-primary transition-colors hover:text-background focus-visible:ring-2 focus-visible:ring-background/60 focus-visible:outline-none"
+                ? "text-background relative text-sm font-medium tracking-tight uppercase transition-colors"
+                : "bg-secondary text-primary hover:text-background focus-visible:ring-background/60 rounded-md px-4 py-2 text-sm font-medium tracking-tight uppercase transition-colors focus-visible:ring-2 focus-visible:outline-none"
             }
           >
             {CTA_LINK.label}
@@ -143,7 +143,7 @@ export default function NavbarClient({ user }: NavbarClientProps) {
             <button
               type="button"
               aria-label={menuOpen ? "Cerrar menú" : "Abrir menú"}
-              className="inline-flex size-11 items-center justify-center rounded-md text-zinc-200 transition-colors hover:text-background focus-visible:ring-2 focus-visible:ring-background/60 focus-visible:outline-none lg:hidden"
+              className="hover:text-background focus-visible:ring-background/60 inline-flex size-11 items-center justify-center rounded-md text-zinc-200 transition-colors focus-visible:ring-2 focus-visible:outline-none lg:hidden"
             >
               {menuOpen ? (
                 <XRoundedIcon className="size-7" />
@@ -152,7 +152,10 @@ export default function NavbarClient({ user }: NavbarClientProps) {
               )}
             </button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="flex w-64 flex-col gap-2 px-2 py-3">
+          <DropdownMenuContent
+            align="end"
+            className="flex w-64 flex-col gap-2 px-2 py-3"
+          >
             {NAV_LINKS.map((link) => {
               const isActive = isActiveRoute(pathname, link.href);
 
@@ -163,8 +166,8 @@ export default function NavbarClient({ user }: NavbarClientProps) {
                     aria-current={isActive ? "page" : undefined}
                     className={`flex w-full items-center rounded-sm px-4 py-2 text-sm font-medium tracking-tight uppercase outline-none ${
                       isActive
-                        ? "text-secondary data-highlighted:bg-transparent data-highlighted:text-secondary"
-                        : "text-zinc-600 data-highlighted:bg-primary data-highlighted:text-background"
+                        ? "text-secondary data-highlighted:text-secondary data-highlighted:bg-transparent"
+                        : "data-highlighted:bg-primary data-highlighted:text-background text-zinc-600"
                     }`}
                   >
                     <span
@@ -186,8 +189,8 @@ export default function NavbarClient({ user }: NavbarClientProps) {
                 aria-current={ctaActive ? "page" : undefined}
                 className={
                   ctaActive
-                    ? "flex w-full items-center rounded-sm px-4 py-2 text-sm font-medium tracking-tight uppercase text-secondary outline-none data-highlighted:bg-transparent data-highlighted:text-secondary"
-                    : "flex w-full items-center justify-start rounded-md border-0 bg-secondary px-4 py-2.5 text-sm font-medium tracking-tight uppercase text-primary shadow-none transition-colors outline-none data-highlighted:bg-secondary data-highlighted:text-background"
+                    ? "text-secondary data-highlighted:text-secondary flex w-full items-center rounded-sm px-4 py-2 text-sm font-medium tracking-tight uppercase outline-none data-highlighted:bg-transparent"
+                    : "bg-secondary text-primary data-highlighted:bg-secondary data-highlighted:text-background flex w-full items-center justify-start rounded-md border-0 px-4 py-2.5 text-sm font-medium tracking-tight uppercase shadow-none transition-colors outline-none"
                 }
               >
                 <span

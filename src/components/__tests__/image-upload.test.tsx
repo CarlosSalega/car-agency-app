@@ -1,10 +1,7 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-import {
-  ImageUpload,
-  buildMoveAnnouncement,
-} from "@/components/image-upload";
+import { ImageUpload, buildMoveAnnouncement } from "@/components/image-upload";
 
 const KEYS = ["cars/a.webp", "cars/b.webp", "cars/c.webp"];
 

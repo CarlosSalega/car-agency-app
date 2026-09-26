@@ -346,7 +346,11 @@ export function SellersConfig({
                 >
                   Cancelar
                 </Button>
-                <Button type="submit" disabled={isSubmitting} className="min-w-32">
+                <Button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="min-w-32"
+                >
                   {isSubmitting
                     ? "Guardando..."
                     : editing

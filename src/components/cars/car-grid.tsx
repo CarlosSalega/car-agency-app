@@ -49,9 +49,7 @@ export function CarGrid({
           />
         </div>
         <div className="flex flex-col gap-1">
-          <p className="text-lg font-medium">
-            Sin resultados con esos filtros
-          </p>
+          <p className="text-lg font-medium">Sin resultados con esos filtros</p>
           <p className="text-muted-foreground text-sm">
             Probá ampliando el precio o quitando algún filtro.
           </p>

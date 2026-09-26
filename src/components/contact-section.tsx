@@ -99,7 +99,9 @@ export default function ContactSection({
 
           {socialLinks.length > 0 ? (
             <div className="space-y-3">
-              <h3 className="text-center text-lg font-semibold">Redes sociales</h3>
+              <h3 className="text-center text-lg font-semibold">
+                Redes sociales
+              </h3>
               <SocialGrid links={socialLinks} />
             </div>
           ) : null}
