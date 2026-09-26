@@ -6,7 +6,7 @@ export const seedSellers: SeedSeller[] = [
     firstName: "Facundo",
     lastName: "Podio",
     phone: "+54 9 342 528 1841",
-    email: "facundo@Car Agency Appautomotores.com",
+    email: "facundo@caragency.com",
     isActive: true,
   },
 ];
