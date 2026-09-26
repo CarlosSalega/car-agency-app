@@ -107,7 +107,12 @@ export function BrandsTable({ initialBrands }: Props) {
           <TableBody>
             {brands.map((b) => (
               <TableRow key={b.id}>
-                <TableCell className="font-medium">{b.name}</TableCell>
+                <TableCell
+                  className="max-w-[240px] truncate font-medium"
+                  title={b.name}
+                >
+                  {b.name}
+                </TableCell>
                 <TableCell>{b.createdAt.toLocaleString()}</TableCell>
                 <TableCell className="text-right">
                   <div className="flex items-center justify-end gap-2">

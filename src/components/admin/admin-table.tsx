@@ -17,6 +17,10 @@ export interface AdminColumn<T> {
   key: string;
   header: ReactNode;
   cell: (row: T) => ReactNode;
+  /**
+   * Applied to the header **and** every body cell for this column, so a
+   * `text-right` header keeps its values aligned under it.
+   */
   className?: string;
 }
 
@@ -94,7 +98,9 @@ export function AdminTable<T>({
             data.map((row) => (
               <TableRow key={rowKey(row)}>
                 {columns.map((col) => (
-                  <TableCell key={col.key}>{col.cell(row)}</TableCell>
+                  <TableCell key={col.key} className={col.className}>
+                    {col.cell(row)}
+                  </TableCell>
                 ))}
               </TableRow>
             ))}

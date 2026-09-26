@@ -41,10 +41,18 @@ export function getCarsColumns({
     {
       key: "vehicle",
       header: "Vehículo",
+      // Titles and model names are free text, so they get a width limit and
+      // truncate. The constraint sits on the element because a `max-width` on a
+      // `td` is only a suggestion under the default `table-auto` layout.
       cell: (car) => (
-        <div>
-          <p className="font-medium">{car.title}</p>
-          <p className="text-muted-foreground text-sm">
+        <div className="max-w-[220px]">
+          <p className="truncate font-medium" title={car.title}>
+            {car.title}
+          </p>
+          <p
+            className="text-muted-foreground truncate text-sm"
+            title={`${car.brand.name} ${car.model.name}`}
+          >
             {car.brand.name} {car.model.name}
           </p>
         </div>
@@ -69,7 +77,10 @@ export function getCarsColumns({
       key: "createdBy",
       header: "Creado por",
       cell: (car) => (
-        <span className="text-muted-foreground text-sm">
+        <span
+          className="text-muted-foreground block max-w-[160px] truncate text-sm"
+          title={car.user?.name || "N/A"}
+        >
           {car.user?.name || "N/A"}
         </span>
       ),

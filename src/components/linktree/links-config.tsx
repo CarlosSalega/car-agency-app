@@ -257,7 +257,14 @@ export function LinkTreeLinksConfig({
             rel={
               row.href.startsWith("http") ? "noopener noreferrer" : undefined
             }
-            className="text-primary line-clamp-1 underline underline-offset-4"
+            title={row.href}
+            // The width limit lives on the element, not on the cell. A
+            // `max-width` on a `td` is only a suggestion under the default
+            // `table-auto` layout, so the browser grows the column to fit the
+            // URL instead. `block` plus an explicit `max-width` truncates
+            // regardless of how the table is laid out, and `TableCell` inherits
+            // `whitespace-nowrap`, so `truncate` supplies the ellipsis.
+            className="text-primary block max-w-[300px] truncate underline underline-offset-4 sm:max-w-[340px]"
           >
             {row.href}
           </a>

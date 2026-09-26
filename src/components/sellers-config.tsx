@@ -103,11 +103,17 @@ export function SellersConfig({
     {
       key: "name",
       header: "Nombre",
-      cell: (s) => (
-        <span className="font-medium">
-          {s.lastName} {s.firstName}
-        </span>
-      ),
+      cell: (s) => {
+        const full = `${s.lastName} ${s.firstName}`;
+        return (
+          <span
+            className="block max-w-[180px] truncate font-medium"
+            title={full}
+          >
+            {full}
+          </span>
+        );
+      },
     },
     {
       key: "phone",
@@ -117,7 +123,14 @@ export function SellersConfig({
     {
       key: "email",
       header: "Email",
-      cell: (s) => s.email ?? "-",
+      cell: (s) =>
+        s.email ? (
+          <span className="block max-w-[220px] truncate" title={s.email}>
+            {s.email}
+          </span>
+        ) : (
+          "-"
+        ),
     },
     {
       key: "actions",

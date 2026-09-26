@@ -108,7 +108,14 @@ export function ModelsConfig({
     {
       key: "name",
       header: "Modelo",
-      cell: (model) => <span className="font-medium">{model.name}</span>,
+      cell: (model) => (
+        <span
+          className="block max-w-[220px] truncate font-medium"
+          title={model.name}
+        >
+          {model.name}
+        </span>
+      ),
     },
     {
       key: "actions",
