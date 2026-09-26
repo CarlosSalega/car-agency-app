@@ -1,4 +1,4 @@
-import { Slot } from "@radix-ui/react-slot";
+import { Button as ButtonPrimitive } from "@base-ui/react/button";
 import { cva, type VariantProps } from "class-variance-authority";
 import * as React from "react";
 
@@ -51,22 +51,27 @@ const buttonVariants = cva(
   },
 );
 
+/**
+ * Migrated from the Radix `Slot` / `asChild` idiom to `@base-ui/react/button`.
+ *
+ * Base UI's Button accepts a `render` prop natively, so no `useRender` wrapper
+ * is needed. The `asChild` prop is intentionally gone rather than kept as an
+ * alias: keeping it would let un-migrated call sites keep compiling, which hides
+ * the migration from the type checker.
+ */
 function Button({
   className,
   variant,
   size,
-  asChild = false,
+  render,
   ...props
-}: React.ComponentProps<"button"> &
-  VariantProps<typeof buttonVariants> & {
-    asChild?: boolean;
-  }) {
-  const Comp = asChild ? Slot : "button";
-
+}: React.ComponentProps<typeof ButtonPrimitive> &
+  VariantProps<typeof buttonVariants>) {
   return (
-    <Comp
+    <ButtonPrimitive
       data-slot="button"
       className={cn(buttonVariants({ variant, size, className }))}
+      render={render}
       {...props}
     />
   );

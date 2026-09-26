@@ -175,7 +175,7 @@ export function SearchFilters({
           <Select
             value={selectedBrand}
             onValueChange={(value) => {
-              setSelectedBrand(value);
+              setSelectedBrand(value ?? "");
               setSelectedModel("");
             }}
           >
@@ -194,7 +194,10 @@ export function SearchFilters({
         </FilterField>
 
         <FilterField label="Modelo" htmlFor={fieldId("model")}>
-          <Select value={selectedModel} onValueChange={setSelectedModel}>
+          <Select
+            value={selectedModel}
+            onValueChange={(next) => setSelectedModel(next ?? "")}
+          >
             <SelectTrigger id={fieldId("model")}>
               <SelectValue placeholder="Todos" />
             </SelectTrigger>
@@ -213,7 +216,10 @@ export function SearchFilters({
 
         <div className="grid grid-cols-2 gap-4">
           <FilterField label="Tipo" htmlFor={fieldId("type")}>
-            <Select value={selectedType} onValueChange={setSelectedType}>
+            <Select
+              value={selectedType}
+              onValueChange={(next) => setSelectedType(next ?? "")}
+            >
               <SelectTrigger id={fieldId("type")}>
                 <SelectValue placeholder="Todos" />
               </SelectTrigger>
@@ -229,7 +235,10 @@ export function SearchFilters({
           </FilterField>
 
           <FilterField label="Combustible" htmlFor={fieldId("fuel")}>
-            <Select value={selectedFuel} onValueChange={setSelectedFuel}>
+            <Select
+              value={selectedFuel}
+              onValueChange={(next) => setSelectedFuel(next ?? "")}
+            >
               <SelectTrigger id={fieldId("fuel")}>
                 <SelectValue placeholder="Todos" />
               </SelectTrigger>
@@ -246,7 +255,7 @@ export function SearchFilters({
           <FilterField label="Transmisión" htmlFor={fieldId("transmission")}>
             <Select
               value={selectedTransmission}
-              onValueChange={setSelectedTransmission}
+              onValueChange={(next) => setSelectedTransmission(next ?? "")}
             >
               <SelectTrigger id={fieldId("transmission")}>
                 <SelectValue placeholder="Todas" />

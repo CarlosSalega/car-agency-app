@@ -33,7 +33,16 @@ export function EnumSelect<T extends string>({
   triggerAriaDescribedBy,
 }: EnumSelectProps<T>) {
   return (
-    <Select value={value} onValueChange={onValueChange} disabled={disabled}>
+    // Base UI's select can be cleared, so the change handler receives
+    // `null`. `EnumSelect` has no notion of an empty selection, so `null` is
+    // normalized away here rather than widening the component's own contract.
+    <Select
+      value={value}
+      onValueChange={(next) => {
+        if (next !== null) onValueChange(next);
+      }}
+      disabled={disabled}
+    >
       <SelectTrigger
         className={triggerClassName}
         aria-invalid={triggerAriaInvalid}

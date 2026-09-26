@@ -198,12 +198,14 @@ export function ModelsConfig({
     <div>
       <div className="mb-4 flex justify-end">
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
-          <DialogTrigger asChild>
-            <Button onClick={openCreate} disabled={brands.length === 0}>
-              <Plus className="mr-2 size-4" />
-              Agregar Modelo
-            </Button>
-          </DialogTrigger>
+          <DialogTrigger
+            render={
+              <Button onClick={openCreate} disabled={brands.length === 0}>
+                <Plus className="mr-2 size-4" />
+                Agregar Modelo
+              </Button>
+            }
+          />
           <DialogContent>
             <DialogHeader>
               <DialogTitle>
@@ -216,7 +218,7 @@ export function ModelsConfig({
                 <Select
                   value={selectedBrandId}
                   onValueChange={(value) =>
-                    setValue("brandId", value, {
+                    setValue("brandId", value ?? "", {
                       shouldValidate: true,
                       shouldDirty: true,
                     })

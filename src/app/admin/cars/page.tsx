@@ -27,14 +27,14 @@ export default async function AdminCarsPage({
       <div className="container mx-auto px-4 py-6">
         <div className="mb-6 flex flex-row-reverse items-center">
           <Button
-            asChild
+            render={
+              <Link href="/admin/cars/new">
+                <Plus className="mr-2 size-4" />
+                Agregar Vehículo
+              </Link>
+            }
             className="bg-foreground text-background hover:bg-foreground/80"
-          >
-            <Link href="/admin/cars/new">
-              <Plus className="mr-2 size-4" />
-              Agregar Vehículo
-            </Link>
-          </Button>
+          />
         </div>
 
         <CarsTable

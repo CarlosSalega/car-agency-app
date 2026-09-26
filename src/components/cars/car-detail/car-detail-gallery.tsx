@@ -1,6 +1,5 @@
 "use client";
 
-import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
 import { useMemo, useRef, useState, useCallback, useEffect } from "react";
 
@@ -402,9 +401,11 @@ export function CarDetailGallery({ images, title }: CarDetailGalleryProps) {
           aria-describedby={undefined}
           className="data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed! inset-0! top-0! left-0! z-50! m-0! h-full! w-full! max-w-none! translate-x-0! translate-y-0! rounded-none! border-none bg-black/90 p-0! [&>button:first-of-type]:hidden"
         >
-          <VisuallyHidden>
+          {/* Base UI has no VisuallyHidden primitive; `sr-only` is the
+              documented replacement and keeps the dialog title announced. */}
+          <div className="sr-only">
             <DialogTitle>{title}</DialogTitle>
-          </VisuallyHidden>
+          </div>
 
           <div className="flex w-full" style={{ height: "100dvh" }}>
             {/* Thumbnail sidebar — hidden when zoomed */}

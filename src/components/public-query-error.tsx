@@ -45,9 +45,11 @@ export function PublicQueryError({
               Volver a intentar
             </Button>
             {showCatalogLink ? (
-              <Button asChild variant="outline" size="lg">
-                <Link href="/autos">Volver al catálogo</Link>
-              </Button>
+              <Button
+                variant="outline"
+                size="lg"
+                render={<Link href="/autos">Volver al catálogo</Link>}
+              />
             ) : null}
           </div>
         </section>

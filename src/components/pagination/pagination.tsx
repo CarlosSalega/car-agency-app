@@ -35,21 +35,21 @@ export function Pagination({
         className="hover:bg-foreground hover:text-background bg-card"
         variant="outline"
         size="icon"
-        asChild
-      >
-        <Link
-          href={prevHref}
-          aria-disabled={isPrevDisabled}
-          tabIndex={isPrevDisabled ? -1 : 0}
-          onClick={(e) => {
-            if (isPrevDisabled) {
-              e.preventDefault();
-            }
-          }}
-        >
-          <ChevronLeft className="size-5" />
-        </Link>
-      </Button>
+        render={
+          <Link
+            href={prevHref}
+            aria-disabled={isPrevDisabled}
+            tabIndex={isPrevDisabled ? -1 : 0}
+            onClick={(e) => {
+              if (isPrevDisabled) {
+                e.preventDefault();
+              }
+            }}
+          >
+            <ChevronLeft className="size-5" />
+          </Link>
+        }
+      />
 
       <span className="text-muted-foreground text-sm">
         Página {currentPage} de {totalPages}
@@ -59,21 +59,21 @@ export function Pagination({
         className="hover:bg-foreground hover:text-background bg-card"
         variant="outline"
         size="icon"
-        asChild
-      >
-        <Link
-          href={nextHref}
-          aria-disabled={isNextDisabled}
-          tabIndex={isNextDisabled ? -1 : 0}
-          onClick={(e) => {
-            if (isNextDisabled) {
-              e.preventDefault();
-            }
-          }}
-        >
-          <ChevronRight className="size-5" />
-        </Link>
-      </Button>
+        render={
+          <Link
+            href={nextHref}
+            aria-disabled={isNextDisabled}
+            tabIndex={isNextDisabled ? -1 : 0}
+            onClick={(e) => {
+              if (isNextDisabled) {
+                e.preventDefault();
+              }
+            }}
+          >
+            <ChevronRight className="size-5" />
+          </Link>
+        }
+      />
     </div>
   );
 }
