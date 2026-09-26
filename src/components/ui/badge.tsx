@@ -1,5 +1,6 @@
-import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
+import { mergeProps } from "@base-ui/react/merge-props";
+import { useRender } from "@base-ui/react/use-render";
 import * as React from "react";
 
 import { cn } from "@/lib/utils";
@@ -25,22 +26,33 @@ const badgeVariants = cva(
   },
 );
 
+/**
+ * Migrated from the Radix `Slot` / `asChild` idiom to `useRender` +
+ * `mergeProps`. The manual Slot pattern only ever applied to a non-button
+ * polymorphic element, so per the skill it becomes the `useRender` wrapper
+ * rather than a real primitive.
+ *
+ * The `asChild` prop is intentionally replaced by `render`. Keeping `asChild`
+ * as an alias would let un-migrated call sites keep compiling and would hide the
+ * migration from the type checker.
+ */
 function Badge({
   className,
   variant,
-  asChild = false,
+  render,
   ...props
-}: React.ComponentProps<"span"> &
-  VariantProps<typeof badgeVariants> & { asChild?: boolean }) {
-  const Comp = asChild ? Slot : "span";
-
-  return (
-    <Comp
-      data-slot="badge"
-      className={cn(badgeVariants({ variant }), className)}
-      {...props}
-    />
-  );
+}: useRender.ComponentProps<"span"> & VariantProps<typeof badgeVariants>) {
+  return useRender({
+    defaultTagName: "span",
+    render,
+    props: mergeProps<"span">(
+      {
+        "data-slot": "badge",
+        className: cn(badgeVariants({ variant }), className),
+      } as React.ComponentProps<"span">,
+      props,
+    ),
+  });
 }
 
 export { Badge, badgeVariants };
