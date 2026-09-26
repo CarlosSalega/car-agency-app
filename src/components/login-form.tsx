@@ -59,7 +59,7 @@ export function LoginForm() {
   };
 
   return (
-    <Card className="bg-accent mx-auto w-full max-w-sm border-0 py-8">
+    <Card className="bg-card mx-auto w-full max-w-sm border-0 py-8">
       <CardHeader>
         <CardTitle className="text-center">Iniciar Sesión</CardTitle>
       </CardHeader>

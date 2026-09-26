@@ -53,7 +53,11 @@
  * colour.
  */
 :root {
-  --background: oklch(0.9842 0.0034 247.8575);
+  /* Tailwind's `neutral-100`. Chroma 0 against the previous 0.0034 at hue 248:
+     the old value carried a cool tint that read as "white with a blue cast".
+     Card stays pure white, so the separation is now a soft 97% against 100%
+     rather than 98.4% against 100%. */
+  --background: oklch(97% 0 0);
   --foreground: oklch(0.2077 0.0398 265.7549);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.2077 0.0398 265.7549);
@@ -295,6 +299,7 @@ input[type="number"] {
 .no-spinner::-webkit-inner-spin-button,
 .no-spinner::-webkit-outer-spin-button {
   -webkit-appearance: none;
+  appearance: none;
   -moz-appearance: none;
 }
 
