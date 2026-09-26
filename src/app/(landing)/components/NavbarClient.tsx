@@ -139,19 +139,21 @@ export default function NavbarClient({ user }: NavbarClientProps) {
         <HeaderUser user={user} />
 
         <DropdownMenu onOpenChange={setMenuOpen}>
-          <DropdownMenuTrigger asChild>
-            <button
-              type="button"
-              aria-label={menuOpen ? "Cerrar menú" : "Abrir menú"}
-              className="hover:text-background focus-visible:ring-background/60 inline-flex size-11 items-center justify-center rounded-md text-zinc-200 transition-colors focus-visible:ring-2 focus-visible:outline-none lg:hidden"
-            >
-              {menuOpen ? (
-                <XRoundedIcon className="size-7" />
-              ) : (
-                <MenuRoundedIcon className="size-7" />
-              )}
-            </button>
-          </DropdownMenuTrigger>
+          <DropdownMenuTrigger
+            render={
+              <button
+                type="button"
+                aria-label={menuOpen ? "Cerrar menú" : "Abrir menú"}
+                className="hover:text-background focus-visible:ring-background/60 inline-flex size-11 items-center justify-center rounded-md text-zinc-200 transition-colors focus-visible:ring-2 focus-visible:outline-none lg:hidden"
+              >
+                {menuOpen ? (
+                  <XRoundedIcon className="size-7" />
+                ) : (
+                  <MenuRoundedIcon className="size-7" />
+                )}
+              </button>
+            }
+          />
           <DropdownMenuContent
             align="end"
             className="flex w-64 flex-col gap-2 px-2 py-3"
@@ -160,50 +162,55 @@ export default function NavbarClient({ user }: NavbarClientProps) {
               const isActive = isActiveRoute(pathname, link.href);
 
               return (
-                <DropdownMenuItem key={link.label} asChild>
-                  <Link
-                    href={link.href}
-                    aria-current={isActive ? "page" : undefined}
-                    className={`flex w-full items-center rounded-sm px-4 py-2 text-sm font-medium tracking-tight uppercase outline-none ${
-                      isActive
-                        ? "text-secondary data-highlighted:text-secondary data-highlighted:bg-transparent"
-                        : "data-highlighted:bg-primary data-highlighted:text-background text-zinc-600"
-                    }`}
-                  >
-                    <span
-                      className={
+                <DropdownMenuItem
+                  key={link.label}
+                  render={
+                    <Link
+                      href={link.href}
+                      aria-current={isActive ? "page" : undefined}
+                      className={`flex w-full items-center rounded-sm px-4 py-2 text-sm font-medium tracking-tight uppercase outline-none ${
                         isActive
-                          ? "border-secondary -mb-1 border-b-2 pb-0.5"
-                          : undefined
-                      }
+                          ? "text-secondary data-highlighted:text-secondary data-highlighted:bg-transparent"
+                          : "data-highlighted:bg-primary data-highlighted:text-background text-zinc-600"
+                      }`}
                     >
-                      {link.label}
-                    </span>
-                  </Link>
-                </DropdownMenuItem>
+                      <span
+                        className={
+                          isActive
+                            ? "border-secondary -mb-1 border-b-2 pb-0.5"
+                            : undefined
+                        }
+                      >
+                        {link.label}
+                      </span>
+                    </Link>
+                  }
+                />
               );
             })}
-            <DropdownMenuItem asChild>
-              <Link
-                href={CTA_LINK.href}
-                aria-current={ctaActive ? "page" : undefined}
-                className={
-                  ctaActive
-                    ? "text-secondary data-highlighted:text-secondary flex w-full items-center rounded-sm px-4 py-2 text-sm font-medium tracking-tight uppercase outline-none data-highlighted:bg-transparent"
-                    : "bg-secondary text-primary data-highlighted:bg-secondary data-highlighted:text-background flex w-full items-center justify-start rounded-md border-0 px-4 py-2.5 text-sm font-medium tracking-tight uppercase shadow-none transition-colors outline-none"
-                }
-              >
-                <span
+            <DropdownMenuItem
+              render={
+                <Link
+                  href={CTA_LINK.href}
+                  aria-current={ctaActive ? "page" : undefined}
                   className={
                     ctaActive
-                      ? "border-secondary -mb-1 border-b-2 pb-0.5"
-                      : undefined
+                      ? "text-secondary data-highlighted:text-secondary flex w-full items-center rounded-sm px-4 py-2 text-sm font-medium tracking-tight uppercase outline-none data-highlighted:bg-transparent"
+                      : "bg-secondary text-primary data-highlighted:bg-secondary data-highlighted:text-background flex w-full items-center justify-start rounded-md border-0 px-4 py-2.5 text-sm font-medium tracking-tight uppercase shadow-none transition-colors outline-none"
                   }
                 >
-                  {CTA_LINK.label}
-                </span>
-              </Link>
-            </DropdownMenuItem>
+                  <span
+                    className={
+                      ctaActive
+                        ? "border-secondary -mb-1 border-b-2 pb-0.5"
+                        : undefined
+                    }
+                  >
+                    {CTA_LINK.label}
+                  </span>
+                </Link>
+              }
+            />
           </DropdownMenuContent>
         </DropdownMenu>
       </div>

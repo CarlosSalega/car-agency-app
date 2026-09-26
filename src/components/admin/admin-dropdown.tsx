@@ -38,20 +38,22 @@ export function AdminDropdown({ user }: AdminDropdownProps) {
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button
-          variant="outline"
-          size="icon"
-          aria-label="Menú de usuario"
-          className="hover:bg-background hover:text-foreground focus-visible:ring-0 focus-visible:ring-offset-0"
-        >
-          {user.role === "ADMIN" ? (
-            <ShieldCheck className="size-5" />
-          ) : (
-            <User className="size-5" />
-          )}
-        </Button>
-      </DropdownMenuTrigger>
+      <DropdownMenuTrigger
+        render={
+          <Button
+            variant="outline"
+            size="icon"
+            aria-label="Menú de usuario"
+            className="hover:bg-background hover:text-foreground focus-visible:ring-0 focus-visible:ring-offset-0"
+          >
+            {user.role === "ADMIN" ? (
+              <ShieldCheck className="size-5" />
+            ) : (
+              <User className="size-5" />
+            )}
+          </Button>
+        }
+      />
 
       <DropdownMenuContent align="end" className="w-64">
         <DropdownMenuLabel>
@@ -89,47 +91,50 @@ export function AdminDropdown({ user }: AdminDropdownProps) {
           const active = isActiveRoute(pathname, item.href!);
 
           return (
-            <DropdownMenuItem key={item.id} asChild>
-              <Link
-                href={item.href!}
-                prefetch={false}
-                aria-current={active ? "page" : undefined}
-                className={cn(
-                  "flex w-full items-center rounded-sm px-4 py-2 text-sm outline-none",
-
-                  !active &&
-                    "data-highlighted:bg-primary data-highlighted:text-background",
-
-                  active &&
-                    "data-highlighted:text-primary data-highlighted:bg-transparent",
-                )}
-              >
-                {Icon && (
-                  <Icon
-                    className={cn(
-                      "mr-2 size-4 shrink-0",
-
-                      active ? "text-secondary" : "text-current",
-
-                      active && "data-highlighted:text-primary",
-                    )}
-                  />
-                )}
-
-                <span
+            <DropdownMenuItem
+              key={item.id}
+              render={
+                <Link
+                  href={item.href!}
+                  prefetch={false}
+                  aria-current={active ? "page" : undefined}
                   className={cn(
-                    "inline-block",
+                    "flex w-full items-center rounded-sm px-4 py-2 text-sm outline-none",
+
+                    !active &&
+                      "data-highlighted:bg-primary data-highlighted:text-background",
 
                     active &&
-                      "text-secondary border-secondary -mb-1 border-b-2 pb-0.5",
-
-                    active && "data-[highlighted]:no-border",
+                      "data-highlighted:text-primary data-highlighted:bg-transparent",
                   )}
                 >
-                  {item.label}
-                </span>
-              </Link>
-            </DropdownMenuItem>
+                  {Icon && (
+                    <Icon
+                      className={cn(
+                        "mr-2 size-4 shrink-0",
+
+                        active ? "text-secondary" : "text-current",
+
+                        active && "data-highlighted:text-primary",
+                      )}
+                    />
+                  )}
+
+                  <span
+                    className={cn(
+                      "inline-block",
+
+                      active &&
+                        "text-secondary border-secondary -mb-1 border-b-2 pb-0.5",
+
+                      active && "data-[highlighted]:no-border",
+                    )}
+                  >
+                    {item.label}
+                  </span>
+                </Link>
+              }
+            />
           );
         })}
       </DropdownMenuContent>
