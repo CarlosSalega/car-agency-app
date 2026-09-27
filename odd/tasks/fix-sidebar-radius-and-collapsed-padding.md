@@ -91,10 +91,10 @@ Quitar `[--radius:0]` no solo afecta a los botones de navegacion: **todo** lo re
 
 ## Criterios de aceptacion
 
-- [ ] `rounded-md` produce un radio visible en `SidebarMenuButton`. **Pendiente de confirmacion visual.**
-- [ ] Al colapsar, ningun item toca el borde derecho del sidebar. **Pendiente de confirmacion visual.**
-- [ ] Al colapsar, el icono queda centrado en su caja de 32px. **Pendiente de confirmacion visual.**
-- [ ] Ningun otro layout del sidebar se desplaza respecto al estado actual. **Pendiente de confirmacion visual.**
+- [x] `rounded-md` produce un radio visible en `SidebarMenuButton`. **CONFIRMADO por el usuario** en navegador, tras la primera tanda.
+- [x] Al colapsar, ningun item toca el borde derecho del sidebar. **CONFIRMADO por el usuario** en navegador.
+- [ ] Al colapsar, el icono queda centrado en su caja de 32px. **PENDIENTE.** El `gap-0` de `e72d53c` corrige un desvio medido de 4px, pero sin confirmacion visual.
+- [ ] Ningun otro layout del sidebar se desplaza respecto al estado actual. **PENDIENTE.**
 
 ## Checks
 
@@ -102,14 +102,23 @@ Quitar `[--radius:0]` no solo afecta a los botones de navegacion: **todo** lo re
 - [x] `pnpm exec prettier --check src/components/ui/sidebar.tsx` -> `All matched files use Prettier code style!`
 - [x] `pnpm exec eslint src/components/ui/sidebar.tsx` -> sin salida, 0 problemas.
 - [x] Barrido de residuos: `grep -- "--radius:0"` sobre `src/` no encuentra ningun otro reset. Los dos `--radius: 0.5rem` de `globals.css:104,188` son los legítimos (tema claro y oscuro). No queda ningun ancestro que vuelva a anular el radio.
-- [ ] **Confirmacion visual del usuario.** Este repo no tiene motor de layout en los tests: jsdom no calcula radio ni desbordamiento. Un test verde aqui NO prueba los pixeles. La prueba real es la captura del navegador, y ya se perdio una vez por confundir verificacion automatica con verificacion visual.
+- [ ] **Confirmacion visual del `gap-0`.** Este repo no tiene motor de layout en los tests: jsdom no calcula radio, centrado ni desbordamiento. Un test verde aqui NO prueba los pixeles. La prueba real es la captura del navegador, y ya se perdio una vez por confundir verificacion automatica con verificacion visual.
 
 ## Estado
 
-Los tres cambios aplicados, checks automaticos en verde, **sin commit todavia**. Se espera la confirmacion visual antes de commitear, porque el diff no esta committeado hasta que los pixeles esten confirmados.
+**Commiteado y pusheado. `main` y `origin/main` en `e72d53c`. Working tree limpio, 0 stashes.**
 
-Diff: 1 archivo, +13/-3, tres lineas de clase y tres bloques de comentario que explican el porqué.
+Dos commits, cuatro correcciones:
+
+| Commit    | Cambio                                                          |
+| --------- | --------------------------------------------------------------- |
+| `bfa8bac` | Quita `[--radius:0]`, colapsa a `px-2`, agrega `justify-center` |
+| `e72d53c` | Agrega `group-data-[collapsible=icon]:gap-0`                    |
+
+**Lo unico que queda abierto de este trabajo es la confirmacion visual del `gap-0`.** Los tres criterios del radio y del espaciado derecho estan confirmados por el usuario en el navegador. El centrado del icono no: el `gap-0` es aritmetica deriva (16px de contenido en una caja de 16px), no una medicion. Si al abrir `/admin` el icono sigue corrido, el `Computed` de ese boton con `width`, `padding` y `gap` reales cierra el caso en una iteracion.
 
 ## Rollback
 
-`git checkout HEAD -- src/components/ui/sidebar.tsx`, o `git revert` del commit cuando exista.
+- Radio y padding: `git revert bfa8bac`
+- Centrado del icono: `git revert e72d53c`
+- Sin perder historial: `git checkout 1fa11ec -- src/components/ui/sidebar.tsx`
