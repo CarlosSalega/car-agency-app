@@ -140,7 +140,9 @@ function SidebarNavUser({ user }: { user: AuthUser }) {
                       />
                     }
                   >
-                    {Icon && <Icon className="mr-2 size-4" />}
+                    {Icon && (
+                      <Icon className="focus:text-primary mr-2 size-4" />
+                    )}
                     {item.label}
                   </DropdownMenuItem>
                 );
@@ -155,12 +157,8 @@ function SidebarNavUser({ user }: { user: AuthUser }) {
                   const Icon = item.icon ?? LogOut;
 
                   return (
-                    <DropdownMenuItem
-                      key={item.id}
-                      onClick={logout}
-                      className="text-destructive focus:text-destructive"
-                    >
-                      <Icon className="mr-2 size-4" />
+                    <DropdownMenuItem key={item.id} onClick={logout}>
+                      <Icon className="focus:text-primary mr-2 size-4" />
                       {item.label}
                     </DropdownMenuItem>
                   );

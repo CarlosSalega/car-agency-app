@@ -97,7 +97,7 @@ export function AdminDropdown({ user }: AdminDropdownProps) {
                   prefetch={false}
                   aria-current={active ? "page" : undefined}
                   className={cn(
-                    "flex w-full items-center rounded-sm px-4 py-2 text-sm outline-none",
+                    "flex w-full items-center rounded-md px-4 py-2 text-sm outline-none",
 
                     !active &&
                       "data-highlighted:bg-primary data-highlighted:text-background",
