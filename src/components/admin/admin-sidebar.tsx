@@ -204,6 +204,7 @@ export function AdminSidebar({ user }: { user: AuthUser }) {
                 <SidebarMenuItem key={item.id}>
                   <SidebarMenuButton
                     isActive={active}
+                    variant="outline"
                     tooltip={
                       state === "collapsed" && !isMobile
                         ? item.label
