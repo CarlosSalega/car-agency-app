@@ -37,7 +37,7 @@ export async function getSession() {
     include: { user: true },
   });
 
-  if (!session || session.expires < new Date()) {
+  if (!session || session.expires < new Date() || !session.user.isActive) {
     return null;
   }
 
