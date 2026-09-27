@@ -354,7 +354,15 @@ function SidebarGroup({ className, ...props }: React.ComponentProps<"div">) {
     <div
       data-slot="sidebar-group"
       data-sidebar="group"
-      className={cn("relative flex w-full min-w-0 flex-col p-2", className)}
+      className={cn(
+        // Horizontal padding is what makes the active item's rounded background
+        // readable. A rounded pill flush against the sidebar edge has no visible
+        // corners — the clip comes from the sidebar, not from the radius. The
+        // shadcn `sidebar` block this layout is derived from insets the active
+        // item by ~18px for exactly that reason.
+        "relative flex w-full min-w-0 flex-col px-4 py-2",
+        className,
+      )}
       {...props}
     />
   );
