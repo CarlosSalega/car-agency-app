@@ -32,27 +32,29 @@ Fuente: hallazgos de implementación y writers, sesión 2026-09-22. No son urgen
 
 Medido con `pnpm exec eslint . -f json` sobre `580a826`. **132 problemas: 11 errores, 121 warnings.** `pnpm lint` falla hoy y por eso no puede ser gate de nada.
 
-### Lo primero: el 70% del ruido NO es nuestro código
+### [RESUELTO 2026-09-26] El 70% del ruido era de terceros
 
 | Regla                                      | Cantidad | Dónde                                                                            |
 | ------------------------------------------ | -------- | -------------------------------------------------------------------------------- |
 | `@typescript-eslint/no-unused-expressions` | 78       | **1 solo archivo**: `.agents/skills/impeccable/scripts/modern-screenshot.umd.js` |
-| `@typescript-eslint/no-unused-vars`        | 34       | 10 archivos (16 de esos en `.agents/skills/impeccable/scripts/live-browser.js`)  |
+| `@typescript-eslint/no-unused-vars`        | 16 de 34 | `.agents/skills/impeccable/scripts/live-browser.js`                              |
 
-Son bundles de skills de terceros commiteados dentro de `.agents/`. **No son deuda de este proyecto, son ruido.** Falta un ignore de ESLint para `.agents/**`; con eso solo, `pnpm lint` deja de reportar ~94 de los 132 problemas y por fin puede usarse como gate. Es el arreglo de mayor retorno y el más barato.
+Eran bundles de skills de terceros commiteados en `.agents/`. **Resuelto:** se agregó `.agents/**` al `ignores` de `eslint.config.mjs` con un comentario explicando el porqué. Medido después: **132 → 35 problemas**, 0 remanentes en `.agents/`. Sin tocar una línea de código de aplicación.
 
-### Lo que SÍ es deuda real (38 problemas en `src/`)
+### Lo que SÍ es deuda real (35 problemas en `src/`)
 
 - [2026-09-26] **ERROR `react-hooks/rules-of-hooks` en `src/app/(landing)/components/Reviews.tsx:186`.** `useScrollAnimation` se llama DENTRO del callback de `REVIEWS.map((review, i) => ...)`. Eso es N instancias del hook creadas en un bucle dentro del render: viola las reglas de hooks y solo aparenta funcionar porque el largo del array es constante. El fix correcto es extraer un componente `ReviewCard` y llamarlo por review, no reordenar el código para silenciar la regla. **Es el único error del repo que puede cornear un bug real de render** — prioritario sobre el resto.
 - [2026-09-26] **10 errores `@typescript-eslint/no-explicit-any`**, todos en `src/`: `api/users/[id]/route.ts:106`, `components/form/form-field.tsx:10`, `components/login-form.tsx:43`, `components/models-config.tsx:183`, `components/users/user-form-dialog.tsx:128`, `lib/auth/auth-middleware.ts:47` y `:69`, `lib/cache/cache-key.ts:1`, `lib/images/providers/cloudinary.provider.ts:18`, `lib/prisma-safe.ts:21`. Los de `auth-middleware.ts` y `prisma-safe.ts` son los que más importan: son frontera de auth y de acceso a datos.
 - [2026-09-26] 7 warnings `@next/next/no-img-element` en 6 archivos — la decisión entre imagen nativa y `next/image` se toma por archivo, no globalmente.
 - [2026-09-26] 2 warnings `react-hooks/exhaustive-deps`. Vale revisar: los hooks mal declarados suelen ser la causa raíz del error de `Reviews.tsx`.
 
+### Estado real hoy: 11 errores, 24 warnings — todos en `src/`
+
 ### Orden sugerido cuando se ataque
 
-1. Ignorar `.agents/**` en ESLint → baja el ruido de 132 a ~38. Sin tocar código de app.
-2. `Reviews.tsx` extraer `ReviewCard` → elimina el único error con riesgo de bug real.
+1. ~~Ignorar `.agents/**` en ESLint~~ — **hecho**, 132 → 35.
+2. `Reviews.tsx` extraer `ReviewCard` → elimina el único error con riesgo de bug real. **Siguiente en la fila.**
 3. Los `any` de `auth-middleware.ts` y `prisma-safe.ts` → frontera de seguridad primero.
 4. El resto de `any`, `no-img-element` y `exhaustive-deps`.
 
-Mientras tanto: **`pnpm lint` no es un gate confiable en este repo.** El hook de pre-commit solo corre `prettier --check`, no eslint — por eso estos 132 problemas nunca bloquearon un commit. No agregar eslint al hook hasta cerrar (1) y (2).
+**Lo que sigue bloqueando el uso de eslint como gate:** el hook de pre-commit solo corre `prettier --check`, no eslint. Agregarlo al hook antes de cerrar (2) haría fallar cada commit por el error de `Reviews.tsx`. Orden: arreglar (2) primero, después agregar eslint al hook.
