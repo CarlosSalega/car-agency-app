@@ -88,21 +88,28 @@ export async function DELETE(request: Request) {
       select: { id: true, userId: true },
     });
 
-    if (carsWithImage.length > 0) {
-      const hasPermission = carsWithImage.some(
-        (car) =>
-          car.userId === session.user.id || session.user.role === "ADMIN",
+    if (carsWithImage.length === 0) {
+      return NextResponse.json(
+        {
+          error:
+            "No tienes permiso para eliminar esta imagen. Pertenece a otro vehículo.",
+        },
+        { status: 403 },
       );
+    }
 
-      if (!hasPermission) {
-        return NextResponse.json(
-          {
-            error:
-              "No tienes permiso para eliminar esta imagen. Pertenece a otro vehículo.",
-          },
-          { status: 403 },
-        );
-      }
+    const hasPermission = carsWithImage.some(
+      (car) => car.userId === session.user.id || session.user.role === "ADMIN",
+    );
+
+    if (!hasPermission) {
+      return NextResponse.json(
+        {
+          error:
+            "No tienes permiso para eliminar esta imagen. Pertenece a otro vehículo.",
+        },
+        { status: 403 },
+      );
     }
 
     const result = await ImageService.delete(key);
