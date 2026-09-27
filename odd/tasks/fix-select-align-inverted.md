@@ -137,9 +137,12 @@ Not authorized:
 | T4    | ESLint 7 errors / 24 warnings | pending |
 | T5    | `prettier --check`            | pending |
 
+| T6 | Visual confirmation in a browser | pass — reported by the user |
+
 **Honest limitation:** the popup geometry is CSS-driven and jsdom has no layout
-engine, so T1–T5 prove the mapping, not the pixels. Visual confirmation of the
-13 dropdowns requires opening them in a browser. That check belongs to the user.
+engine, so T1–T5 prove the mapping, not the pixels. T6 is the one that proves
+the symptom is actually gone, and the user ran it: the dropdown now behaves as
+expected. Without T6 this fix would have been "verified" on paper only.
 
 ## Route
 
@@ -174,7 +177,9 @@ comment is not a guard.
 
 ## Next step
 
-User opens any dropdown — `Orden` in the enlace dialog, the 11 in
-`search-filters.tsx`, `Icono` and `Estado` in the same dialog — and confirms all
-options are listed. That is the only check the orchestrator cannot perform: the
-geometry is CSS and jsdom has no layout engine.
+Closed. The user confirmed T6: the dropdown behaves as expected.
+
+Not re-verified by the orchestrator and therefore not claimed: the other 12
+`SelectContent` usages. They share the one fixed code path and no consumer
+passes `position`, so the same correction reaches all of them, but that is
+inference, not observation.
