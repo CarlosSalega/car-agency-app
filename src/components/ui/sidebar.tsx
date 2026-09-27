@@ -251,7 +251,13 @@ function Sidebar({
         <div
           data-sidebar="sidebar"
           data-slot="sidebar-inner"
-          className="bg-sidebar flex size-full flex-col [--radius:0]"
+          // No `[--radius:0]` here. The radius scale resolves to
+          // `calc(var(--radius) - Npx)`, so zeroing the variable on this wrapper
+          // cascaded to every descendant and turned each `rounded-*` utility into
+          // a negative, and therefore invalid, `border-radius` — which the browser
+          // drops. The classes were present in the DOM the whole time and rendered
+          // square. Any rounding inside the sidebar comes from this variable.
+          className="bg-sidebar flex size-full flex-col"
         >
           {children}
         </div>
@@ -360,7 +366,15 @@ function SidebarGroup({ className, ...props }: React.ComponentProps<"div">) {
         // corners — the clip comes from the sidebar, not from the radius. The
         // shadcn `sidebar` block this layout is derived from insets the active
         // item by ~18px for exactly that reason.
-        "relative flex w-full min-w-0 flex-col px-4 py-2",
+        //
+        // Collapsed, the rail is 3rem (48px) and the menu button is `size-8`
+        // (32px), so the padding has to be (48 - 32) / 2 = 8px per side. That makes
+        // the content box exactly the button width, which centers it. Keeping
+        // `px-4` left a 16px box for a 32px button, so it overflowed right and got
+        // clipped; dropping to `px-0` fixed that but left a 48px box for a 32px
+        // button, so the button hugged the left edge with 16px of dead space on
+        // the right. `px-2` is the value that makes the box and the button equal.
+        "relative flex w-full min-w-0 flex-col px-4 py-2 group-data-[collapsible=icon]:px-2",
         className,
       )}
       {...props}
@@ -411,7 +425,7 @@ function SidebarMenuItem({ className, ...props }: React.ComponentProps<"li">) {
 }
 
 const sidebarMenuButtonVariants = cva(
-  "peer/menu-button flex w-full items-center gap-2 overflow-hidden rounded-md px-3 py-2 text-left text-sm ring-sidebar-ring outline-hidden transition-[width,height,padding] hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2 active:bg-sidebar-accent active:text-sidebar-accent-foreground disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-active:bg-sidebar-accent data-active:font-medium data-active:text-sidebar-accent-foreground group-data-[collapsible=icon]:size-8! group-data-[collapsible=icon]:p-2! [&_svg]:size-4 [&_svg]:shrink-0 [&>span:last-child]:truncate",
+  "peer/menu-button flex w-full items-center gap-2 overflow-hidden rounded-md px-3 py-2 text-left text-sm ring-sidebar-ring outline-hidden transition-[width,height,padding] hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2 active:bg-sidebar-accent active:text-sidebar-accent-foreground disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-active:bg-sidebar-accent data-active:font-medium data-active:text-sidebar-accent-foreground group-data-[collapsible=icon]:size-8! group-data-[collapsible=icon]:p-2! group-data-[collapsible=icon]:justify-center [&_svg]:size-4 [&_svg]:shrink-0 [&>span:last-child]:truncate",
   {
     variants: {
       variant: {
