@@ -39,6 +39,33 @@ Tres cambios, todos en `src/components/ui/sidebar.tsx`. Ningun otro archivo.
 1. **`sidebar.tsx:254`** — eliminar `[--radius:0]` de `sidebar-inner`.
 2. **`sidebar.tsx:363`** — anadir `group-data-[collapsible=icon]:px-2` a `SidebarGroup`.
 3. **`sidebar.tsx:414`** — anadir `group-data-[collapsible=icon]:justify-center` a `sidebarMenuButtonVariants`.
+4. **`sidebar.tsx:414`** — anadir `group-data-[collapsible=icon]:gap-0` a `sidebarMenuButtonVariants`.
+
+### Correccion de iteracion 2: el `gap-2` descentraba el icono 4px
+
+`justify-center` solo no centro el icono. El usuario reporto que seguian descentrados, y la razon es que **el `gap-2` no se comprime cuando el label desaparece**.
+
+El label `<span>` se oculta sin `hidden`: `truncate` aplica `overflow: hidden`, y eso hace que su `min-width: auto` resuelva a **0** en vez del ancho del texto, asi que flex lo comprime a 0px. Ese es el mecanismo real del ocultamiento, y por eso nunca hacia falta un `hidden` explicito. El `gap-2` (8px), en cambio, sigue midiendo 8px.
+
+| Elemento                    | Ancho                          |
+| --------------------------- | ------------------------------ |
+| Caja de contenido del boton | 32px - 16px (`p-2`) = **16px** |
+| Icono `[&_svg]:size-4`      | 16px                           |
+| `gap-2`                     | **8px** <- no se comprime      |
+| `span` del label            | 0px (comprimido por flex)      |
+| **Contenido total**         | **24px** en una caja de 16px   |
+
+Con `justify-center`, el offset es `(16 - 24) / 2 = -4px`. Centro del icono en 20px contra un centro de rail de 24px: **desvio de 4px**, poco visible pero suficiente para notarse.
+
+Con `gap-0` colapsado el contenido son 16px en una caja de 16px y el icono cae en el centro geometrico sin depender de `justify-center`.
+
+**Leccion transferible:** al centrar un item en un contenedor, el centro no esta-determinado por el item visible sino por **todo el contenido en flujo**, incluidos los gaps y los items colapsados a 0. Corregir el `justify` sin revisar que mas ocupa la fila produce un desvio pequeno y dificil de explicar. La pregunta util no es "esta centrado el item" sino "que suma el ancho total de la fila frente al ancho de la caja".
+
+### Nota de alcance: por que el fix va en la clase base y no en `admin-sidebar.tsx`
+
+El label vive en `admin-sidebar.tsx:218` (`<span>{item.label}</span>`), pero el comportamiento colapsado es propiedad de `sidebarMenuButtonVariants`, asi que el fix corresponde a la clase base y beneficia a todo consumidor futuro.
+
+Se descarto aplicar `hidden` al `span` del label: el otro consumidor de `SidebarMenuButton` (`admin-sidebar.tsx:82-99`, el trigger del menu de usuario) tiene como ultimo hijo un `<ChevronsUpDown>` que es un `svg`, no un `span`, asi que la regla `[&>span:last-child]` no lo alcanza. La regla existente `truncate` ya cubre solo a los items de navegacion, que es exactamente el alcance buscado, y el avatar del footer mantiene su comportamiento actual sin tocar.
 
 ### Correccion de iteracion: `px-0` fue un sobrecorrido
 
