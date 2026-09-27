@@ -57,7 +57,9 @@ Eran bundles de skills de terceros commiteados en `.agents/`. **Resuelto:** se a
 
 1. ~~Ignorar `.agents/**` en ESLint~~ — **hecho**, 132 → 35.
 2. ~~`Reviews.tsx` extraer `ReviewCard`~~ — **hecho**. Ya no queda ningún error con riesgo de render.
-3. Los 10 `any`: empezar por `auth-middleware.ts:47,69` y `prisma-safe.ts:21` → frontera de seguridad y de datos primero. **Siguiente en la fila.**
+3. ~~Los `any` de `auth-middleware.ts:47,69` y `prisma-safe.ts:21`~~ — **hecho**. Errores repo: 10 → 7. Los 7 restantes (todos en `src/components/` y `src/app/api/`) son los siguientes.
+   - **Hallazgo grande del mismo trabajo:** `withAuth`, `withAdmin`, `requireAuth` y `requireAdmin` tienen **cero call sites** fuera de su propio archivo. `index.ts` los re-exporta y nadie los importa. Lo que hoy protege `/admin` es `requireAuthSession()` (`session.ts:62`) usada por `admin/page.tsx`, `admin/config/page.tsx` y `admin/users/page.tsx`, más el check de cookie en `src/proxy.ts`. O sea: el módulo que acabamos de tipar está **muerto**. Tiparlo fue correcto (es la forma que debería tener la API) pero **no endureció ninguna ruta de autorización viva**. Una revisión real de autorización tiene que empezar por `requireAuthSession` + `proxy.ts`, no por `auth-middleware.ts`.
+   - El helper de error de `prisma-safe.ts` NO puede ser `error instanceof Error`: eso convertiría en "no reintentable" un throw de tipo objeto plano `{ message: "Connection terminated" }`, que el código anterior sí detectaba. Regresión de resiliencia escondida detrás de una mejora de tipos. Quedó duck-typed con type guard.
 4. El resto de `any`, los 7 `no-img-element` y los 2 `exhaustive-deps`.
 
 **Estado del gate:** el hook de pre-commit sigue corriendo solo `prettier --check`. Con los 10 `any` que quedan, agregar eslint al hook haría fallar cada commit. Orden: cerrar (3) primero, después agregar eslint al hook.

@@ -6,6 +6,26 @@ type RetryOptions = {
   log?: boolean;
 };
 
+// Duck-typed on purpose, and deliberately NOT `error instanceof Error`.
+//
+// The original was `String(error?.message || "")`, which reads `.message` off
+// anything — including a plain object like `{ message: "Connection
+// terminated..." }`. Narrowing to `instanceof Error` would silently turn such a
+// throw from retryable into a rethrow, i.e. a resilience regression hiding
+// behind a type-safety improvement.
+//
+// The retry classifier below runs in a catch block precisely because we do not
+// control what gets thrown. Keep it maximally permissive, but typed.
+function getErrorMessage(error: unknown): string {
+  if (typeof error !== "object" || error === null || !("message" in error)) {
+    return "";
+  }
+
+  const { message } = error as { message: unknown };
+
+  return typeof message === "string" ? message : String(message ?? "");
+}
+
 export async function prismaSafe<T>(
   fn: () => Promise<T>,
   options: RetryOptions = {},
@@ -18,8 +38,8 @@ export async function prismaSafe<T>(
 
   try {
     return await fn();
-  } catch (error: any) {
-    const message = String(error?.message || "");
+  } catch (error: unknown) {
+    const message = getErrorMessage(error);
 
     const isConnectionError =
       error instanceof Prisma.PrismaClientInitializationError ||

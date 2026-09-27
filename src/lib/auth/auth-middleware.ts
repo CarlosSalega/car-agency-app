@@ -2,6 +2,10 @@ import { NextRequest, NextResponse } from "next/server";
 
 import { getSession } from "@/lib/auth";
 
+export type AuthenticatedUser = NonNullable<
+  Awaited<ReturnType<typeof getSession>>
+>["user"];
+
 class AuthError extends Error {
   constructor(
     message: string,
@@ -44,7 +48,10 @@ export async function requireAdmin(request?: NextRequest) {
 }
 
 export function withAuth(
-  handler: (request: NextRequest, user: any) => Promise<NextResponse>,
+  handler: (
+    request: NextRequest,
+    user: AuthenticatedUser,
+  ) => Promise<NextResponse>,
 ) {
   return async (request: NextRequest) => {
     try {
@@ -66,7 +73,10 @@ export function withAuth(
 }
 
 export function withAdmin(
-  handler: (request: NextRequest, user: any) => Promise<NextResponse>,
+  handler: (
+    request: NextRequest,
+    user: AuthenticatedUser,
+  ) => Promise<NextResponse>,
 ) {
   return async (request: NextRequest) => {
     try {
