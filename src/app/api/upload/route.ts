@@ -92,7 +92,7 @@ export async function DELETE(request: Request) {
       return NextResponse.json(
         {
           error:
-            "No tienes permiso para eliminar esta imagen. Pertenece a otro vehículo.",
+            "No tienes permiso para eliminar esta imagen. No pertenece a ninguno de tus vehículos.",
         },
         { status: 403 },
       );
