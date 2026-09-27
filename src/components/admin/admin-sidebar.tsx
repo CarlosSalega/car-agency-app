@@ -81,7 +81,7 @@ function SidebarNavUser({ user }: { user: AuthUser }) {
             render={
               <SidebarMenuButton
                 size="lg"
-                className="data-[popup-open]:bg-sidebar-accent data-[popup-open]:text-sidebar-accent-foreground"
+                className="data-popup-open:bg-sidebar-accent data-popup-open:text-sidebar-accent-foreground"
               />
             }
           >
@@ -204,7 +204,6 @@ export function AdminSidebar({ user }: { user: AuthUser }) {
                 <SidebarMenuItem key={item.id}>
                   <SidebarMenuButton
                     isActive={active}
-                    variant="outline"
                     tooltip={
                       state === "collapsed" && !isMobile
                         ? item.label
