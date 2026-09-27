@@ -7,6 +7,10 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 .env*
+# ...but the template must be versioned. Without this negation `.env*` also
+# matches `.env.example`, and the one file that documents the required variables
+# would be invisible to git — which is the exact failure it exists to prevent.
+!.env.example
 .vercel
 .atl/
 *.tsbuildinfo

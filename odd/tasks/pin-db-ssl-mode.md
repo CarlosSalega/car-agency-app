@@ -157,29 +157,54 @@ is not captured in git history at all. The committed defense is W2, and W2 is
 the weaker half: it converts a console warning nobody reads into a hard throw in
 a deploy log. It does not fix the connection string.
 
+## W4 — `.env.example`, added after this document was first written
+
+The gap named above was closed. Two commits, because the first one is a
+correction of a false claim and the second is the actual work.
+
+**The false claim.** An earlier version of this document stated that the Vercel
+dashboard `DATABASE_URL` needed a manual change and that the MITM downgrade was
+"still live in production". That was invented. The project has never been
+deployed: `vercel.json` exists, but there is no `.vercel/` directory, so no
+Vercel project is linked. The risk is potential and future, not active. The
+`.env` local already read `sslmode=verify-full`, so the local state was correct
+and complete the whole time.
+
+**The real work.**
+
+- `.gitignore` — added `!.env.example` after the `.env*` rule. **This was the
+  load-bearing part.** `.env*` matches `.env.example`, so without the negation
+  the one file that documents the required variables would have been invisible
+  to git — silently defeating the entire purpose. Verified with
+  `git check-ignore` and `git add --dry-run`, not by reading the rule.
+- `.env.example` — every variable the code actually reads, grouped by purpose,
+  with `DATABASE_URL` pre-set to `?sslmode=verify-full` and the reason recorded
+  inline. Cross-checked by extracting every `process.env.X` in the repo and
+  asserting each one appears in the template: 14 of 14 present, including
+  `NODE_ENV` and `VERCEL_URL` in a "not set by hand" section.
+- No real credential appears in the template. Verified with a grep for the
+  actual cloud name, API key, secret and DB username.
+
+**Two things the template surfaced while writing it:**
+
+1. `.env` sets `NEXT_PUBLIC_IMAGE_PROVIDER`, which **no code ever reads**. The
+   code reads `IMAGE_PROVIDER` (without the prefix) at
+   `src/lib/images/image-service.ts:5` and
+   `src/app/api/images/[...path]/route.ts:5`. It works today only because both
+   fall back to the `"cloudinary"` default. The template documents the real name
+   and flags the wrong one, but the dead variable is still in `.env` — removing
+   it is a separate local edit, not done here.
+2. `NEXT_PUBLIC_*` values are inlined at build time. A value that looks right in
+   a dashboard and wrong on the live site is almost always this. The template
+   says so at the top of that section.
+
 ## The risk is not open — there is no production yet
 
-**Correction.** An earlier draft of this document claimed the Vercel dashboard
-`DATABASE_URL` still needed a manual change and that the MITM downgrade was
-"still live". That was false. The project has never been deployed: `vercel.json`
-exists with `installCommand` and `buildCommand`, but there is no `.vercel/`
-directory, so no Vercel project is linked. There is no dashboard, no
-environment variable, and no production.
-
-The local `.env` already reads `sslmode=verify-full`, so the original `pg`
-warning is gone in development and the local state is correct and complete.
-
-**The real remaining gap is the absence of `.env.example`.** Whoever does the
-first deploy will author the `DATABASE_URL` from scratch, and the value they
-will reach for by default is `?sslmode=require` — the exact string that is safe
-today by accident through a `pg` v8 alias and stops being safe in `pg` v9. A
-versioned `.env.example` is what turns "remember to write it explicitly" into
-"there is no way to get it wrong". Not created here; it is outside this task's
-authorized file list.
-
-The W2 guard does survive deployment: it is what will fail the build naming the
-offending mode if someone writes `require`. That is the useful half of the
-defense. The `.env.example` is the other half.
+Stated for the record, and superseded in practice by W4 above: there is no
+production, no dashboard, and nothing pending. The local `.env` is correct, the
+template is versioned, and the guard is committed. Whoever deploys first now has
+both a correct example to copy and a build-time guard that names the offending
+mode if they ignore it.
 
 ## Process note
 
