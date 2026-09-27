@@ -157,16 +157,29 @@ is not captured in git history at all. The committed defense is W2, and W2 is
 the weaker half: it converts a console warning nobody reads into a hard throw in
 a deploy log. It does not fix the connection string.
 
-## The risk is still open in production
+## The risk is not open — there is no production yet
 
-**The Vercel dashboard `DATABASE_URL` still reads `?sslmode=require`.** It has to
-be changed to `?sslmode=verify-full` by hand, in the dashboard, by the user. The
-orchestrator has no access to it and does not pretend otherwise.
+**Correction.** An earlier draft of this document claimed the Vercel dashboard
+`DATABASE_URL` still needed a manual change and that the MITM downgrade was
+"still live". That was false. The project has never been deployed: `vercel.json`
+exists with `installCommand` and `buildCommand`, but there is no `.vercel/`
+directory, so no Vercel project is linked. There is no dashboard, no
+environment variable, and no production.
 
-Until that happens: the warning still fires on every production boot, and the
-`pg` v9 silent MITM downgrade is still live. W2 will make the deploy fail loudly
-instead of degrading quietly, which is strictly better than nothing, but it is
-not the fix.
+The local `.env` already reads `sslmode=verify-full`, so the original `pg`
+warning is gone in development and the local state is correct and complete.
+
+**The real remaining gap is the absence of `.env.example`.** Whoever does the
+first deploy will author the `DATABASE_URL` from scratch, and the value they
+will reach for by default is `?sslmode=require` — the exact string that is safe
+today by accident through a `pg` v8 alias and stops being safe in `pg` v9. A
+versioned `.env.example` is what turns "remember to write it explicitly" into
+"there is no way to get it wrong". Not created here; it is outside this task's
+authorized file list.
+
+The W2 guard does survive deployment: it is what will fail the build naming the
+offending mode if someone writes `require`. That is the useful half of the
+defense. The `.env.example` is the other half.
 
 ## Process note
 
