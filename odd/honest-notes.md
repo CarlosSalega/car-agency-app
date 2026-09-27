@@ -43,7 +43,10 @@ Eran bundles de skills de terceros commiteados en `.agents/`. **Resuelto:** se a
 
 ### Lo que SÍ es deuda real (35 problemas en `src/`)
 
-- [2026-09-26] **ERROR `react-hooks/rules-of-hooks` en `src/app/(landing)/components/Reviews.tsx:186`.** `useScrollAnimation` se llama DENTRO del callback de `REVIEWS.map((review, i) => ...)`. Eso es N instancias del hook creadas en un bucle dentro del render: viola las reglas de hooks y solo aparenta funcionar porque el largo del array es constante. El fix correcto es extraer un componente `ReviewCard` y llamarlo por review, no reordenar el código para silenciar la regla. **Es el único error del repo que puede cornear un bug real de render** — prioritario sobre el resto.
+- [2026-09-26] **[RESUELTO] ERROR `react-hooks/rules-of-hooks` en `src/app/(landing)/components/Reviews.tsx:186`.** `useScrollAnimation` se llamaba DENTRO del callback de `REVIEWS.map((review, i) => ...)`. Corregido en `8697774`→ commit del writer: se extrajo un componente `ReviewCard` en el mismo archivo, cada review tiene su propia instancia del hook, su propio `IntersectionObserver` y su propio `isVisible`. Errores repo: 11 → 10. La nota original decía:
+  `useScrollAnimation` se llamaba DENTRO del callback de `REVIEWS.map((review, i) => ...)`. Eso es N instancias del hook creadas en un bucle dentro del render: viola las reglas de hooks y solo aparenta funcionar porque el largo del array es constante. El fix correcto era extraer un componente `ReviewCard` y llamarlo por review, no reordenar el código para silenciar la regla. **Era el único error del repo que podía cornear un bug real de render.**
+
+- [2026-09-27] **Pendiente deliberado:** `useScrollAnimation<HTMLDivElement>` tipa el ref como `HTMLDivElement` pero se adjunta a un `<article>` (`HTMLElement`). TS no se queja porque las props `ref` de React son bivariantes. Type lie real, a tighten por separado.
 - [2026-09-26] **10 errores `@typescript-eslint/no-explicit-any`**, todos en `src/`: `api/users/[id]/route.ts:106`, `components/form/form-field.tsx:10`, `components/login-form.tsx:43`, `components/models-config.tsx:183`, `components/users/user-form-dialog.tsx:128`, `lib/auth/auth-middleware.ts:47` y `:69`, `lib/cache/cache-key.ts:1`, `lib/images/providers/cloudinary.provider.ts:18`, `lib/prisma-safe.ts:21`. Los de `auth-middleware.ts` y `prisma-safe.ts` son los que más importan: son frontera de auth y de acceso a datos.
 - [2026-09-26] 7 warnings `@next/next/no-img-element` en 6 archivos — la decisión entre imagen nativa y `next/image` se toma por archivo, no globalmente.
 - [2026-09-26] 2 warnings `react-hooks/exhaustive-deps`. Vale revisar: los hooks mal declarados suelen ser la causa raíz del error de `Reviews.tsx`.
@@ -53,8 +56,8 @@ Eran bundles de skills de terceros commiteados en `.agents/`. **Resuelto:** se a
 ### Orden sugerido cuando se ataque
 
 1. ~~Ignorar `.agents/**` en ESLint~~ — **hecho**, 132 → 35.
-2. `Reviews.tsx` extraer `ReviewCard` → elimina el único error con riesgo de bug real. **Siguiente en la fila.**
-3. Los `any` de `auth-middleware.ts` y `prisma-safe.ts` → frontera de seguridad primero.
-4. El resto de `any`, `no-img-element` y `exhaustive-deps`.
+2. ~~`Reviews.tsx` extraer `ReviewCard`~~ — **hecho**. Ya no queda ningún error con riesgo de render.
+3. Los 10 `any`: empezar por `auth-middleware.ts:47,69` y `prisma-safe.ts:21` → frontera de seguridad y de datos primero. **Siguiente en la fila.**
+4. El resto de `any`, los 7 `no-img-element` y los 2 `exhaustive-deps`.
 
-**Lo que sigue bloqueando el uso de eslint como gate:** el hook de pre-commit solo corre `prettier --check`, no eslint. Agregarlo al hook antes de cerrar (2) haría fallar cada commit por el error de `Reviews.tsx`. Orden: arreglar (2) primero, después agregar eslint al hook.
+**Estado del gate:** el hook de pre-commit sigue corriendo solo `prettier --check`. Con los 10 `any` que quedan, agregar eslint al hook haría fallar cada commit. Orden: cerrar (3) primero, después agregar eslint al hook.

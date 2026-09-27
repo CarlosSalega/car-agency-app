@@ -146,6 +146,56 @@ function Avatar({ initials }: { initials: string }) {
   );
 }
 
+type Review = (typeof REVIEWS)[number];
+
+function ReviewCard({ review, index }: { review: Review; index: number }) {
+  const { ref, isVisible } = useScrollAnimation<HTMLDivElement>({
+    rootMargin: "0px 0px -80px 0px",
+  });
+
+  return (
+    <article
+      ref={ref}
+      className={`rounded-lg border border-zinc-200 bg-neutral-100 p-6 shadow-sm transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] hover:border-zinc-300 hover:shadow-md ${
+        isVisible
+          ? "translate-y-0 opacity-100"
+          : index % 2 === 0
+            ? "-translate-x-15 translate-y-10 opacity-0"
+            : "translate-x-15 translate-y-10 opacity-0"
+      }`}
+      style={{
+        transitionDelay: isVisible ? `${index * 90}ms` : "0ms",
+      }}
+    >
+      <header className="mb-4 flex items-center gap-3">
+        <Avatar initials={review.avatar} />
+
+        <div className="flex-1">
+          <p className="text-sm font-bold text-zinc-900">{review.name}</p>
+          <p className="text-xs text-zinc-400">{review.date}</p>
+        </div>
+
+        {review.photo && (
+          <img
+            src={review.photo}
+            alt={review.name}
+            width={review.photoWidth}
+            height={review.photoHeight}
+            className="h-20 rounded-md object-cover"
+            loading="lazy"
+          />
+        )}
+      </header>
+
+      <Stars rating={review.rating} />
+
+      <p className="mt-3 text-sm leading-relaxed text-zinc-600">
+        {review.text}
+      </p>
+    </article>
+  );
+}
+
 export default function Reviews() {
   const { ref: ctaRef, isVisible: ctaVisible } =
     useScrollAnimation<HTMLDivElement>({
@@ -182,56 +232,9 @@ export default function Reviews() {
 
         {/* GRID */}
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {REVIEWS.map((review, i) => {
-            const { ref, isVisible } = useScrollAnimation<HTMLDivElement>({
-              rootMargin: "0px 0px -80px 0px",
-            });
-
-            return (
-              <article
-                ref={ref}
-                key={review.name}
-                className={`rounded-lg border border-zinc-200 bg-neutral-100 p-6 shadow-sm transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] hover:border-zinc-300 hover:shadow-md ${
-                  isVisible
-                    ? "translate-y-0 opacity-100"
-                    : i % 2 === 0
-                      ? "-translate-x-15 translate-y-10 opacity-0"
-                      : "translate-x-15 translate-y-10 opacity-0"
-                }`}
-                style={{
-                  transitionDelay: isVisible ? `${i * 90}ms` : "0ms",
-                }}
-              >
-                <header className="mb-4 flex items-center gap-3">
-                  <Avatar initials={review.avatar} />
-
-                  <div className="flex-1">
-                    <p className="text-sm font-bold text-zinc-900">
-                      {review.name}
-                    </p>
-                    <p className="text-xs text-zinc-400">{review.date}</p>
-                  </div>
-
-                  {review.photo && (
-                    <img
-                      src={review.photo}
-                      alt={review.name}
-                      width={review.photoWidth}
-                      height={review.photoHeight}
-                      className="h-20 rounded-md object-cover"
-                      loading="lazy"
-                    />
-                  )}
-                </header>
-
-                <Stars rating={review.rating} />
-
-                <p className="mt-3 text-sm leading-relaxed text-zinc-600">
-                  {review.text}
-                </p>
-              </article>
-            );
-          })}
+          {REVIEWS.map((review, i) => (
+            <ReviewCard key={review.name} review={review} index={i} />
+          ))}
         </div>
 
         {/* CTA */}
