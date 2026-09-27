@@ -96,3 +96,31 @@ Task doc: `odd/tasks/close-live-authorization-holes.md`. Tres work units, tres c
 ### Verificación de esta tanda
 
 `tsc --noEmit` exit 0. ESLint sin cambio: `errors 7 warnings 24` antes y después. Prettier limpio en los 4 archivos. **Sin cobertura de tests:** este repo no ejercita route handlers, así que la prueba es tsc + ESLint + Prettier + lectura del diff. Los tres comportamientos (criterios 5, 4 y 6) están verificados por lectura, no por ejecución.
+
+## `sslmode` explícito + guard de boot — 2026-09-27
+
+Task doc: `odd/tasks/pin-db-ssl-mode.md`. Tres work units, tres commits (W1 sin commit, ver abajo).
+
+### [RESUELTO] W2 — `findInsecureSslMode` + throw en producción
+
+- [2026-09-27] `src/lib/db/assert-secure-ssl.ts` (nuevo) exporta `findInsecureSslMode(connectionString): string | null`. Función pura: recibe la connection string como argumento, no lee `process` ni toca ningún global, no conecta a nada. `verify-full` es el único valor aceptable; `require`, `prefer`, `verify-ca`, `allow`, `disable`, `sslmode` ausente (`"<missing>"`), casing distinto (`VERIFY-FULL`) y connection string no parseable (`"<unparseable>"`) se rechazan. Usa `new URL(...).searchParams` con `try/catch` para no propagar un `TypeError` inesperado.
+- [2026-09-27] La **decisión** de tirar vive en `createPrismaClient()` (`src/lib/db/db.ts`), NO dentro de la función pura, y está condicionada a `process.env.NODE_ENV === "production"`. Razón: un Postgres local sin TLS es un setup de desarrollo legítimo; un guard que lo bloquea enseña a desactivar el guard. Test: `src/lib/db/__tests__/assert-secure-ssl.test.ts`, 8 casos, cubre todos los del criterio de aceptación 6.
+- [2026-09-27] Sin tocar: el adapter (`new PrismaPg({ connectionString })`), el ciclo de vida del `PrismaClient`, el cacheo de `globalForPrisma` y el error existente de `"DATABASE_URL is not set"`. No se agregó `NODE_OPTIONS=--no-warnings` ni ninguna supresión de warnings: con `verify-full` el warning de `pg` desaparece solo.
+
+### [RESUELTO] W3 — `@neondatabase/serverless` eliminado
+
+- [2026-09-27] Dependencia quitada de `dependencies` con `pnpm remove` y lockfile refrescado. El repo no la usaba en ningún lado: la base es Prisma Postgres (`pooled.db.prisma.io`), no Neon. Quedaba de una migración anterior y le decía al siguiente lector algo falso.
+
+### [LOCAL-ONLY] W1 — el cambio REAL de `.env` NO está en git
+
+- [2026-09-27] `.env` ahora dice `?sslmode=verify-full` (antes `?sslmode=require`) con un comentario de 3 líneas arriba explicando por qué. **Es un edit local únicamente: `.env` está en `.gitignore` (`.gitignore:9`, patrón `.env*`), así que W1 no aparece en `git status` y no tiene commit. No se hizo `git add -f` ni se movió el valor a un archivo versionado.** El fix no está capturado en el historial: se pierde en cada máquina nueva.
+- Motivo real: `pg` v8 trata `require` como alias de `verify-full` (cifra Y verifica el certificado) y avisa; `pg` v9 le devuelve la semántica real de libpq (cifra, **sin** verificar el certificado). El proyecto está seguro hoy y se volvería vulnerable en el próximo bump de dependencia, sin error y sin segundo warning.
+
+### ⚠️ PENDIENTE DEL USUARIO — el riesgo NO está cerrado en producción
+
+- [2026-09-27] **La variable `DATABASE_URL` del dashboard de Vercel sigue con `sslmode=require` y hay que cambiarla A MANO a `sslmode=verify-full`.** El orchestrator no tiene acceso a ese dashboard y no lo cambió ni puede cambiarlo. Hasta que ese cambio manual ocurra: (a) el warning de `pg` sigue apareciendo en cada boot de producción, y (b) el riesgo de MITM silencioso en `pg` v9 sigue **vivo**. El commit de W2 **no** arregla esto: solo convierte el modo inseguro en un throw explícito en el log de deploy, que es la mitad útil de la defensa, no la defensa completa.
+- [2026-09-27] Corolario: si el usuario aplica el cambio en Vercel, el commit de W2 es lo que va a decir exactamente qué valor escribir, porque el mensaje del error nombra el modo culpable.
+
+### Verificación de esta tanda
+
+`tsc --noEmit` exit 0. `pnpm test` en verde, 8 tests nuevos en verde. ESLint sin cambio: `errors 7 warnings 24` antes y después. Prettier limpio en los 4 archivos. Sin supresión de warnings, sin `any`, sin `eslint-disable`.
