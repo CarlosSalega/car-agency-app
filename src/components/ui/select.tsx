@@ -15,10 +15,12 @@ import { cn } from "@/lib/utils";
  * positioning props on the `Positioner`.
  *
  * `position` is kept in the public API and translated to Base UI's boolean
- * `alignItemWithTrigger`: `"popper"` becomes `true` and `"item-aligned"`
- * becomes `false`. The wrapper's classes branch on `position`, so dropping the
- * prop would change the rendered result for no benefit. No consumer in this
- * project passes it, so the default applies throughout.
+ * `alignItemWithTrigger`. The two enums are NOT name-for-name equivalents:
+ * `"popper"` becomes `false` and `"item-aligned"` becomes `true`. See
+ * `resolveAlignItemWithTrigger` below for why, and for the test that pins it.
+ * The wrapper's classes branch on `position`, so dropping the prop would change
+ * the rendered result for no benefit. No consumer in this project passes it, so
+ * the default (`"popper"`) applies throughout.
  *
  * The CSS custom properties are renamed per the skill:
  * `--radix-select-content-transform-origin` becomes `--transform-origin`,
@@ -78,6 +80,27 @@ function SelectTrigger({
 
 /** Positioning props live on the `Positioner`; declared, destructured and
  * forwarded explicitly so they cannot fall through onto the `Popup`. */
+/**
+ * Radix's `position` enum and Base UI's `alignItemWithTrigger` boolean are not
+ * name-for-name equivalents, and getting this backwards is not cosmetic.
+ *
+ * `true` means "the selected item occupies the trigger's slot": Base UI
+ * stretches the positioner and pins the list to `--anchor-height`, the
+ * trigger's own height. With a multi-item list that shows one option and an
+ * empty white box, and the rest of the options are clipped away. It also
+ * disables `side` and `sideOffset`, which only apply when it is `false`.
+ *
+ * `false` is the mode that matches Radix's `position="popper"`.
+ *
+ * Exported and tested because the failure mode is a silent inverted boolean
+ * next to a confident comment, which is exactly what happened once already.
+ */
+export function resolveAlignItemWithTrigger(
+  position: "popper" | "item-aligned",
+) {
+  return position === "item-aligned";
+}
+
 type SelectPositioningProps = Pick<
   React.ComponentProps<typeof SelectPrimitive.Positioner>,
   "align" | "alignOffset" | "side" | "sideOffset" | "collisionPadding"
@@ -95,7 +118,7 @@ function SelectContent({
   SelectPositioningProps & {
     position?: "popper" | "item-aligned";
   }) {
-  const alignItemWithTrigger = position === "popper";
+  const alignItemWithTrigger = resolveAlignItemWithTrigger(position);
 
   return (
     <SelectPrimitive.Portal>
