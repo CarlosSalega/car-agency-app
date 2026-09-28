@@ -93,8 +93,10 @@ Quitar `[--radius:0]` no solo afecta a los botones de navegacion: **todo** lo re
 
 - [x] `rounded-md` produce un radio visible en `SidebarMenuButton`. **CONFIRMADO por el usuario** en navegador, tras la primera tanda.
 - [x] Al colapsar, ningun item toca el borde derecho del sidebar. **CONFIRMADO por el usuario** en navegador.
-- [ ] Al colapsar, el icono queda centrado en su caja de 32px. **PENDIENTE.** El `gap-0` de `e72d53c` corrige un desvio medido de 4px, pero sin confirmacion visual.
-- [ ] Ningun otro layout del sidebar se desplaza respecto al estado actual. **PENDIENTE.**
+- [x] Al colapsar, el icono queda centrado en su caja de 32px. **CONFIRMADO por el usuario** en navegador. El `gap-0` de `e72d53c` era aritmetica derivada; quedo confirmado por captura.
+- [x] Al colapsar, el boton del footer muestra el avatar centrado y sin la astilla de la flecha. **CONFIRMADO por el usuario** en navegador, tras `d78e508`.
+- [x] Ningun otro layout del sidebar se desplaza respecto al estado actual. **CONFIRMADO por el usuario** en navegador.
+- [x] En mobile, tocar un item de navegacion cierra el sheet. **CONFIRMADO por el usuario**, y cubierto por tests (`444c0bf`).
 
 ## Checks
 
@@ -102,20 +104,35 @@ Quitar `[--radius:0]` no solo afecta a los botones de navegacion: **todo** lo re
 - [x] `pnpm exec prettier --check src/components/ui/sidebar.tsx` -> `All matched files use Prettier code style!`
 - [x] `pnpm exec eslint src/components/ui/sidebar.tsx` -> sin salida, 0 problemas.
 - [x] Barrido de residuos: `grep -- "--radius:0"` sobre `src/` no encuentra ningun otro reset. Los dos `--radius: 0.5rem` de `globals.css:104,188` son los legítimos (tema claro y oscuro). No queda ningun ancestro que vuelva a anular el radio.
-- [ ] **Confirmacion visual del `gap-0`.** Este repo no tiene motor de layout en los tests: jsdom no calcula radio, centrado ni desbordamiento. Un test verde aqui NO prueba los pixeles. La prueba real es la captura del navegador, y ya se perdio una vez por confundir verificacion automatica con verificacion visual.
+- [x] **Confirmacion visual del `gap-0`, del footer y del sheet mobile.** Cerrado por el usuario en navegador tras `e72d53c`, `d78e508` y `1ebb9ae`.
+
+## Que se puede y que no se puede verificar aca
+
+Este repo **no tiene motor de layout**: jsdom no calcula radio, centrado, padding ni desbordamiento. Un test verde no prueba los pixeles, y esa confusion ya costo una iteracion entera en este mismo trabajo.
+
+La division real del trabajo:
+
+| Que                                      | Como se verifica                                                                                               |
+| ---------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| Radio, centrado, padding, desbordamiento | **Solo** por captura del navegador. Aritmetica derivada del codigo como hipotesis, no como prueba.             |
+| El sheet mobile cierra al tocar          | **Con test automatizado.** El estado del sheet es comportamiento, hay DOM para assertar, y no requiere layout. |
+
+`444c0bf` es el ejemplo de por que conviene separar las dos cosas: cuando el defecto es de comportamiento, un test de verdad es mejor que pedirle al usuario que mire. Cuando el defecto es de geometria, ni el test ni el agente pueden probarlo, y decirlo con honestidad es parte del trabajo.
 
 ## Estado
 
-**Commiteado y pusheado. `main` y `origin/main` en `e72d53c`. Working tree limpio, 0 stashes.**
+**Commiteado y pusheado. `main` y `origin/main` en `8434564`. Working tree limpio, 0 stashes.**
 
-Dos commits, cuatro correcciones:
+Cuatro correcciones, todas verificadas por el usuario en navegador:
 
-| Commit    | Cambio                                                          |
-| --------- | --------------------------------------------------------------- |
-| `bfa8bac` | Quita `[--radius:0]`, colapsa a `px-2`, agrega `justify-center` |
-| `e72d53c` | Agrega `group-data-[collapsible=icon]:gap-0`                    |
+| Commit    | Cambio                                                          | Verificacion        |
+| --------- | --------------------------------------------------------------- | ------------------- |
+| `bfa8bac` | Quita `[--radius:0]`, colapsa a `px-2`, agrega `justify-center` | captura del usuario |
+| `e72d53c` | Agrega `group-data-[collapsible=icon]:gap-0`                    | captura del usuario |
+| `d78e508` | `p-0!` y `hidden` en el boton del footer                        | captura del usuario |
+| `1ebb9ae` | Cierra el sheet mobile al tocar un item de navegacion           | test automatizado   |
 
-**Lo unico que queda abierto de este trabajo es la confirmacion visual del `gap-0`.** Los tres criterios del radio y del espaciado derecho estan confirmados por el usuario en el navegador. El centrado del icono no: el `gap-0` es aritmetica derivada (16px de contenido en una caja de 16px), no una medicion. Si al abrir `/admin` el icono sigue corrido, el `Computed` de ese boton con `width`, `padding` y `gap` reales cierra el caso en una iteracion.
+**Este trabajo esta cerrado.** El `gap-0` era aritmetica derivada (16px de contenido en una caja de 16px) y quedo confirmado por captura; el footer quedo confirmado por captura; el sheet mobile quedo cubierto por tests. No queda nada abierto de este doc.
 
 ## Iteracion 3 — el boton del footer no cerraba
 
