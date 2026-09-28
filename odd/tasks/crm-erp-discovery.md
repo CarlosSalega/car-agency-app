@@ -1,3 +1,11 @@
+> **SUPERSEDED** by `dealer-system-evaluation.md`. This document is a generic CRM
+> phase list with no Argentine market specifics. Kept for history.
+>
+> Two of its claims are now false and were corrected in the evaluation: there is no
+> settings UI, and `recentLogs` was deliberately removed (a regression test now locks
+> it out). Its "do not start with accounting" advice is right for accounting and wrong
+> for invoicing — electronic invoicing is a legal obligation at the moment of sale.
+
 # CRM / ERP Discovery — Car Agency App
 
 ## Objective
