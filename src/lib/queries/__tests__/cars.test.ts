@@ -45,6 +45,52 @@ const publicWhere = {
   deletedAt: null,
 };
 
+/**
+ * A relation request as Prisma receives it: `true` means "every column",
+ * `{ select: { ... } }` is an explicit field selection.
+ */
+type RelationRequest = true | { select: Record<string, boolean> };
+
+/** A stored `User` row, password hash included, as it exists in the database. */
+const storedUserRow: Record<string, unknown> = {
+  id: "user-1",
+  name: "Ada Lovelace",
+  email: "ada@example.com",
+  emailVerified: null,
+  image: null,
+  role: "ADMIN",
+  isActive: true,
+  hashedPassword: "$2b$10$fictionalhashfictionalhashfictionalhas",
+  createdAt: new Date("2024-01-01T00:00:00.000Z"),
+  updatedAt: new Date("2024-01-02T00:00:00.000Z"),
+};
+
+/**
+ * Simulates Prisma's projection: the stored row filtered by the requested
+ * `select`, where `true` yields every column. Asserting on the resulting
+ * payload is the only way to catch a blanket `user: true`, because a
+ * blanket request never mentions `hashedPassword` in the query arguments.
+ */
+function projectRelation(
+  row: Record<string, unknown>,
+  request: RelationRequest,
+): Record<string, unknown> {
+  if (request === true) return { ...row };
+  return Object.fromEntries(
+    Object.entries(row).filter(([field]) => request.select[field] === true),
+  );
+}
+
+function lastCarFindManyArgs(): { include?: { user?: RelationRequest } } {
+  const call = carMocks.findMany.mock.calls.at(-1)?.[0] as
+    | { include?: { user?: RelationRequest } }
+    | undefined;
+  if (!call) {
+    throw new Error("prisma.car.findMany was not called");
+  }
+  return call;
+}
+
 describe("buildWhere", () => {
   it("always includes the public visibility predicate", () => {
     expect(buildWhere({})).toEqual(publicWhere);
@@ -157,12 +203,50 @@ describe("admin car queries", () => {
       include: {
         brand: true,
         model: true,
-        user: true,
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            role: true,
+          },
+        },
       },
       orderBy: { createdAt: "desc" },
       skip: 12,
       take: 12,
     });
+  });
+
+  it("does not request the full user record in the admin car list", async () => {
+    carMocks.findMany.mockResolvedValue([]);
+
+    await getAdminCarsList(0, 12);
+
+    const request = lastCarFindManyArgs().include?.user;
+    expect(request).toBeDefined();
+    expect(request).not.toBe(true);
+    expect(request).toHaveProperty("select");
+
+    const selected = (request as { select: object }).select;
+    expect(Object.keys(selected)).not.toHaveLength(0);
+  });
+
+  it("projects no hashedPassword into the admin car list payload", async () => {
+    carMocks.findMany.mockResolvedValue([]);
+
+    await getAdminCarsList(0, 12);
+
+    const request = lastCarFindManyArgs().include?.user as RelationRequest;
+    const payload = projectRelation(storedUserRow, request);
+
+    expect(payload).toEqual({
+      id: "user-1",
+      name: "Ada Lovelace",
+      email: "ada@example.com",
+      role: "ADMIN",
+    });
+    expect(Object.keys(payload)).not.toContain("hashedPassword");
   });
 
   it("counts non-deleted admin cars", async () => {
@@ -191,8 +275,7 @@ describe("admin car queries", () => {
     });
   });
 
-  it("returns the existing admin dashboard counts and recent logs", async () => {
-    const recentLogs = [{ id: "log-1" }];
+  it("returns the existing admin dashboard counts", async () => {
     carMocks.count
       .mockResolvedValueOnce(30)
       .mockResolvedValueOnce(10)
@@ -200,7 +283,6 @@ describe("admin car queries", () => {
       .mockResolvedValueOnce(7)
       .mockResolvedValueOnce(8);
     visitMocks.count.mockResolvedValue(100);
-    logMocks.findMany.mockResolvedValue(recentLogs);
 
     await expect(getAdminCarStats()).resolves.toEqual({
       totalCars: 30,
@@ -209,7 +291,6 @@ describe("admin car queries", () => {
       reservedCars: 7,
       soldCars: 8,
       totalVisits: 100,
-      recentLogs,
     });
 
     expect(carMocks.count).toHaveBeenNthCalledWith(1, {
@@ -228,10 +309,23 @@ describe("admin car queries", () => {
       where: { status: "SOLD", deletedAt: null },
     });
     expect(visitMocks.count).toHaveBeenCalledWith();
-    expect(logMocks.findMany).toHaveBeenCalledWith({
-      include: { user: true },
-      orderBy: { createdAt: "desc" },
-      take: 5,
-    });
+  });
+
+  it("performs no log query in the admin dashboard stats", async () => {
+    carMocks.count.mockResolvedValue(0);
+    visitMocks.count.mockResolvedValue(0);
+
+    await getAdminCarStats();
+
+    expect(logMocks.findMany).not.toHaveBeenCalled();
+  });
+
+  it("returns no recentLogs key in the admin dashboard stats", async () => {
+    carMocks.count.mockResolvedValue(0);
+    visitMocks.count.mockResolvedValue(0);
+
+    const stats = await getAdminCarStats();
+
+    expect(Object.keys(stats)).not.toContain("recentLogs");
   });
 });
