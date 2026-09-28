@@ -62,9 +62,13 @@ function initialsOf(name: string | null, email: string): string {
 }
 
 function SidebarNavUser({ user }: { user: AuthUser }) {
-  const { isMobile } = useSidebar();
+  const { isMobile, setOpenMobile } = useSidebar();
   const pathname = usePathname();
   const initials = initialsOf(user.name, user.email);
+
+  // Same reason as the main nav: these links live inside the mobile Sheet, and a
+  // Link does not close the overlay it navigates from.
+  const closeOnMobile = () => setOpenMobile(false);
 
   const items = ADMIN_NAVIGATION.filter(
     (item) =>
@@ -142,6 +146,7 @@ function SidebarNavUser({ user }: { user: AuthUser }) {
                       <Link
                         href={item.href!}
                         aria-current={active ? "page" : undefined}
+                        onClick={closeOnMobile}
                       />
                     }
                   >
@@ -179,7 +184,19 @@ function SidebarNavUser({ user }: { user: AuthUser }) {
 
 export function AdminSidebar({ user }: { user: AuthUser }) {
   const pathname = usePathname();
-  const { state, isMobile } = useSidebar();
+  const { state, isMobile, setOpenMobile } = useSidebar();
+
+  /**
+   * On mobile the sidebar is a Sheet overlay, not a rail: `isMobile` swaps the
+   * whole `Sidebar` for `<Sheet open={openMobile} onOpenChange={setOpenMobile}>`.
+   * A `Link` inside a sheet does not close it, so navigating leaves the overlay
+   * open on top of the destination page. Closing is `setOpenMobile(false)`.
+   *
+   * On desktop there is no sheet, so the call is a no-op that never touches the
+   * desktop `open` state. That makes it safe to run unconditionally instead of
+   * branching on `isMobile`.
+   */
+  const closeOnMobile = () => setOpenMobile(false);
 
   const linkItems = ADMIN_NAVIGATION.filter(
     (item) => item.href && (!item.roles || item.roles.includes(user.role)),
@@ -216,6 +233,7 @@ export function AdminSidebar({ user }: { user: AuthUser }) {
                       <Link
                         href={item.href!}
                         aria-current={active ? "page" : undefined}
+                        onClick={closeOnMobile}
                       />
                     }
                   >
