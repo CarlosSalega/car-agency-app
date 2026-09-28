@@ -215,12 +215,6 @@ export async function getAdminCarStats() {
     prisma.visit.count(),
   ]);
 
-  const recentLogs = await prisma.log.findMany({
-    include: { user: true },
-    orderBy: { createdAt: "desc" },
-    take: 5,
-  });
-
   return {
     totalCars,
     availableCars,
@@ -228,7 +222,6 @@ export async function getAdminCarStats() {
     reservedCars,
     soldCars,
     totalVisits,
-    recentLogs,
   };
 }
 
