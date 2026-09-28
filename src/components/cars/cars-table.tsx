@@ -1,7 +1,7 @@
 "use client";
 
 import type { PaginationProps } from "@/components/pagination/pagination";
-import type { CarWithRelations } from "@/types/cars";
+import type { CarListItem } from "@/types/cars";
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -11,14 +11,14 @@ import { AdminTable } from "@/components/admin";
 import { getCarsColumns, DeleteCarDialog } from "@/components/cars";
 
 export interface CarsTableProps {
-  cars: CarWithRelations[];
+  cars: CarListItem[];
   pagination?: PaginationProps;
 }
 
 export function CarsTable({ cars, pagination }: CarsTableProps) {
   const router = useRouter();
 
-  const [carToDelete, setCarToDelete] = useState<CarWithRelations | null>(null);
+  const [carToDelete, setCarToDelete] = useState<CarListItem | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
 
   async function handleConfirmDelete(carId: string) {

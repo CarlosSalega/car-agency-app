@@ -1,6 +1,6 @@
 "use client";
 
-import type { CarWithRelations } from "@/types/car-form";
+import type { CarForEdit } from "@/types/car-form";
 import type React from "react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -26,7 +26,7 @@ import {
 import { carSchema, type CarInput } from "@/lib/validations/car";
 
 interface CarFormProps {
-  car?: CarWithRelations;
+  car?: CarForEdit;
   mode: "create" | "edit";
 }
 

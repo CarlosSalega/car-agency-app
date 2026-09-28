@@ -1,6 +1,6 @@
 import type { Car, Brand, Model, Role } from "@generated/prisma/client";
 
-export type CarWithRelations = Car & {
+export type CarListItem = Car & {
   brand: Brand;
   model: Model;
   user: {

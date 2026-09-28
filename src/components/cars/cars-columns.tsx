@@ -1,5 +1,5 @@
 import type { AdminColumn } from "@/components/admin/admin-table";
-import type { CarWithRelations } from "@/types/cars";
+import type { CarListItem } from "@/types/cars";
 
 import { ActionButtonsGroup } from "@/components/admin/admin-action-buttons";
 import { CarImage } from "@/components/cars/car-image";
@@ -18,7 +18,7 @@ interface Params {
 
 export function getCarsColumns({
   onDelete,
-}: Params): AdminColumn<CarWithRelations>[] {
+}: Params): AdminColumn<CarListItem>[] {
   return [
     {
       key: "image",

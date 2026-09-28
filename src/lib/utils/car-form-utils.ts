@@ -1,9 +1,9 @@
 import type { CarInput } from "@/lib/validations/car";
-import type { CarWithRelations, CarPayload } from "@/types/car-form";
+import type { CarForEdit, CarPayload } from "@/types/car-form";
 // Enum value, not a type: see the note in `src/lib/constants/enum-options.ts`.
 import { PaymentMethod } from "@generated/prisma/enums";
 
-export function carToFormValues(car?: CarWithRelations): Partial<CarInput> {
+export function carToFormValues(car?: CarForEdit): Partial<CarInput> {
   if (!car) return getDefaultFormValues();
 
   return {

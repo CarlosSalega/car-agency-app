@@ -55,6 +55,6 @@ export type SellerOption = Pick<
   "id" | "firstName" | "lastName" | "phone" | "email" | "isActive"
 >;
 
-export type CarWithRelations = CarGetPayload<typeof carWithRelations>;
+export type CarForEdit = CarGetPayload<typeof carWithRelations>;
 export type CreateCarPayload = CarPayload;
 export type UpdateCarPayload = Partial<CarPayload>;
