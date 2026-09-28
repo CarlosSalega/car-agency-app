@@ -8,6 +8,11 @@ export async function GET(
   { params }: { params: Promise<{ key: string }> },
 ) {
   try {
+    const session = await getSession();
+    if (!session || session.user.role !== "ADMIN") {
+      return NextResponse.json({ error: "No autorizado" }, { status: 401 });
+    }
+
     const { key } = await params;
     const setting = await prisma.settings.findUnique({
       where: { key },

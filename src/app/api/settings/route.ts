@@ -5,6 +5,11 @@ import { getSession } from "@/lib/auth";
 
 export async function GET() {
   try {
+    const session = await getSession();
+    if (!session || session.user.role !== "ADMIN") {
+      return NextResponse.json({ error: "No autorizado" }, { status: 401 });
+    }
+
     const settings = await prisma.settings.findMany({
       orderBy: { key: "asc" },
     });
