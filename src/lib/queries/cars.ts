@@ -154,24 +154,34 @@ export async function getPublicLatestCars(take: number) {
   )(take);
 }
 
+/**
+ * The single source of truth for the admin car listing. The query below spreads
+ * this object, and `CarListItem` in `src/types/cars.ts` is derived from it with
+ * `CarGetPayload<typeof adminCarsListArgs>`, so the type cannot drift away from
+ * the query that actually runs.
+ */
+export const adminCarsListArgs = {
+  include: {
+    brand: true,
+    model: true,
+    user: {
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        role: true,
+      },
+    },
+  },
+} satisfies Prisma.CarDefaultArgs;
+
 export async function getAdminCarsList(skip: number, take: number) {
   return prisma.car.findMany({
     where: { deletedAt: null },
-    include: {
-      brand: true,
-      model: true,
-      user: {
-        select: {
-          id: true,
-          name: true,
-          email: true,
-          role: true,
-        },
-      },
-    },
     orderBy: { createdAt: "desc" },
     skip,
     take,
+    ...adminCarsListArgs,
   });
 }
 
@@ -181,13 +191,22 @@ export async function getAdminCarsCount() {
   });
 }
 
+/**
+ * The single source of truth for the admin car edit form. `seller` is
+ * deliberately absent: nothing reads it, and the form is a client component, so
+ * including it would serialize seller PII to the browser.
+ */
+export const adminCarForEditArgs = {
+  include: {
+    brand: true,
+    model: true,
+  },
+} satisfies Prisma.CarDefaultArgs;
+
 export async function getAdminCarForEdit(id: string) {
   return prisma.car.findUnique({
     where: { id },
-    include: {
-      brand: true,
-      model: true,
-    },
+    ...adminCarForEditArgs,
   });
 }
 
