@@ -187,7 +187,6 @@ export async function getAdminCarForEdit(id: string) {
     include: {
       brand: true,
       model: true,
-      seller: true,
     },
   });
 }

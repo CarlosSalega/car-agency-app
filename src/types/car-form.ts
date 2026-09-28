@@ -17,13 +17,12 @@ import type { CarGetPayload } from "@generated/prisma/models/Car";
  * payload type is now exported per model from the generated model file, and the
  * select/include argument is constrained with `satisfies` instead.
  *
- * The resulting type is unchanged: car plus brand, model and seller.
+ * The resulting type is unchanged: car plus brand and model.
  */
 export const carWithRelations = {
   include: {
     brand: true,
     model: true,
-    seller: true,
   },
 } satisfies Prisma.CarDefaultArgs;
 

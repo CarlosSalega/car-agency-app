@@ -270,9 +270,29 @@ describe("admin car queries", () => {
       include: {
         brand: true,
         model: true,
-        seller: true,
       },
     });
+  });
+
+  it("does not include the seller relation in the admin edit query", async () => {
+    const car = { id: "car-1" };
+    carMocks.findUnique.mockResolvedValue(car);
+
+    await getAdminCarForEdit("car-1");
+
+    const call = carMocks.findUnique.mock.calls.at(-1)?.[0] as
+      | { include?: Record<string, unknown> }
+      | undefined;
+    if (!call) {
+      throw new Error("prisma.car.findUnique was not called");
+    }
+
+    expect(call.include).toBeDefined();
+    expect(Object.keys(call.include as object)).not.toContain("seller");
+    expect(Object.keys(call.include as object).sort()).toEqual([
+      "brand",
+      "model",
+    ]);
   });
 
   it("returns the existing admin dashboard counts", async () => {
