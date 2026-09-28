@@ -12,17 +12,6 @@ import type {
 import type { CarGetPayload } from "@generated/prisma/models/Car";
 import type { adminCarForEditArgs } from "@/lib/queries/cars";
 
-/**
- * Prisma 7 removed `Prisma.validator` and `Prisma.<Model>GetPayload`. The
- * payload type is now exported per model from the generated model file, and the
- * select/include argument is constrained with `satisfies` instead.
- *
- * The argument is not a parallel declaration: `getAdminCarForEdit` in
- * `src/lib/queries/cars.ts` spreads the very object this type is derived from,
- * so the type and the query cannot drift apart. The resulting type is
- * unchanged: car plus brand and model.
- */
-
 export interface BrandWithModels extends Brand {
   models: Model[];
 }
@@ -52,6 +41,21 @@ export type SellerOption = Pick<
   "id" | "firstName" | "lastName" | "phone" | "email" | "isActive"
 >;
 
+/**
+ * A car as the edit form receives it: brand and model, and deliberately no owner
+ * and no seller.
+ *
+ * Derived from `adminCarForEditArgs`, the object `getAdminCarForEdit` in
+ * `src/lib/queries/cars.ts` actually spreads, so this type and the query cannot
+ * drift apart.
+ *
+ * Prisma 7 removed `Prisma.validator` and `Prisma.<Model>GetPayload`. The payload
+ * type is exported per model from the generated model file (`CarGetPayload` from
+ * `@generated/prisma/models/Car`), and the argument is constrained with
+ * `satisfies Prisma.CarDefaultArgs` instead. Do not reintroduce the removed APIs.
+ *
+ * Not interchangeable with `CarListItem`: a listing has an owner, a form must not.
+ */
 export type CarForEdit = CarGetPayload<typeof adminCarForEditArgs>;
 export type CreateCarPayload = CarPayload;
 export type UpdateCarPayload = Partial<CarPayload>;
