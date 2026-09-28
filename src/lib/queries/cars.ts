@@ -160,7 +160,14 @@ export async function getAdminCarsList(skip: number, take: number) {
     include: {
       brand: true,
       model: true,
-      user: true,
+      user: {
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          role: true,
+        },
+      },
     },
     orderBy: { createdAt: "desc" },
     skip,
