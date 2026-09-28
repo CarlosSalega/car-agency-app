@@ -81,7 +81,7 @@ function SidebarNavUser({ user }: { user: AuthUser }) {
             render={
               <SidebarMenuButton
                 size="lg"
-                className="data-popup-open:bg-sidebar-accent data-popup-open:text-sidebar-accent-foreground"
+                className="data-popup-open:bg-sidebar-accent data-popup-open:text-sidebar-accent-foreground group-data-[collapsible=icon]:p-0!"
               />
             }
           >
@@ -95,7 +95,12 @@ function SidebarNavUser({ user }: { user: AuthUser }) {
               <span className="truncate font-medium">{user.name}</span>
               <span className="truncate text-xs">{user.email}</span>
             </span>
-            <ChevronsUpDown className="ml-auto size-4 shrink-0" />
+            {/* The label span collapses to 0 on its own (`truncate` resolves its
+                automatic minimum to 0), but a fixed-width child does not: this svg
+                stays 16px and pushes the 32px avatar out of a 16px content box. The
+                rule for the label, `[&>span:last-child]`, cannot reach it because
+                this is an svg, not a span. Hide it with the rail. */}
+            <ChevronsUpDown className="ml-auto size-4 shrink-0 group-data-[collapsible=icon]:hidden" />
           </DropdownMenuTrigger>
 
           <DropdownMenuContent

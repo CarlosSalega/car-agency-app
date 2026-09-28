@@ -115,10 +115,72 @@ Dos commits, cuatro correcciones:
 | `bfa8bac` | Quita `[--radius:0]`, colapsa a `px-2`, agrega `justify-center` |
 | `e72d53c` | Agrega `group-data-[collapsible=icon]:gap-0`                    |
 
-**Lo unico que queda abierto de este trabajo es la confirmacion visual del `gap-0`.** Los tres criterios del radio y del espaciado derecho estan confirmados por el usuario en el navegador. El centrado del icono no: el `gap-0` es aritmetica deriva (16px de contenido en una caja de 16px), no una medicion. Si al abrir `/admin` el icono sigue corrido, el `Computed` de ese boton con `width`, `padding` y `gap` reales cierra el caso en una iteracion.
+**Lo unico que queda abierto de este trabajo es la confirmacion visual del `gap-0`.** Los tres criterios del radio y del espaciado derecho estan confirmados por el usuario en el navegador. El centrado del icono no: el `gap-0` es aritmetica derivada (16px de contenido en una caja de 16px), no una medicion. Si al abrir `/admin` el icono sigue corrido, el `Computed` de ese boton con `width`, `padding` y `gap` reales cierra el caso en una iteracion.
+
+## Iteracion 3 — el boton del footer no cerraba
+
+`e72d53c` arreglo los items de navegacion. El trigger del menu de usuario, en
+`SidebarFooter`, es el otro consumidor de `SidebarMenuButton` y seguia roto: el avatar
+quedaba pegado al borde izquierdo y el `ChevronsUpDown` se veia como una astilla al
+borde derecho.
+
+### Por que los fixes anteriores no lo alcanzaban
+
+Los tres fixes viven en `sidebarMenuButtonVariants` y en `SidebarGroup`. El footer no
+usa `SidebarGroup` — usa `SidebarFooter`, que tiene su propio `p-2` — y su boton tiene
+dos hijos de ancho fijo que los items de navegacion no tienen.
+
+La aritmetica, con el rail colapsado en 48px:
+
+| Elemento                               | Ancho                            |
+| -------------------------------------- | -------------------------------- |
+| `SidebarFooter` `p-2`                  | 48 - 16 = **32px** de caja       |
+| Boton `size-8!`                        | **32px**                         |
+| Boton `p-2!`                           | 32 - 16 = **16px** de caja       |
+| Avatar `<span>` `size-8` `shrink-0`    | **32px**, fijo                   |
+| `<span>` del label                     | **0px** (lo comprime `truncate`) |
+| `<ChevronsUpDown>` `size-4` `shrink-0` | **16px**, fijo                   |
+| **Total**                              | **48px** en una caja de 16px     |
+
+48px de contenido en 16px de caja. El avatar se come la caja entera desde la
+izquierda y el chevron queda fuera, asomando lo que da el `overflow-hidden`. Eso es
+exactamente la captura.
+
+El contraste con los items de navegacion es la leccion: alla el unico hijo de ancho
+fijo es el icono de 16px, y 16px en una caja de 16px es exacto. **La misma clase base
+funciona con un hijo fijo de 16px y se rompe con uno de 32px.** El rail y el boton no
+son el problema; la caja de 16px es la que se armó para el caso de los items.
+
+### El fix
+
+Dos cambios, ambos locales a `src/components/admin/admin-sidebar.tsx`, ninguno en la
+clase base — cambiar `p-2!` a `p-0!` en la base realinearia los items de navegacion
+tambien, y eso requiere su propia confirmacion visual.
+
+1. `group-data-[collapsible=icon]:p-0!` en el `SidebarMenuButton` del footer: deja la
+   caja de contenido en 32px, que es exactamente el avatar. Misma logica del punto 2
+   del fix original: no se busca "cuanto padding sobra" sino "que valor hace que las
+   dos medidas coincidan".
+2. `group-data-[collapsible=icon]:hidden` en el `ChevronsUpDown`. La regla
+   `[&>span:last-child]` que colapsa el label no lo alcanza porque este hijo es un
+   `svg`, no un `span` — ya habia sido anotado en la nota de alcance del primer fix y
+   sigue siendo la razon de que el footer quedara fuera.
+
+Con el chevron oculto y la caja en 32px, el contenido es 32px en 32px.
+
+### Pendiente de verificacion
+
+**`tsc` exit 0, 70/70 tests, eslint y prettier limpios, y nada de eso prueba los
+pixeles.** Este repo no tiene motor de layout: jsdom no calcula ancho, padding ni
+desbordamiento. Los tres numeros de la tabla de arriba son aritmetica derivada del
+codigo, igual que el `gap-0` de `e72d53c`. La unica prueba real es abrir `/admin`,
+colapsar el sidebar y mirar el boton del footer. Si el avatar sigue corrido, el
+`Computed` de ese boton con `width`, `padding` y los `width` de sus hijos cierra el
+caso en una iteracion.
 
 ## Rollback
 
 - Radio y padding: `git revert bfa8bac`
 - Centrado del icono: `git revert e72d53c`
+- Boton del footer: `git revert <sha de esta iteracion>`
 - Sin perder historial: `git checkout 1fa11ec -- src/components/ui/sidebar.tsx`
