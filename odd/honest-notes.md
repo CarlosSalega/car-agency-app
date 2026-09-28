@@ -126,3 +126,63 @@ Task doc: `odd/tasks/pin-db-ssl-mode.md`. Tres work units, tres commits (W1 sin 
 ### Verificación de esta tanda
 
 `tsc --noEmit` exit 0. `pnpm test` en verde, 8 tests nuevos en verde. ESLint sin cambio: `errors 7 warnings 24` antes y después. Prettier limpio en los 4 archivos. Sin supresión de warnings, sin `any`, sin `eslint-disable`.
+
+## Guards de autorizacion en la API — 2026-09-28
+
+### [RESUELTO] `GET /api/settings` y `GET /api/settings/[key]` sin ningun guard
+
+- [2026-09-28] Ambos handlers devolvian la tabla `Settings` completa —y un registro
+  individual— **sin sesion y sin chequeo de rol**. El detalle que lo delata: `getSession`
+  ya estaba importado en los dos archivos y lo usaban `POST`/`PUT`/`DELETE`, pero no
+  `GET`. Asimetria de guard, no decision de diseno.
+- Se les aplico el mismo guard que sus hermanos en el mismo archivo:
+  `if (!session || session.user.role !== "ADMIN")` -> 401 `"No autorizado"`.
+- **Verificacion: por lectura del diff, typecheck y lint. NO por ejecucion.** Este repo no
+  tiene ningun test de route handler (`find src -name "*.test.*" -path "*api*"` no
+  devuelve nada). El guard es correcto por construccion y coincide con los otros
+  metodos del archivo, pero nadie lo ejecuto.
+
+### [DEUDA] La API de `/api/settings` es huerfana y nadie la consume
+
+- [2026-09-28] `grep -rn "api/settings" src/` fuera de los propios route files **no
+  devuelve nada**. La pagina `/admin/config` consulta Prisma directo
+  (`admin/config/page.tsx:30-45`), no la API. El modelo `Settings` es un
+  `key`/`value` generico de strings y no tiene consumidor en la app.
+- Es decir: hay una superficie CRUD completa y autenticada para una tabla que la
+  aplicacion no usa. El guard nuevo la cierra, pero **la pregunta de fondo es si esta
+  tabla debe existir**. Si el CMS/CRM/ERP la va a usar, es el lugar natural para
+  configuracion editable; si no, es codigo muerto con base de datos.
+- **No se decidio.** Requiere vision de producto.
+
+### [DEUDA] `withAuth`, `withAdmin`, `requireAdmin` y `AuthError` son codigo muerto
+
+- [2026-09-28] `src/lib/auth/auth-middleware.ts` (~100 lineas) no tiene **ningun** import
+  fuera de si mismo. Las rutas inlinean el chequeo de rol una por una. El modulo se
+  reexporta desde `src/lib/auth/index.ts:1`, asi que viaja en el bundle sin usarse.
+- **Por que importa mas alla del dead code:** dos Regulatory efectos. (1) El proximo
+  dev que necesite proteger una ruta va a usar `withAdmin` creyendo que es el patron
+  del repo, sin saber que ninguna ruta lo usa. (2) El patron real —inline, repetido en
+  14 archivos— es el que no tiene tests, asi que cada copia es una oportunidad de
+  divergir.
+- Dos salidas: conectar las rutas al wrapper, o borrar el modulo. **No se decidio.**
+  Con la expansion prevista a CMS/CRM/ERP y nuevos roles, la capa de autorizacion va a
+  cambiar de forma: conviene resolverlo cuando la politica de roles este definida, no
+  antes.
+
+### [NO ES BUG — decision de producto] `sellerId` asignable por cualquier COLLABORATOR
+
+- [2026-09-28] `POST /api/cars` valida `sellerId` solo por existencia e `isActive`, y
+  `PUT /api/cars/[id]` deja que un owner no-ADMIN reescriba el `sellerId` (`:205`). Se
+  documento como posible escalada de privilegios.
+- **El usuario decidio que es intencional**: un COLLABORATOR puede asignarle cualquier
+  vendedor a cualquier auto, porque el proyecto va a expandirse a un CMS/CRM/ERP con
+  roles de Vendedores. La asignacion libre es el andamiaje de ese rol futuro.
+- Lo mismo aplica a `admin/layout.tsx`, que no chequea rol: `ADMIN_NAVIGATION` no
+  declara `roles` para `panel` ni para `vehiculos`, y ambos son de acceso libre por
+  diseno. **Poner un guard de rol en el layout habria sido una regresion funcional.**
+
+### Leccion de esta tanda
+
+Un permiso que parece amplio puede ser el andamiaje de un rol que todavia no existe.
+Antes de cerrar un permiso como bug, hay que preguntar por la direccion del producto:
+el codigo solo dice que hace, no por que.
