@@ -1,1 +1,14 @@
+# git runs hooks through a non-interactive `sh`, which never reads .zshrc or
+# .bashrc. On machines where pnpm lives outside the default PATH (a standalone
+# PNPM_HOME install, for example), `pnpm exec` dies with 127 when the commit
+# comes from VS Code, a git GUI or CI instead of an interactive shell. Export
+# it here so the hook is self-sufficient, and leave PATH untouched wherever
+# pnpm already resolves (corepack, CI images, interactive terminals).
+if ! command -v pnpm >/dev/null 2>&1; then
+	PNPM_HOME="${PNPM_HOME:-$HOME/.local/share/pnpm}"
+	export PNPM_HOME
+	PATH="$PNPM_HOME/bin:$PATH"
+	export PATH
+fi
+
 pnpm exec lint-staged
