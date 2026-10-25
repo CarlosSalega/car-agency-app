@@ -1,62 +1,61 @@
-import { cookies } from "next/headers";
+import type { Role } from "@generated/prisma/client";
+import { headers } from "next/headers";
 
-import { prisma } from "@/lib/db";
+import { auth } from "./server";
 
-export async function createSession(userId: string) {
-  const sessionToken = crypto.randomUUID();
-  const expires = new Date(Date.now() + 1 * 60 * 60 * 1000);
+type BetterAuthSession = NonNullable<
+  Awaited<ReturnType<typeof auth.api.getSession>>
+>;
 
-  await prisma.session.create({
-    data: {
-      sessionToken,
-      userId,
-      expires,
-    },
-  });
+/**
+ * The user shape every caller already depends on.
+ *
+ * `role` is narrowed back to the Prisma enum: better-auth types additional
+ * fields as plain strings, but the rest of the app compares against `Role`.
+ */
+export type SessionUser = Omit<BetterAuthSession["user"], "role"> & {
+  role: Role;
+};
 
-  const cookieStore = await cookies();
-  cookieStore.set("session", sessionToken, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
+/**
+ * The session shape every caller already depends on: the session record
+ * itself with `user` attached -- **not** a `{ session, user }` wrapper.
+ * 63 call sites read `session.user` and 4 read `session.expires`.
+ */
+export type AuthSession = {
+  sessionToken: string;
+  userId: string;
+  expires: Date;
+  user: SessionUser;
+};
+
+/**
+ * Reads the better-auth session from the request cookies and maps it onto the
+ * flat contract above.
+ *
+ * Returns `null` for an inactive user even though better-auth would happily
+ * return the session: deactivating an account must invalidate it immediately,
+ * which is what the old hand-rolled lookup guaranteed.
+ */
+export async function getSession(): Promise<AuthSession | null> {
+  const result = await auth.api.getSession({ headers: await headers() });
+
+  if (!result) return null;
+
+  const { session, user } = result;
+
+  if (!user.isActive) return null;
+
+  const expires = new Date(session.expiresAt);
+
+  if (expires < new Date()) return null;
+
+  return {
+    sessionToken: session.token,
+    userId: session.userId,
     expires,
-    sameSite: "lax",
-    path: "/",
-  });
-
-  return sessionToken;
-}
-
-export async function getSession() {
-  const cookieStore = await cookies();
-  const sessionToken = cookieStore.get("session")?.value;
-
-  if (!sessionToken) return null;
-
-  const session = await prisma.session.findUnique({
-    where: { sessionToken },
-    include: { user: true },
-  });
-
-  if (!session || session.expires < new Date() || !session.user.isActive) {
-    return null;
-  }
-
-  return session;
-}
-
-export async function deleteSession() {
-  const cookieStore = await cookies();
-  const sessionToken = cookieStore.get("session")?.value;
-
-  if (sessionToken) {
-    await prisma.session
-      .delete({
-        where: { sessionToken },
-      })
-      .catch(() => {});
-  }
-
-  cookieStore.delete("session");
+    user: { ...user, role: user.role as Role },
+  };
 }
 
 export async function requireAuthSession() {

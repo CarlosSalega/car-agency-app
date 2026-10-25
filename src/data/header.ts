@@ -11,6 +11,6 @@ export const HEADER_CONTENT = {
     className: "font-bold text-foreground uppercase hidden md:block",
   },
   api: {
-    authEndpoint: "/api/auth/me",
+    authEndpoint: "/api/auth/get-session",
   },
 };

@@ -60,58 +60,71 @@ enum LinkTreeCategory {
   SOCIAL
 }
 
+// Auth models follow better-auth's canonical shape. They are not Auth.js
+// models: passwords live on `Account.password` with `providerId: "credential"`
+// and `accountId` equal to the user id. Without that row, email+password
+// sign-in fails. See `src/lib/auth/server.ts`.
 model User {
-  id             String    @id @default(uuid())
-  name           String?
-  email          String    @unique
-  emailVerified  DateTime?
-  image          String?
-  role           Role      @default(COLLABORATOR)
-  isActive       Boolean   @default(true)
-  hashedPassword String?
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
-  accounts       Account[]
-  sessions       Session[]
-  cars           Car[]     @relation("UserCars")
-  logs           Log[]
-  createdBrands  Brand[]   @relation("UserBrands")
-  createdModels  Model[]   @relation("UserModels")
-  createdSellers Seller[]  @relation("UserSellers")
+  id            String    @id @default(uuid())
+  name          String?
+  email         String    @unique
+  emailVerified Boolean   @default(false)
+  image         String?
+  role          Role      @default(COLLABORATOR)
+  isActive      Boolean   @default(true)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  accounts      Account[]
+  sessions      Session[]
+  cars          Car[]     @relation("UserCars")
+  logs          Log[]
+  createdBrands Brand[]   @relation("UserBrands")
+  createdModels Model[]   @relation("UserModels")
+  createdSellers Seller[] @relation("UserSellers")
 }
 
 model Account {
-  id                String  @id @default(uuid())
-  userId            String
-  type              String
-  provider          String
-  providerAccountId String
-  refresh_token     String?
-  access_token      String?
-  expires_at        Int?
-  token_type        String?
-  scope             String?
-  id_token          String?
-  session_state     String?
-  user              User    @relation(fields: [userId], references: [id])
+  id                    String    @id @default(uuid())
+  accountId             String
+  providerId            String
+  userId                String
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@unique([provider, providerAccountId])
+  @@index([userId])
 }
 
 model Session {
-  id           String   @id @default(uuid())
-  sessionToken String   @unique
-  userId       String
-  expires      DateTime
-  user         User     @relation(fields: [userId], references: [id])
+  id        String   @id @default(uuid())
+  token     String   @unique
+  userId    String
+  expiresAt DateTime
+  ipAddress String?
+  userAgent String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
 }
 
-model VerificationToken {
+model Verification {
+  id         String   @id @default(uuid())
   identifier String
-  token      String   @unique
-  expires    DateTime
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
-  @@unique([identifier, token])
+  @@index([identifier])
 }
 
 model Brand {

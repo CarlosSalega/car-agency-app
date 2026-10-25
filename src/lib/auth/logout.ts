@@ -8,7 +8,10 @@
  */
 export async function logout(): Promise<void> {
   try {
-    await fetch("/api/auth/logout", { method: "POST" });
+    await fetch("/api/auth/sign-out", {
+      method: "POST",
+      credentials: "include",
+    });
     window.location.href = "/";
   } catch (error) {
     console.error("Error al cerrar sesión", error);

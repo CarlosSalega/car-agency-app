@@ -106,22 +106,24 @@ admin UI, car/seller/brand data model, and Cloudinary behaviour.
 - [x] T2 — Write characterization tests for the current auth: login success,
       bad password, unknown email, inactive user, session read with/without
       cookie, expiry, `requireAdmin` on a non-admin, logout. Route: inline.
-- [ ] T3 — Rewrite the four auth models in `prisma/schema.prisma` to
+- [x] T3 — Rewrite the four auth models in `prisma/schema.prisma` to
       better-auth's canonical shape, keeping PascalCase model names and mapping
       them with `modelName`. Route: inline.
-- [ ] T4 — Install `better-auth`, add `BETTER_AUTH_SECRET` and
+- [x] T4 — Install `better-auth`, add `BETTER_AUTH_SECRET` and
       `BETTER_AUTH_URL`, and create `src/lib/auth/server.ts` with
       `prismaAdapter`, `minPasswordLength: 8`, and the `additionalFields`.
       Route: inline.
-- [ ] T5 — Replace `getSession()` with an adapter over `auth.api.getSession()`
+- [x] T5 — Replace `getSession()` with an adapter over `auth.api.getSession()`
       that preserves the S5 contract; keep the guards untouched. Route: inline.
-- [ ] T6 — Mount `/api/auth/[...all]` with `toNextJsHandler`; repoint the login
+- [x] T6 — Mount `/api/auth/[...all]` with `toNextJsHandler`; repoint the login
       form, logout and the header endpoint. Route: inline.
-- [ ] T7 — Make the seed create the admin through `auth.api.signUpEmail` and
-      delete `bcryptjs` and both `hashPassword` implementations. Route: inline.
-- [ ] T8 — Reset and reseed, then prove the seeded admin reaches `/admin`.
+- [x] T7 — Make the seed create the admin with a `better-auth/crypto` hash and
+      a `credential` `Account` row, and delete `bcryptjs` and both
+      `hashPassword` implementations. Route: inline. (Deviation from the
+      original wording, which said `auth.api.signUpEmail`; see L11.)
+- [x] T8 — Reset and reseed, then prove the seeded admin reaches `/admin`.
       Route: inline.
-- [ ] T9 — Verification: characterization tests still green, `build`,
+- [x] T9 — Verification: characterization tests still green, `build`,
       `tsc --noEmit`, `test`, `lint`, `prettier --check`. Route: inline.
 
 ## Applicable checks
@@ -207,3 +209,55 @@ requires changing the seed password, which is a user-visible decision.
   Full suite after T2: **14 files / 105 tests passing**, `tsc --noEmit` exit 0,
   `lint` unchanged at 31 pre-existing problems. Committed on
   `feat/better-auth-migration` as `31fbc66`.
+- **L10** — T3/T4/T5/T6 implementation. Schema: `emailVerified Boolean`, and
+  `Session`/`Account`/`Verification` replaced by better-auth's canonical shape
+  (the model is `Verification`, not `VerificationToken`, so the adapter's
+  default model name resolves against `prisma.verification`). `server.ts` sets
+  `session.expiresIn` to 3600s to match the old one-hour window,
+  `minPasswordLength: 8`, `additionalFields` for `role`/`isActive` with
+  `input: false`, and `advanced.database.generateId` to keep uuid ids.
+  `session.ts` is now a pure adapter: better-auth's nested
+  `{ session, user }` in, the flat `{ sessionToken, userId, expires, user }`
+  out. `/api/auth/[...all]` mounts `toNextJsHandler(auth)`; the three custom
+  routes are deleted; the login form, logout helper and header endpoint point
+  at `sign-in/email`, `sign-out` and `get-session`.
+- **L11** — Deviation from S7. The seed does **not** call
+  `auth.api.signUpEmail`: the seed is a CLI process with no request context,
+  and better-auth's sign-up path sets the session cookie through
+  `next/headers`. Instead the seed (and the admin users API) hash with
+  `hashPassword` from `better-auth/crypto` and insert the `credential`
+  `Account` row explicitly. This is the same scrypt implementation the sign-in
+  endpoint verifies with, and `password.test.ts` pins that compatibility.
+- **L12** — S8 refined after the fact. `auth-middleware.test.ts` survived
+  unchanged, which is the strongest evidence the guard contract held.
+  `session.test.ts` was rewritten to assert the flat shape against a mocked
+  `auth.api.getSession` -- the mapping is the new risk. `login.test.ts` and
+  `logout.test.ts` were retired together with the routes they described: they
+  characterised code that no longer exists. `password.test.ts` replaces them
+  with the risk that actually matters now (seed hash vs. verifier).
+- **L13** — Deliberate behaviour change, both improvements: an inactive
+  account now fails sign-in with `401 FAILED_TO_CREATE_SESSION` from the
+  `databaseHooks.session.create.before` hook instead of the old
+  `403 "cuenta desactivada"`, and an unknown email returns the same
+  `401 INVALID_EMAIL_OR_PASSWORD` as a wrong password. The 403/401 split that
+  leaked account existence is gone. Verified by HTTP.
+- **L14** — Bug caught only by the end-to-end run: `src/proxy.ts` gated
+  `/admin` on a cookie literally named `session`, which better-auth never
+  sets. A valid session still redirected to `/admin/login`. Fixed with
+  `getSessionCookie(request)` from `better-auth/cookies`. The proxy stays an
+  optimistic presence check; authority remains in the layout's `getSession()`.
+- **L15** — T8 used `prisma db push --force-reset --accept-data-loss`, not
+  `migrate reset`: the project has only two historical migrations and ships
+  `db:push`, so push is its schema workflow. Prisma's built-in
+  destructive-action guard refused the command and required consent given
+  _after_ the attempt; the user confirmed explicitly and the run proceeded.
+- **L16** — T9 evidence. `pnpm build` OK (`/api/auth/[...all]` mounted),
+  `tsc --noEmit` OK, `pnpm test` 14 files / 93 tests, `prettier --check .`
+  clean, `pnpm lint` 30 problems (6 errors, 24 warnings) versus the 31/7
+  baseline -- no new problems, one fewer. End-to-end over HTTP: wrong password
+  and unknown email both 401; seeded admin 200 with `role: "ADMIN"`; session
+  expiry 60 minutes; deactivation blocks sign-in; reactivation restores it;
+  sign-out nulls the session; `/admin` and `/admin/users` 200 with a session
+  and 307 to `/admin/login` without one; admin-created user logs in with the
+  password set through the API; a 7-character password is rejected with the
+  8-character message. Database left in exact seed state: one active admin.

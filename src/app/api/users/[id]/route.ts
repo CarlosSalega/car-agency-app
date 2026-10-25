@@ -1,6 +1,8 @@
+import type { Prisma } from "@generated/prisma/client";
+import { hashPassword } from "better-auth/crypto";
 import { type NextRequest, NextResponse } from "next/server";
 
-import { getSession, hashPassword } from "@/lib/auth";
+import { getSession } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 
 export async function GET(
@@ -103,35 +105,62 @@ export async function PUT(
       );
     }
 
-    const updateData: any = {
+    const updateData: Prisma.UserUpdateInput = {
       name: data.name.trim(),
       email: data.email.trim().toLowerCase(),
-      role: data.role,
       isActive: data.isActive !== undefined ? data.isActive : true,
+      ...(data.role ? { role: data.role } : {}),
     };
 
-    if (data.password && data.password.trim()) {
-      if (data.password.length < 6) {
-        return NextResponse.json(
-          { error: "La contraseña debe tener al menos 6 caracteres" },
-          { status: 400 },
-        );
-      }
-      updateData.hashedPassword = await hashPassword(data.password);
+    const newPassword = data.password?.trim();
+
+    if (newPassword && newPassword.length < 8) {
+      return NextResponse.json(
+        { error: "La contraseña debe tener al menos 8 caracteres" },
+        { status: 400 },
+      );
     }
 
-    const user = await prisma.user.update({
-      where: { id },
-      data: updateData,
-      select: {
-        id: true,
-        name: true,
-        email: true,
-        role: true,
-        isActive: true,
-        createdAt: true,
-        updatedAt: true,
-      },
+    // One transaction: a password that fails to persist must not leave the
+    // profile fields already updated.
+    const user = await prisma.$transaction(async (tx) => {
+      const updated = await tx.user.update({
+        where: { id },
+        data: updateData,
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          role: true,
+          isActive: true,
+          createdAt: true,
+          updatedAt: true,
+        },
+      });
+
+      if (newPassword) {
+        const password = await hashPassword(newPassword);
+
+        // The credential row is what better-auth actually verifies against.
+        // It is created on sign-up; this upsert covers a user that predates it.
+        const { count } = await tx.account.updateMany({
+          where: { userId: id, providerId: "credential" },
+          data: { password },
+        });
+
+        if (count === 0) {
+          await tx.account.create({
+            data: {
+              userId: id,
+              accountId: id,
+              providerId: "credential",
+              password,
+            },
+          });
+        }
+      }
+
+      return updated;
     });
 
     await prisma.log.create({

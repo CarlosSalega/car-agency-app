@@ -1,194 +1,129 @@
 // @vitest-environment node
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import { createSession, deleteSession, getSession } from "@/lib/auth/session";
-
 /**
- * Characterization tests for the hand-rolled session layer.
+ * Contract tests for `getSession()`.
  *
- * These describe behaviour that already exists, so they are green on arrival.
- * The point is to pin the `getSession()` contract before the better-auth
- * migration, because 56 call sites depend on its exact shape: a `{ session,
- * user }` object or `null`, with `session.expires`, `user.isActive` and
- * `user.role` intact.
+ * These pin the shape 56 call sites depend on, which is **flat**: the session
+ * record itself with `user` attached -- `{ sessionToken, userId, expires,
+ * user }` -- not a `{ session, user }` wrapper. Measured across `src/`: 63
+ * reads of `session.user`, 4 of `session.expires`, 0 of `session.session`.
+ *
+ * `better-auth` returns the nested shape, so the adapter in `session.ts` is the
+ * only thing standing between the two. That mapping is what this file guards.
  */
 
-interface SessionRow {
-  sessionToken: string;
-  userId: string;
-  expires: Date;
-}
-
-interface UserRow {
-  id: string;
-  email: string;
-  name: string;
-  role: "ADMIN" | "COLLABORATOR";
-  isActive: boolean;
-}
-
-interface CookieRecord {
-  value: string;
-  options?: Record<string, unknown>;
+interface BetterAuthSession {
+  session: {
+    id: string;
+    token: string;
+    userId: string;
+    expiresAt: Date;
+  };
+  user: {
+    id: string;
+    name: string;
+    email: string;
+    emailVerified: boolean;
+    image: string | null;
+    role: string;
+    isActive: boolean;
+    createdAt: Date;
+    updatedAt: Date;
+  };
 }
 
 const state = vi.hoisted(() => ({
-  sessions: [] as SessionRow[],
-  users: new Map<string, UserRow>(),
-  cookies: new Map<string, CookieRecord>(),
+  result: null as BetterAuthSession | null,
+  getSession: vi.fn(async () => state.result),
 }));
 
-vi.mock("@/lib/db", () => ({
-  prisma: {
-    session: {
-      create: vi.fn(async ({ data }: { data: SessionRow }) => {
-        state.sessions.push(data);
-        return data;
-      }),
-      findUnique: vi.fn(
-        async ({ where }: { where: { sessionToken: string } }) => {
-          const row = state.sessions.find(
-            (s) => s.sessionToken === where.sessionToken,
-          );
-          if (!row) return null;
-          const user = state.users.get(row.userId);
-          if (!user) return null;
-          return { ...row, user };
-        },
-      ),
-      delete: vi.fn(async ({ where }: { where: { sessionToken: string } }) => {
-        const index = state.sessions.findIndex(
-          (s) => s.sessionToken === where.sessionToken,
-        );
-        if (index >= 0) state.sessions.splice(index, 1);
-        return {};
-      }),
-    },
-  },
+vi.mock("@/lib/auth/server", () => ({
+  auth: { api: { getSession: state.getSession } },
 }));
 
 vi.mock("next/headers", () => ({
-  cookies: async () => ({
-    get: (name: string) => {
-      const record = state.cookies.get(name);
-      return record ? { name, value: record.value } : undefined;
-    },
-    set: (name: string, value: string, options?: Record<string, unknown>) => {
-      state.cookies.set(name, { value, options });
-    },
-    delete: (name: string) => {
-      state.cookies.delete(name);
-    },
-  }),
+  headers: async () => new Headers(),
 }));
 
-const activeUser: UserRow = {
-  id: "user-1",
-  email: "admin@caragency.com",
-  name: "Administrador",
-  role: "ADMIN",
-  isActive: true,
-};
+import { getSession } from "@/lib/auth/session";
+
+function buildSession(overrides: Partial<BetterAuthSession["user"]> = {}) {
+  return {
+    session: {
+      id: "session-1",
+      token: "token-1",
+      userId: "user-1",
+      expiresAt: new Date(Date.now() + 60 * 60 * 1000),
+    },
+    user: {
+      id: "user-1",
+      name: "Administrador",
+      email: "admin@caragency.com",
+      emailVerified: false,
+      image: null,
+      role: "ADMIN",
+      isActive: true,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      ...overrides,
+    },
+  } satisfies BetterAuthSession;
+}
 
 beforeEach(() => {
-  state.sessions.length = 0;
-  state.users.clear();
-  state.cookies.clear();
-  state.users.set(activeUser.id, { ...activeUser });
-});
-
-describe("createSession", () => {
-  it("persists a session row and sets the session cookie", async () => {
-    await createSession(activeUser.id);
-
-    expect(state.sessions).toHaveLength(1);
-    expect(state.sessions[0]?.userId).toBe(activeUser.id);
-
-    const cookie = state.cookies.get("session");
-    expect(cookie?.value).toBe(state.sessions[0]?.sessionToken);
-  });
-
-  it("marks the cookie httpOnly, lax and path-scoped", async () => {
-    await createSession(activeUser.id);
-
-    expect(state.cookies.get("session")?.options).toMatchObject({
-      httpOnly: true,
-      sameSite: "lax",
-      path: "/",
-    });
-  });
-
-  it("expires the session one hour after creation", async () => {
-    const before = Date.now();
-    await createSession(activeUser.id);
-
-    const expires = state.sessions[0]?.expires.getTime() ?? 0;
-    const oneHour = 60 * 60 * 1000;
-    expect(expires - before).toBeGreaterThan(oneHour - 5_000);
-    expect(expires - before).toBeLessThan(oneHour + 5_000);
-  });
+  state.result = buildSession();
+  state.getSession.mockClear();
 });
 
 describe("getSession", () => {
-  it("returns null when there is no session cookie", async () => {
+  it("returns null when better-auth has no session", async () => {
+    state.result = null;
+
     await expect(getSession()).resolves.toBeNull();
   });
 
-  it("returns the session and its user for a valid cookie", async () => {
-    await createSession(activeUser.id);
-
+  it("returns the flat session shape, not a { session, user } wrapper", async () => {
     const result = await getSession();
 
     expect(result).not.toBeNull();
-    expect(result?.user.id).toBe(activeUser.id);
-    expect(result?.user.role).toBe("ADMIN");
-    expect(result?.user.isActive).toBe(true);
-    // The returned object is the session row itself, with `user` attached --
-    // not a `{ session, user }` wrapper. 56 call sites read `session.user` and
-    // `session.expires` directly.
+    // Flat: these live on the returned object itself.
+    expect(result?.sessionToken).toBe("token-1");
+    expect(result?.userId).toBe("user-1");
     expect(result?.expires).toBeInstanceOf(Date);
-    expect(result?.sessionToken).toBe(state.sessions[0]?.sessionToken);
-    expect(result?.userId).toBe(activeUser.id);
+    // The wrapper must NOT exist.
+    expect(result).not.toHaveProperty("session");
   });
 
-  it("returns null when the session has expired", async () => {
-    await createSession(activeUser.id);
-    const row = state.sessions[0];
-    if (!row) throw new Error("expected a session row");
-    row.expires = new Date(Date.now() - 1_000);
+  it("exposes the user the app reads from", async () => {
+    const result = await getSession();
 
-    await expect(getSession()).resolves.toBeNull();
+    expect(result?.user.id).toBe("user-1");
+    expect(result?.user.email).toBe("admin@caragency.com");
+    expect(result?.user.role).toBe("ADMIN");
+    expect(result?.user.isActive).toBe(true);
   });
 
   it("returns null when the user is deactivated", async () => {
-    await createSession(activeUser.id);
-    const user = state.users.get(activeUser.id);
-    if (!user) throw new Error("expected a user row");
-    user.isActive = false;
+    state.result = buildSession({ isActive: false });
 
     await expect(getSession()).resolves.toBeNull();
   });
 
-  it("returns null for a token that does not exist", async () => {
-    state.cookies.set("session", { value: "not-a-real-token" });
+  it("returns null when the session has already expired", async () => {
+    const session = buildSession();
+    session.session.expiresAt = new Date(Date.now() - 1_000);
+    state.result = session;
 
     await expect(getSession()).resolves.toBeNull();
   });
-});
 
-describe("deleteSession", () => {
-  it("removes the session row and clears the cookie", async () => {
-    await createSession(activeUser.id);
-    expect(state.sessions).toHaveLength(1);
+  it("reads the session from the request headers", async () => {
+    await getSession();
 
-    await deleteSession();
-
-    expect(state.sessions).toHaveLength(0);
-    expect(state.cookies.has("session")).toBe(false);
-  });
-
-  it("is safe when no session exists", async () => {
-    await expect(deleteSession()).resolves.toBeUndefined();
-    expect(state.cookies.has("session")).toBe(false);
+    expect(state.getSession).toHaveBeenCalledOnce();
+    expect(state.getSession).toHaveBeenCalledWith({
+      headers: expect.any(Headers),
+    });
   });
 });

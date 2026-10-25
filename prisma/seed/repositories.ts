@@ -1,8 +1,8 @@
 import crypto from "node:crypto";
 import type { PrismaClient } from "@generated/prisma/client";
+import { hashPassword } from "better-auth/crypto";
 import { brands } from "@/data/brands";
 import { modelsByBrand } from "@/data/modelsByBrand";
-import { hashPassword } from "@/lib/hash-password";
 import type { SeedCar, SeedLinkTreeLink, SeedSeller, SeedUser } from "./types";
 
 export async function resetDatabase(prisma: PrismaClient): Promise<void> {
@@ -16,18 +16,32 @@ export async function resetDatabase(prisma: PrismaClient): Promise<void> {
   await prisma.settings.deleteMany();
   await prisma.session.deleteMany();
   await prisma.account.deleteMany();
-  await prisma.verificationToken.deleteMany();
+  await prisma.verification.deleteMany();
   await prisma.user.deleteMany();
 }
 
 export async function createUser(prisma: PrismaClient, user: SeedUser) {
+  // better-auth verifies against `Account.password`, not a `User` column, and
+  // requires `accountId` to equal the user id. Hashing with
+  // `better-auth/crypto` keeps the seed on the exact scrypt implementation the
+  // sign-in endpoint verifies with -- no second hasher to drift out of sync.
+  const id = crypto.randomUUID();
+  const password = await hashPassword(user.password);
+
   return prisma.user.create({
     data: {
+      id,
       email: user.email,
-      hashedPassword: hashPassword(user.password),
       name: user.name,
       role: user.role,
       isActive: user.isActive,
+      accounts: {
+        create: {
+          accountId: id,
+          providerId: "credential",
+          password,
+        },
+      },
     },
   });
 }

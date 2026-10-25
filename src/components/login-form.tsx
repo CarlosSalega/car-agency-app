@@ -34,10 +34,11 @@ export function LoginForm() {
     if (isSubmitting) return;
 
     try {
-      const res = await fetch("/api/auth/login", {
+      const res = await fetch("/api/auth/sign-in/email", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
+        credentials: "include",
       });
 
       let result: any = null;

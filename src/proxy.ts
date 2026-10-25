@@ -1,3 +1,4 @@
+import { getSessionCookie } from "better-auth/cookies";
 import type { NextRequest } from "next/server";
 
 import { NextResponse } from "next/server";
@@ -32,13 +33,15 @@ export function proxy(request: NextRequest) {
   });
 
   if (pathname.startsWith("/admin")) {
-    const sessionCookie = request.cookies.get("session");
-
     if (pathname === "/admin/login") {
       return response;
     }
 
-    if (!sessionCookie) {
+    // Optimistic gate only: presence of better-auth's session cookie, whose
+    // name is `better-auth.session_token` (prefixed further on https). The
+    // authoritative check -- signature, expiry and `isActive` -- happens in
+    // the admin layout via `getSession()`.
+    if (!getSessionCookie(request)) {
       const loginUrl = new URL("/admin/login", request.url);
       return NextResponse.redirect(loginUrl);
     }

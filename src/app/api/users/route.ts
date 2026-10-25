@@ -1,8 +1,9 @@
 import type { Prisma } from "@generated/prisma/client";
+import { hashPassword } from "better-auth/crypto";
 
 import { type NextRequest, NextResponse } from "next/server";
 
-import { getSession, hashPassword } from "@/lib/auth";
+import { getSession } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 
 export async function GET(request: NextRequest) {
@@ -112,9 +113,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    if (data.password.length < 6) {
+    if (data.password.length < 8) {
       return NextResponse.json(
-        { error: "La contraseña debe tener al menos 6 caracteres" },
+        { error: "La contraseña debe tener al menos 8 caracteres" },
         { status: 400 },
       );
     }
@@ -139,14 +140,25 @@ export async function POST(request: NextRequest) {
     }
 
     const hashedPassword = await hashPassword(data.password);
+    // better-auth reads credentials from `Account`, not from a column on
+    // `User`. `accountId` must equal the user id, so the id is generated here
+    // rather than left to the database default.
+    const userId = crypto.randomUUID();
 
     const user = await prisma.user.create({
       data: {
+        id: userId,
         name: data.name.trim(),
         email: data.email.trim().toLowerCase(),
-        hashedPassword,
         role: data.role || "COLLABORATOR",
         isActive: data.isActive !== undefined ? data.isActive : true,
+        accounts: {
+          create: {
+            accountId: userId,
+            providerId: "credential",
+            password: hashedPassword,
+          },
+        },
       },
       select: {
         id: true,
