@@ -20,4 +20,7 @@ next-env.d.ts
 /prisma/generated/
 .claude
 .agents
+# Local CodeGraph index. It is machine-specific and rebuilt by the tool, so it
+# must never be committed or shared between checkouts.
+.codegraph/
 skills-lock.json
