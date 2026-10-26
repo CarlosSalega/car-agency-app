@@ -351,3 +351,13 @@ totpURI, backupCodes: 10}`, and the row lands with `verified: false` while
   and verified against the Resend test sender, which exercises every code path
   up to the API call. What a verified domain changes is the provider's
   acceptance, not our code.
+- **L24** — Regression the user caught in the browser: the 2FA settings cards
+  rendered with the title flush against the top edge and the button against the
+  bottom. Root cause is the local `Card`: it ships `px-6` on header and content
+  and a `gap-4` between them, but **no vertical padding** -- `py-*` only appears
+  through `[.border-b]` / `[.border-t]` on the header and footer, so a
+  `border-0` card gets none. Every other card in `(auth)` declares `py-8`; mine
+  did not. Fixed with `py-8` on all four states, and the rule is now documented
+  in `src/components/ui/card.tsx` so the next borderless card does not repeat
+  it. Evidence: the rendered HTML now carries
+  `data-slot="card" class="... bg-card border-0 py-8"`.

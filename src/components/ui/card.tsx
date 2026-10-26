@@ -6,6 +6,10 @@ function Card({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="card"
+      // No vertical padding on purpose: `[.border-b]` / `[.border-t]` add it to
+      // the header and footer, so a card that declares a border gets it for
+      // free. A borderless card (`border-0`) must add its own `py-*`, or the
+      // content sits flush against the top and bottom edges.
       className={cn(
         "bg-card text-card-foreground flex flex-col gap-4 rounded-xl border shadow-sm",
         className,

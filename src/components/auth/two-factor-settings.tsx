@@ -167,7 +167,7 @@ export function TwoFactorSettings({ enabled }: { enabled: boolean }) {
 
   if (phase === "setup") {
     return (
-      <Card className="bg-card border-0">
+      <Card className="bg-card border-0 py-8">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <ShieldCheck className="size-5" />
@@ -283,7 +283,7 @@ export function TwoFactorSettings({ enabled }: { enabled: boolean }) {
 
   if (phase === "enable-password") {
     return (
-      <Card className="bg-card border-0">
+      <Card className="bg-card border-0 py-8">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <ShieldCheck className="size-5" />
@@ -344,7 +344,7 @@ export function TwoFactorSettings({ enabled }: { enabled: boolean }) {
 
   if (phase === "disable-password") {
     return (
-      <Card className="bg-card border-0">
+      <Card className="bg-card border-0 py-8">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <ShieldOff className="size-5" />
@@ -407,7 +407,7 @@ export function TwoFactorSettings({ enabled }: { enabled: boolean }) {
   }
 
   return (
-    <Card className="bg-card border-0">
+    <Card className="bg-card border-0 py-8">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           {enabled ? (
