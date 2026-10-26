@@ -229,6 +229,7 @@ export function SearchFilters({
                 <SelectItem value="SEDAN">Sedán</SelectItem>
                 <SelectItem value="HATCHBACK">Hatchback</SelectItem>
                 <SelectItem value="PICKUP">Pickup</SelectItem>
+                <SelectItem value="VAN">Furgón</SelectItem>
                 <SelectItem value="COUPE">Coupé</SelectItem>
               </SelectContent>
             </Select>

@@ -16,6 +16,7 @@ export const CAR_TYPE_OPTIONS = [
   { value: CarType.SUV, label: "SUV" },
   { value: CarType.HATCHBACK, label: "Hatchback" },
   { value: CarType.PICKUP, label: "Pickup" },
+  { value: CarType.VAN, label: "Furgón" },
   { value: CarType.COUPE, label: "Coupé" },
 ] as const;
 

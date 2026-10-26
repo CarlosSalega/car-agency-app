@@ -10,7 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { getCarBadge } from "@/components/status-badges";
 import { PAYMENT_METHOD_OPTIONS } from "@/lib/constants/enum-options";
-import { fuelLabels } from "@/lib/constants/constants";
+import { carTypeLabels, fuelLabels } from "@/lib/constants/constants";
 
 interface CarDetailSpecsProps {
   car: Car & {
@@ -38,7 +38,7 @@ export function CarDetailSpecs({ car }: CarDetailSpecsProps) {
     { label: "Versión", value: car.version || "N/A" },
     { label: "Año", value: car.year.toString() },
     { label: "Kilometraje", value: `${formatKm(car.kilometers)} km` },
-    { label: "Tipo", value: car.type },
+    { label: "Tipo", value: carTypeLabels[car.type] ?? car.type },
     {
       label: "Combustible",
       value: fuelLabels[car.fuelType] ?? car.fuelType,

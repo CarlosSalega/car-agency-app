@@ -18,6 +18,8 @@ enum CarType {
   HATCHBACK
   PICKUP
   COUPE
+  // Argentinian market term: "Furgón". Values stay in English like the rest.
+  VAN
 }
 
 enum CarStatus {
