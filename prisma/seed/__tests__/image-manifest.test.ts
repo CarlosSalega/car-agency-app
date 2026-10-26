@@ -7,6 +7,7 @@ import {
   validateImageManifest,
 } from "../image-manifest";
 import { indexLocalImages, matchImagesForCar } from "../images";
+import { seedCars } from "../cars";
 
 const files = [
   "toyota_corolla_1.webp",
@@ -87,6 +88,24 @@ describe("seed image manifest", () => {
   it("has a valid manifest", () => {
     expect(validateImageManifest(imageManifest)).toEqual([]);
   });
+
+  // The catalog is meant to publish every vehicle whose photos ship in
+  // `public/autos`. A photo group with no seed car would mean an asset library
+  // that grew past the catalog again.
+  it("publishes a seed car for every vehicle that has photos", () => {
+    const carKeys = new Set(seedCars.map((car) => car.key));
+    const withPhotos = imageManifest.entries.filter(
+      (entry) => entry.files.length > 0,
+    );
+
+    expect(withPhotos.length).toBeGreaterThan(0);
+    for (const entry of withPhotos) {
+      expect(
+        carKeys.has(entry.carKey),
+        `${entry.carKey} has photos but no seed car`,
+      ).toBe(true);
+    }
+  });
 });
 
 describe("staged asset groups", () => {
@@ -104,19 +123,26 @@ describe("staged asset groups", () => {
   });
 
   it("separates claimed files, staged files and true orphans", () => {
-    const partition = partitionImageAssets(imageManifest, [
-      ...files,
+    // Self-contained: the real manifest claims every asset, so it has no staged
+    // group left to exercise here.
+    const manifest = {
+      entries: [{ carKey: "corolla", files: ["toyota_corolla_1.webp"] }],
+      stagedAssets: [
+        { vehicleKey: "toyota_hilux", label: "Toyota Hilux", reason: "r" },
+      ],
+    };
+
+    const partition = partitionImageAssets(manifest, [
+      "toyota_corolla_1.webp",
+      "toyota_corolla_2.webp",
       "toyota_hilux_1.webp",
       "mystery_vehicle_9.webp",
     ]);
 
-    expect(partition.claimed).toContain("toyota_corolla_1.webp");
-    expect(partition.staged).toEqual([
-      "toyota_corollacross_1.webp",
-      "toyota_hilux_1.webp",
-    ]);
+    expect(partition.claimed).toEqual(["toyota_corolla_1.webp"]);
+    expect(partition.staged).toEqual(["toyota_hilux_1.webp"]);
     expect(partition.orphans).toEqual([
-      "unknown_vehicle.webp",
+      "toyota_corolla_2.webp",
       "mystery_vehicle_9.webp",
     ]);
   });

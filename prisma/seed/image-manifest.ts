@@ -5,81 +5,16 @@ import type {
 } from "./types";
 
 /**
- * Vehicles whose images exist in `public/autos` but that the seed catalog does
- * not publish yet. The catalog currently ships 6 cars; the asset library holds
- * 15 vehicles.
+ * Asset groups for vehicles that have photos in `public/autos` but no car in the
+ * seed catalog.
  *
- * Declaring the gap here is deliberate. The alternative — leaving these files
- * unmentioned — let 53 assets sit unused with no signal that the catalog and
- * the asset folder had drifted apart. Each group is expanded to files by
- * prefix, so adding a photo for one of these vehicles needs no change here,
- * while adding a photo for a *new* vehicle surfaces as an orphan and fails.
+ * The catalog now publishes every vehicle the asset library holds, so this list
+ * is empty. The mechanism stays: a photo dropped in for a vehicle that is
+ * neither published nor declared here surfaces as an orphan and fails the seed,
+ * instead of going unused silently. Declaring a group here is how a future gap
+ * is acknowledged without publishing the car.
  */
-const CATALOG_NOT_PUBLISHED =
-  "Photos available; vehicle not published in the seed catalog yet.";
-
-export const stagedAssets: StagedAssetGroup[] = [
-  {
-    vehicleKey: "chevrolet_cruze",
-    label: "Chevrolet Cruze",
-    reason: CATALOG_NOT_PUBLISHED,
-  },
-  {
-    vehicleKey: "chevrolet_tracker_2025",
-    label: "Chevrolet Tracker 2025",
-    reason: CATALOG_NOT_PUBLISHED,
-  },
-  {
-    vehicleKey: "fiat_cronos",
-    label: "Fiat Cronos",
-    reason: CATALOG_NOT_PUBLISHED,
-  },
-  {
-    vehicleKey: "ford_ranger",
-    label: "Ford Ranger",
-    reason: CATALOG_NOT_PUBLISHED,
-  },
-  {
-    vehicleKey: "nissan_frontier",
-    label: "Nissan Frontier",
-    reason: CATALOG_NOT_PUBLISHED,
-  },
-  {
-    vehicleKey: "renault_kangoo",
-    label: "Renault Kangoo",
-    reason: CATALOG_NOT_PUBLISHED,
-  },
-  {
-    vehicleKey: "renault_sandero",
-    label: "Renault Sandero",
-    reason: CATALOG_NOT_PUBLISHED,
-  },
-  {
-    vehicleKey: "toyota_corollacross",
-    label: "Toyota Corolla Cross",
-    reason: CATALOG_NOT_PUBLISHED,
-  },
-  {
-    vehicleKey: "toyota_hilux",
-    label: "Toyota Hilux",
-    reason: CATALOG_NOT_PUBLISHED,
-  },
-  {
-    vehicleKey: "toyota_yaris",
-    label: "Toyota Yaris",
-    reason: CATALOG_NOT_PUBLISHED,
-  },
-  {
-    vehicleKey: "volkswagen_amarok_2025",
-    label: "Volkswagen Amarok 2025",
-    reason: CATALOG_NOT_PUBLISHED,
-  },
-  {
-    vehicleKey: "volkswagen_taos_2025",
-    label: "Volkswagen Taos 2025",
-    reason: CATALOG_NOT_PUBLISHED,
-  },
-];
+export const stagedAssets: StagedAssetGroup[] = [];
 
 export const imageManifest: ImageManifest = {
   entries: [
@@ -100,6 +35,115 @@ export const imageManifest: ImageManifest = {
         "toyota_corolla_3.webp",
         "toyota_corolla_4.webp",
         "toyota_corolla_5.webp",
+      ],
+    },
+    {
+      carKey: "chevrolet-cruze-2019",
+      files: [
+        "chevrolet_cruze_1.webp",
+        "chevrolet_cruze_2.webp",
+        "chevrolet_cruze_3.webp",
+        "chevrolet_cruze_4.webp",
+        "chevrolet_cruze_5.webp",
+      ],
+    },
+    {
+      carKey: "chevrolet-tracker-2025",
+      files: [
+        "chevrolet_tracker_2025_1.webp",
+        "chevrolet_tracker_2025_2.webp",
+        "chevrolet_tracker_2025_3.webp",
+        "chevrolet_tracker_2025_4.webp",
+        "chevrolet_tracker_2025_5.webp",
+      ],
+    },
+    {
+      carKey: "fiat-cronos-2022",
+      files: ["fiat_cronos_1.webp", "fiat_cronos_2.webp", "fiat_cronos_3.webp"],
+    },
+    {
+      carKey: "ford-ranger-2021",
+      files: [
+        "ford_ranger_1.webp",
+        "ford_ranger_2.webp",
+        "ford_ranger_3.webp",
+        "ford_ranger_4.webp",
+      ],
+    },
+    {
+      carKey: "nissan-frontier-2020",
+      files: [
+        "nissan_frontier_1.webp",
+        "nissan_frontier_2.webp",
+        "nissan_frontier_3.webp",
+        "nissan_frontier_4.webp",
+        "nissan_frontier_5.webp",
+      ],
+    },
+    {
+      carKey: "renault-kangoo-2019",
+      files: [
+        "renault_kangoo_1.webp",
+        "renault_kangoo_2.webp",
+        "renault_kangoo_3.webp",
+        "renault_kangoo_4.webp",
+      ],
+    },
+    {
+      carKey: "renault-sandero-2020",
+      files: [
+        "renault_sandero_1.webp",
+        "renault_sandero_2.webp",
+        "renault_sandero_3.webp",
+        "renault_sandero_4.webp",
+        "renault_sandero_5.webp",
+      ],
+    },
+    {
+      carKey: "toyota-corolla-cross-2023",
+      files: [
+        "toyota_corollacross_1.webp",
+        "toyota_corollacross_2.webp",
+        "toyota_corollacross_3.webp",
+        "toyota_corollacross_4.webp",
+        "toyota_corollacross_5.webp",
+      ],
+    },
+    {
+      carKey: "toyota-hilux-2022",
+      files: [
+        "toyota_hilux_1.webp",
+        "toyota_hilux_2.webp",
+        "toyota_hilux_3.webp",
+        "toyota_hilux_4.webp",
+        "toyota_hilux_5.webp",
+      ],
+    },
+    {
+      carKey: "toyota-yaris-2021",
+      files: [
+        "toyota_yaris_1.webp",
+        "toyota_yaris_2.webp",
+        "toyota_yaris_3.webp",
+        "toyota_yaris_4.webp",
+      ],
+    },
+    {
+      carKey: "volkswagen-amarok-2025",
+      files: [
+        "volkswagen_amarok_2025_1.webp",
+        "volkswagen_amarok_2025_2.webp",
+        "volkswagen_amarok_2025_3.webp",
+        "volkswagen_amarok_2025_4.webp",
+      ],
+    },
+    {
+      carKey: "volkswagen-taos-2025",
+      files: [
+        "volkswagen_taos_2025_1.webp",
+        "volkswagen_taos_2025_2.webp",
+        "volkswagen_taos_2025_3.webp",
+        "volkswagen_taos_2025_4.webp",
       ],
     },
     { carKey: "renault-clio-2013", files: [] },
