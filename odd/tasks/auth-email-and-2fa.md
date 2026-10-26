@@ -109,14 +109,14 @@ email as a second factor (TOTP only), and any change to the car/seller domain.
       logging, never throws) and `src/lib/email/templates.ts` (reset template).
       `RESEND_API_KEY`, `RESEND_FROM_EMAIL`, `BETTER_AUTH_SECRET` and
       `BETTER_AUTH_URL` documented in `.env.example`. Route: inline. Covers S1,
-      S8. Commit: pending.
+      S8. Commit: `e013ef5`.
 - [x] T2 — Password reset: `sendResetPassword`, `revokeSessionsOnPasswordReset`,
       `backgroundTasks.handler` via `after()`, `/forgot-password` and
       `/reset-password` in the `(auth)` route group, plus the link on the login
-      form. Route: inline. Covers S2, S3, S4, S8. Commit: pending.
+      form. Route: inline. Covers S2, S3, S4, S8. Commit: `e013ef5`.
 - [x] T3 — Session revocation on the admin password path in
       `PUT /api/users/[id]`, inside the existing transaction, sparing the acting
-      admin's own session. Route: inline. Covers S5. Commit: pending.
+      admin's own session. Route: inline. Covers S5. Commit: `e013ef5`.
 - [ ] T4 — Email verification: `sendVerificationEmail`, `/verify-email`
       landing page, and a verification status plus resend action in the admin
       users table. Route: inline. Covers S6.
@@ -128,10 +128,10 @@ email as a second factor (TOTP only), and any change to the car/seller domain.
 - [x] T6 — Tests for this slice: `sendEmail` with Resend mocked (payload,
       missing config, provider rejection, throw), reset template rendering and
       escaping, and the admin password path's session deletion including the
-      self-change exception. Route: inline. Commit: pending.
+      self-change exception. Route: inline. Commit: `e013ef5`.
 - [x] T7 — Verification for this slice: `tsc --noEmit`, `test`, `build`,
       `lint`, `prettier --check`, plus a real end-to-end run against the running
-      app. Route: inline. Evidence in L9-L11. Commit: pending.
+      app. Route: inline. Evidence in L9-L11. Commit: `e013ef5`.
 
 ## Open decisions
 
