@@ -361,3 +361,18 @@ totpURI, backupCodes: 10}`, and the row lands with `verified: false` while
   in `src/components/ui/card.tsx` so the next borderless card does not repeat
   it. Evidence: the rendered HTML now carries
   `data-slot="card" class="... bg-card border-0 py-8"`.
+- **L25** — `requireAuthSession` threw a plain `Error` when it found no session,
+  on the assumption that the admin layout had already guaranteed one. It had
+  not: layout and page render concurrently, so with a cookie pointing at a
+  deleted session row the layout's `redirect()` and the page's `throw()` landed
+  in the same response. Next downgraded the clean `307` to a `200` carrying a
+  one-second meta refresh **plus** an error payload, and logged
+  `⨯ Error: Sesión no encontrada`. Fixed by redirecting to `/admin/login`
+  instead of throwing -- `redirect()` raises its own control-flow error, so it
+  composes with the layout's redirect into one `307`. Pinned by two tests in
+  `src/lib/auth/__tests__/session.test.ts` (rejection carries the
+  `NEXT_REDIRECT;replace;/admin/login;307;` digest; a real session is returned).
+  Evidence after the fix: the error payload is gone from the response and the
+  server logs no new guard errors. Note: the `200` + meta refresh for a stale
+  cookie remains, because the redirect now happens after the shell has streamed
+  -- that is Next's fallback, it terminates in one hop, and it is not a loop.

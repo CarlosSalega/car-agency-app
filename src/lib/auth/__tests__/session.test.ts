@@ -46,7 +46,19 @@ vi.mock("next/headers", () => ({
   headers: async () => new Headers(),
 }));
 
-import { getSession } from "@/lib/auth/session";
+// `redirect()` is control flow, not a value: Next throws an error carrying the
+// `NEXT_REDIRECT` digest. The mock reproduces that so the guard can be asserted
+// without a Next runtime.
+vi.mock("next/navigation", () => ({
+  redirect: (url: string) => {
+    const digest = `NEXT_REDIRECT;replace;${url};307;`;
+    const error = new Error(digest) as Error & { digest: string };
+    error.digest = digest;
+    throw error;
+  },
+}));
+
+import { getSession, requireAuthSession } from "@/lib/auth/session";
 
 function buildSession(overrides: Partial<BetterAuthSession["user"]> = {}) {
   return {
@@ -125,5 +137,24 @@ describe("getSession", () => {
     expect(state.getSession).toHaveBeenCalledWith({
       headers: expect.any(Headers),
     });
+  });
+});
+
+describe("requireAuthSession", () => {
+  it("redirects to the login page instead of throwing a plain error", async () => {
+    state.result = null;
+
+    // A throw here is what downgraded the layout's 307 to a 200 + meta refresh
+    // when a stale cookie pointed at a deleted session row.
+    await expect(requireAuthSession()).rejects.toMatchObject({
+      digest: "NEXT_REDIRECT;replace;/admin/login;307;",
+    });
+  });
+
+  it("returns the session when one exists", async () => {
+    const session = await requireAuthSession();
+
+    expect(session.user.id).toBe("user-1");
+    expect(session.sessionToken).toBe("token-1");
   });
 });

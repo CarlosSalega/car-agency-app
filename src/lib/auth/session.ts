@@ -1,5 +1,6 @@
 import type { Role } from "@generated/prisma/client";
 import { headers } from "next/headers";
+import { redirect } from "next/navigation";
 
 import { auth } from "./server";
 
@@ -58,12 +59,22 @@ export async function getSession(): Promise<AuthSession | null> {
   };
 }
 
+/**
+ * The page-level guard: every admin page starts with this.
+ *
+ * It **redirects** instead of throwing. Throwing looked equivalent -- the layout
+ * already redirects, so a page should never see a null session -- but the layout
+ * and the page render concurrently. When a stale cookie points at a session row
+ * that no longer exists, the page's throw lands while the layout is redirecting,
+ * and Next downgrades the clean `307` to a `200` carrying a one-second meta
+ * refresh plus an error payload. The browser then reloads instead of navigating.
+ *
+ * `redirect()` raises its own control-flow error, so it composes with the
+ * layout's redirect: both point at `/admin/login` and Next resolves them to a
+ * single `307`.
+ */
 export async function requireAuthSession() {
   const session = await getSession();
-  if (!session) {
-    throw new Error(
-      "Sesión no encontrada. Esto no debería ocurrir si el layout está funcionando correctamente.",
-    );
-  }
+  if (!session) redirect("/admin/login");
   return session;
 }
