@@ -1,5 +1,6 @@
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
+import { twoFactor } from "better-auth/plugins";
 import { after } from "next/server";
 
 import { prisma } from "@/lib/db";
@@ -100,6 +101,13 @@ export const auth = betterAuth({
       },
     },
   },
+  plugins: [
+    // TOTP only. The plugin also supports email/SMS OTP, which would need a
+    // `sendOTP` handler and a channel; TOTP needs neither.
+    twoFactor({
+      issuer: "Car Agency",
+    }),
+  ],
   advanced: {
     backgroundTasks: {
       handler: (promise) => {

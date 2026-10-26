@@ -3,6 +3,7 @@ import {
   Car,
   Users,
   Settings,
+  ShieldCheck,
   LogOut,
   Globe,
 } from "lucide-react";
@@ -49,6 +50,14 @@ export const ADMIN_NAVIGATION: AdminNavItem[] = [
     href: "/admin/config",
     icon: Settings,
     roles: ["ADMIN"],
+    showInHeader: true,
+    showInDropdown: true,
+  },
+  {
+    id: "security",
+    label: "Seguridad",
+    href: "/admin/security",
+    icon: ShieldCheck,
     showInHeader: true,
     showInDropdown: true,
   },

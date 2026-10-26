@@ -52,6 +52,15 @@ export function LoginForm() {
         return;
       }
 
+      // The password was correct, but better-auth deleted the session it had
+      // just created and left only a short-lived `2fa-*` cookie. Until a code
+      // is verified there is no session, so `/admin` would bounce back here.
+      if (result?.twoFactorRedirect) {
+        toast.success("Ingresá el código de tu app");
+        router.push("/two-factor");
+        return;
+      }
+
       toast.success("¡Inicio de sesión exitoso!");
       reset();
       window.location.href = "/admin";

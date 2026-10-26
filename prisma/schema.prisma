@@ -65,22 +65,43 @@ enum LinkTreeCategory {
 // and `accountId` equal to the user id. Without that row, email+password
 // sign-in fails. See `src/lib/auth/server.ts`.
 model User {
-  id            String    @id @default(uuid())
-  name          String?
-  email         String    @unique
-  emailVerified Boolean   @default(false)
-  image         String?
-  role          Role      @default(COLLABORATOR)
-  isActive      Boolean   @default(true)
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  accounts      Account[]
-  sessions      Session[]
-  cars          Car[]     @relation("UserCars")
-  logs          Log[]
-  createdBrands Brand[]   @relation("UserBrands")
-  createdModels Model[]   @relation("UserModels")
-  createdSellers Seller[] @relation("UserSellers")
+  id               String      @id @default(uuid())
+  name             String?
+  email            String      @unique
+  emailVerified    Boolean     @default(false)
+  image            String?
+  role             Role        @default(COLLABORATOR)
+  isActive         Boolean     @default(true)
+  twoFactorEnabled Boolean     @default(false)
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
+  accounts         Account[]
+  sessions         Session[]
+  twoFactors       TwoFactor[]
+  cars             Car[]       @relation("UserCars")
+  logs             Log[]
+  createdBrands    Brand[]     @relation("UserBrands")
+  createdModels    Model[]     @relation("UserModels")
+  createdSellers   Seller[]    @relation("UserSellers")
+}
+
+// Added by the better-auth `twoFactor` plugin, not declared in
+// `additionalFields`: the plugin owns the field and its schema. It is the
+// switch the sign-in hook reads to decide whether a password alone is enough.
+model TwoFactor {
+  id                      String    @id @default(uuid())
+  secret                  String
+  backupCodes             String
+  userId                  String
+  verified                Boolean   @default(true)
+  failedVerificationCount Int       @default(0)
+  lockedUntil             DateTime?
+  createdAt               DateTime  @default(now())
+  updatedAt               DateTime  @updatedAt
+  user                    User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([secret])
 }
 
 model Account {

@@ -45,6 +45,7 @@
     "next": "16.3.6",
     "next-cloudinary": "6.17.5",
     "pg": "^8.23.0",
+    "qrcode.react": "^4.2.0",
     "react": "19.2.8",
     "react-dom": "19.2.8",
     "react-hook-form": "7.66.1",

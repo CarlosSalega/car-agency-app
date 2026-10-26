@@ -122,11 +122,13 @@ email as a second factor (TOTP only), and any change to the car/seller domain.
       route at `/api/users/[id]/verify-email` (address taken from the row), and
       a verification badge plus a send action in the admin users table. Route:
       inline. Covers S6. Commit: pending.
-- [ ] T5 — 2FA: `twoFactor()` plugin, Prisma migration for
+- [x] T5 — 2FA: `twoFactor()` plugin, Prisma migration for
       `User.twoFactorEnabled` and the `TwoFactor` model, `/admin/security`
       (enable, QR, confirm, backup codes, disable), `/two-factor` (login step),
-      and the `twoFactorRedirect` branch in the login form. Adds a QR
-      dependency. Route: inline. Covers S7, S9.
+      and the `twoFactorRedirect` branch in the login form. Adds `qrcode.react`.
+      Route: inline. Covers S7, S9. Includes a test pinning that a
+      `twoFactorRedirect` response goes to `/two-factor` and not `/admin`.
+      Commit: pending.
 - [x] T6 — Tests for this slice: `sendEmail` with Resend mocked (payload,
       missing config, provider rejection, throw), reset template rendering and
       escaping, and the admin password path's session deletion including the
@@ -143,11 +145,14 @@ email as a second factor (TOTP only), and any change to the car/seller domain.
    is enough to exercise the flow and not enough for real users. A verified
    domain plus a `RESEND_FROM_EMAIL` change is the only step left for
    production. No code change needed.
-2. **Email verification gating.** Recommended: do not gate login (S6). Confirm
-   if you want it enforced instead, knowing it locks out every current account.
-3. **2FA placement.** Recommended: its own `/admin/security` page. The
-   alternative is folding it into `/admin/config`, which is currently
-   site-wide settings, not per-user.
+2. **Email verification gating — RESOLVED.** Not enforced. Every account is
+   admin-provisioned and the seeded admin predates verification, so enabling it
+   would lock out the only way in while protecting nothing. Verification is
+   still built and surfaced: it is the only signal that catches a mistyped
+   address, which is what makes a password reset dangerous.
+3. **2FA placement — RESOLVED.** Its own `/admin/security` page, open to every
+   role because it is per-user. The login step lives at `/two-factor` in the
+   `(auth)` group for the same reason as reset: there is no session yet.
 
 ## Applicable checks
 
@@ -286,3 +291,48 @@ email for the reset link"}`. Repeated requests → `429`, which is per-IP and
   tests; `build` clean with `/verify-email` and `/api/users/[id]/verify-email`
   in the route list; `prettier --check` clean; `lint` still 30 (6 errors, 24
   warnings).
+- **L17** — T5 shipped. The plugin's own two-step design was kept rather than
+  short-circuited: `enable` stores the secret with `verified: false` and
+  returns the TOTP URI plus 10 backup codes, and `twoFactorEnabled` only flips
+  after a correct code through `verify-totp`. That gap is what stops a user from
+  locking themselves out with an app that never scanned the QR. `issuer` is
+  "Car Agency" so the entry reads correctly in the authenticator.
+- **L18** — Finding worth keeping: better-auth rejects state-changing auth
+  endpoints without an `Origin` header (`MISSING_OR_NULL_ORIGIN`). `sign-in`
+  tolerated its absence, `two-factor/enable` did not. Any future non-browser
+  client, script, or test harness that talks to these endpoints must send it.
+- **L19** — Cosmetic quirk, not a bug to fix: the `verify-totp` response body
+  reports `twoFactorEnabled: false` because it serializes the user snapshot read
+  before the update. The database is correct immediately afterwards, and the
+  next `getSession` reflects it, which is what the UI reads.
+- **L20** — Backup codes are stored hashed by the plugin (the column holds a
+  334-character blob for 10 codes, not JSON), so they cannot be recovered or
+  re-displayed -- matching the "guardalos ahora" copy on the setup screen. A
+  used code is consumed: replaying it returns `INVALID_BACKUP_CODE`.
+- **L21** — T5 end-to-end evidence, `next start` on :3000, same seed database:
+  - Sign-in without 2FA → `200` with a session, as before.
+  - `POST /api/auth/two-factor/enable` with the password → `{method:"totp",
+totpURI, backupCodes: 10}`, and the row lands with `verified: false` while
+    `twoFactorEnabled` stays `false`.
+  - Confirming with a real TOTP code (generated from the secret) → `200`, and
+    `twoFactorEnabled` becomes `true`.
+  - A fresh password-only sign-in → `{"twoFactorRedirect":true,
+"twoFactorMethods":["totp"]}`, `get-session` returns `null`, and `/admin`
+    answers `307` to `/admin/login`. That is S9: the password alone is not
+    enough, and the guard is what proves it.
+  - `verify-totp` with the code → session created; `get-session` returns the
+    admin with `twoFactorEnabled: true`; `/admin` and `/admin/security` answer
+    `200`; the page renders "Desactivar 2FA", i.e. it reads the real state.
+  - A wrong code → `401 INVALID_CODE` and `failedVerificationCount` increments.
+  - `verify-backup-code` with a real backup code → session created; replaying
+    the same code → `401 INVALID_BACKUP_CODE`.
+  - `disable` with the password → `200`, the `TwoFactor` row is deleted and
+    `twoFactorEnabled` returns to `false`.
+  - Cleanup: sessions, verification rows and any `TwoFactor` row removed; the
+    database is back at exact seed state (one active admin, unverified, 2FA
+    off) and `admin1234` signs in without a second step.
+- **L22** — Verification totals after T5: `tsc` clean; `test` 19 files / 116
+  tests; `build` clean with `/admin/security` and `/two-factor` in the route
+  list; `prettier --check` clean; `lint` 28 problems (6 errors, 22 warnings) —
+  two warnings fewer than the post-migration baseline and no new ones, because
+  rewriting `users-columns.tsx` dropped an unused import.
