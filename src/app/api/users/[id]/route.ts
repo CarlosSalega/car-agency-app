@@ -158,6 +158,20 @@ export async function PUT(
             },
           });
         }
+
+        // A new password has to invalidate every session the old one opened,
+        // otherwise an attacker holding a stolen session survives the change
+        // that was supposed to lock them out. When an admin changes their own
+        // password, the session that made this request is spared so the
+        // response is not immediately followed by a logout.
+        await tx.session.deleteMany({
+          where: {
+            userId: id,
+            ...(id === session.user.id
+              ? { NOT: { token: session.sessionToken } }
+              : {}),
+          },
+        });
       }
 
       return updated;

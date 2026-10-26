@@ -2,6 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AlertCircle } from "lucide-react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -134,6 +135,13 @@ export function LoginForm() {
               <span className="bg-black/80 text-base">Ingresar</span>
             )}
           </Button>
+
+          <Link
+            href="/forgot-password"
+            className="text-muted-foreground hover:text-foreground block text-center text-sm underline-offset-4 hover:underline"
+          >
+            ¿Olvidaste tu contraseña?
+          </Link>
         </form>
       </CardContent>
     </Card>

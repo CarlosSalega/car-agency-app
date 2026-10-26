@@ -48,6 +48,7 @@
     "react": "19.2.8",
     "react-dom": "19.2.8",
     "react-hook-form": "7.66.1",
+    "resend": "^6.34.1",
     "slugify": "1.6.6",
     "sonner": "2.0.7",
     "tailwind-merge": "3.4.0",

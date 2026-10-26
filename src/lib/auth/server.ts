@@ -1,12 +1,15 @@
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
+import { after } from "next/server";
 
 import { prisma } from "@/lib/db";
+import { sendEmail } from "@/lib/email/send";
+import { resetPasswordEmail } from "@/lib/email/templates";
 
 /**
  * The single better-auth instance.
  *
- * Two deliberate choices worth naming:
+ * Deliberate choices worth naming:
  *
  * 1. `session.expiresIn` is one hour, matching the hand-rolled session it
  *    replaces. The 56 call sites read `session.expires` and assume that window.
@@ -15,6 +18,13 @@ import { prisma } from "@/lib/db";
  *    `isActive`, so without this an admin-disabled user could still obtain a
  *    session; aborting session creation keeps the old guarantee that a
  *    deactivated account cannot stay signed in.
+ * 3. `backgroundTasks.handler` routes better-auth's deferred work through
+ *    Next's `after()`. By default better-auth *awaits* the reset email inside
+ *    the request, which would make a known address answer measurably slower
+ *    than an unknown one -- the timing oracle `request-password-reset` works
+ *    hard to avoid elsewhere.
+ * 4. `revokeSessionsOnPasswordReset` is on because a password change has to
+ *    invalidate whatever session an attacker may already hold.
  */
 export const auth = betterAuth({
   database: prismaAdapter(prisma, { provider: "postgresql" }),
@@ -26,6 +36,13 @@ export const auth = betterAuth({
     // admin uncreatable. 8 is better-auth's default and still stricter than
     // the 6 the project enforced before.
     minPasswordLength: 8,
+    revokeSessionsOnPasswordReset: true,
+    sendResetPassword: async ({ user, url }) => {
+      await sendEmail({
+        to: user.email,
+        ...resetPasswordEmail({ name: user.name, url }),
+      });
+    },
   },
   session: {
     expiresIn: 60 * 60,
@@ -66,6 +83,22 @@ export const auth = betterAuth({
     },
   },
   advanced: {
+    backgroundTasks: {
+      handler: (promise) => {
+        // Attach the rejection handler now: `after()` only defers the await,
+        // it does not stop an unhandled rejection from surfacing.
+        const settled = promise.catch((error) => {
+          console.error("[AUTH] Background task failed:", error);
+        });
+
+        try {
+          after(() => settled);
+        } catch {
+          // No request scope (a script or a test): run it detached instead.
+          void settled;
+        }
+      },
+    },
     database: {
       // The schema declares `@default(uuid())`; let better-auth produce the
       // same shape instead of its shorter default identifier.
