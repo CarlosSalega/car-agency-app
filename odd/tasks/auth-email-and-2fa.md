@@ -121,14 +121,14 @@ email as a second factor (TOTP only), and any change to the car/seller domain.
       `/verify-email` landing page in the `(auth)` group, an admin-only send
       route at `/api/users/[id]/verify-email` (address taken from the row), and
       a verification badge plus a send action in the admin users table. Route:
-      inline. Covers S6. Commit: pending.
+      inline. Covers S6. Commit: `2f8ca84`.
 - [x] T5 — 2FA: `twoFactor()` plugin, Prisma migration for
       `User.twoFactorEnabled` and the `TwoFactor` model, `/admin/security`
       (enable, QR, confirm, backup codes, disable), `/two-factor` (login step),
       and the `twoFactorRedirect` branch in the login form. Adds `qrcode.react`.
       Route: inline. Covers S7, S9. Includes a test pinning that a
       `twoFactorRedirect` response goes to `/two-factor` and not `/admin`.
-      Commit: pending.
+      Commit: `25ca0da`.
 - [x] T6 — Tests for this slice: `sendEmail` with Resend mocked (payload,
       missing config, provider rejection, throw), reset template rendering and
       escaping, and the admin password path's session deletion including the
