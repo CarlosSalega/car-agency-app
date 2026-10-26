@@ -154,6 +154,15 @@ email as a second factor (TOTP only), and any change to the car/seller domain.
    role because it is per-user. The login step lives at `/two-factor` in the
    `(auth)` group for the same reason as reset: there is no session yet.
 
+## Pending
+
+- [ ] **Verified sender domain (deferred by the user, L23).** Real delivery is
+      blocked until a domain is verified at `resend.com/domains` and
+      `RESEND_FROM_EMAIL` is changed to an address on that domain. Nothing else
+      in this feature depends on it: every flow is built, tested and verified
+      against Resend's test sender, and the only missing piece is the last mile
+      to a real inbox. No code change is expected — configuration only.
+
 ## Applicable checks
 
 ```
@@ -336,3 +345,9 @@ totpURI, backupCodes: 10}`, and the row lands with `verified: false` while
   list; `prettier --check` clean; `lint` 28 problems (6 errors, 22 warnings) —
   two warnings fewer than the post-migration baseline and no new ones, because
   rewriting `users-columns.tsx` dropped an unused import.
+- **L23** — "el dominio en Resend queda para despues, dejalo anotado como
+  pendiente". The verified-domain work is deferred and recorded as the single
+  open item under `## Pending`. This does not reopen any task: T1-T7 are done
+  and verified against the Resend test sender, which exercises every code path
+  up to the API call. What a verified domain changes is the provider's
+  acceptance, not our code.
