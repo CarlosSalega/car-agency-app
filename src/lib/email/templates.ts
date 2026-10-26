@@ -82,3 +82,33 @@ export function resetPasswordEmail({
     ].join("\n"),
   };
 }
+
+export function verifyEmailTemplate({
+  name,
+  url,
+}: {
+  name?: string | null;
+  url: string;
+}): EmailMessage {
+  const greeting = name?.trim() ? `Hola ${name.trim()}:` : "Hola:";
+
+  return {
+    subject: "Confirmá tu dirección de email",
+    html: layout({
+      heading: "Confirmá tu dirección de email",
+      intro: `${greeting} confirmá esta dirección para que los enlaces de recuperación de contraseña lleguen al lugar correcto.`,
+      action: "Confirmar email",
+      url,
+      note: "El enlace vence en una hora. Si no esperabas este correo, podés ignorarlo.",
+    }),
+    text: [
+      greeting,
+      "",
+      "Confirmá esta dirección para que los enlaces de recuperación de contraseña lleguen al lugar correcto.",
+      "",
+      url,
+      "",
+      "El enlace vence en una hora. Si no esperabas este correo, podés ignorarlo.",
+    ].join("\n"),
+  };
+}

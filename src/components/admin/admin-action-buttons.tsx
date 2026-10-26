@@ -103,6 +103,12 @@ interface ActionButtonsGroupProps {
   onDelete?: () => void;
   deleteLabel?: string;
   deleteDisabled?: boolean;
+  /**
+   * Extra actions for a single table, rendered first. A slot rather than
+   * another prop: this component is shared by cars, brands, models and users,
+   * and only users has a per-row action beyond view/edit/delete.
+   */
+  children?: React.ReactNode;
 }
 
 export function ActionButtonsGroup({
@@ -114,9 +120,11 @@ export function ActionButtonsGroup({
   onDelete,
   deleteLabel,
   deleteDisabled,
+  children,
 }: ActionButtonsGroupProps) {
   return (
     <div className="flex items-center justify-end gap-2">
+      {children}
       {viewHref && <ViewButton href={viewHref} label={viewLabel} />}
       {(editHref || editOnClick) && (
         <EditButton href={editHref} onClick={editOnClick} label={editLabel} />

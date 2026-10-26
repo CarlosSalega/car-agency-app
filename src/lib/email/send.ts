@@ -33,6 +33,17 @@ export type SendEmailResult =
 let client: Resend | null = null;
 let clientKey: string | undefined;
 
+/**
+ * Whether outbound mail can work at all.
+ *
+ * Exposed so an admin-triggered action can refuse loudly instead of claiming
+ * success: the auth flows must stay silent about delivery, but an admin who
+ * clicked "send verification" deserves to know the provider is unconfigured.
+ */
+export function isEmailConfigured(): boolean {
+  return Boolean(process.env.RESEND_API_KEY && process.env.RESEND_FROM_EMAIL);
+}
+
 function getClient(): Resend | null {
   const key = process.env.RESEND_API_KEY;
 

@@ -4,7 +4,7 @@ import { after } from "next/server";
 
 import { prisma } from "@/lib/db";
 import { sendEmail } from "@/lib/email/send";
-import { resetPasswordEmail } from "@/lib/email/templates";
+import { resetPasswordEmail, verifyEmailTemplate } from "@/lib/email/templates";
 
 /**
  * The single better-auth instance.
@@ -47,6 +47,24 @@ export const auth = betterAuth({
   session: {
     expiresIn: 60 * 60,
     updateAge: 60 * 5,
+  },
+  emailVerification: {
+    // Accounts are created by an admin, not through sign-up, so there is no
+    // sign-up event to hook into.
+    sendOnSignUp: false,
+    // Deliberately NOT enforced. Every existing account predates verification
+    // and there is no self-service registration, so turning this on would lock
+    // the seeded admin and every current user out on the first deploy while
+    // protecting nothing. Verification is still worth having: a mistyped
+    // address makes a password reset land in the wrong inbox, and this is the
+    // only signal that catches it.
+    requireEmailVerification: false,
+    sendVerificationEmail: async ({ user, url }) => {
+      await sendEmail({
+        to: user.email,
+        ...verifyEmailTemplate({ name: user.name, url }),
+      });
+    },
   },
   user: {
     additionalFields: {

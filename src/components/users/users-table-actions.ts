@@ -11,6 +11,9 @@ export function useUsersTable(initialUsers: UserWithCount[]) {
   const [userToDelete, setUserToDelete] = useState<UserWithCount | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isDeactivating, setIsDeactivating] = useState(false);
+  const [sendingVerificationFor, setSendingVerificationFor] = useState<
+    string | null
+  >(null);
 
   const upsertUser = (user: UserWithCount) => {
     setUsers((prev) =>
@@ -46,6 +49,39 @@ export function useUsersTable(initialUsers: UserWithCount[]) {
     }
   };
 
+  /**
+   * Asks the server to mail a verification link. The address is resolved from
+   * the database row, never sent from here, so this cannot be pointed at an
+   * arbitrary inbox.
+   */
+  const sendVerification = async (user: UserWithCount) => {
+    if (sendingVerificationFor) return;
+
+    setSendingVerificationFor(user.id);
+
+    try {
+      const res = await fetch(`/api/users/${user.id}/verify-email`, {
+        method: "POST",
+      });
+
+      const body = await res.json().catch(() => null);
+
+      if (!res.ok) {
+        throw new Error(body?.error ?? "No se pudo enviar la verificación");
+      }
+
+      toast.success(body?.message ?? "Enviamos un enlace de verificación");
+    } catch (error) {
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "No se pudo enviar la verificación",
+      );
+    } finally {
+      setSendingVerificationFor(null);
+    }
+  };
+
   return {
     users,
     isLoading,
@@ -56,5 +92,6 @@ export function useUsersTable(initialUsers: UserWithCount[]) {
     setUserToDelete,
     upsertUser,
     deactivateUser,
+    sendVerification,
   };
 }

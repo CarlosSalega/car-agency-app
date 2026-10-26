@@ -115,3 +115,24 @@ export function ActiveStatusBadge({
 
   return <Badge className={statusInfo.className}>{label}</Badge>;
 }
+
+interface EmailVerifiedBadgeProps {
+  emailVerified: boolean;
+}
+
+/**
+ * Verification is informational, never a gate: accounts are admin-provisioned
+ * and `requireEmailVerification` stays false. The badge exists because a
+ * mistyped address silently sends password resets to the wrong inbox.
+ */
+export function EmailVerifiedBadge({ emailVerified }: EmailVerifiedBadgeProps) {
+  return (
+    <Badge
+      className={
+        emailVerified ? "bg-green-600 text-white" : "bg-amber-500 text-white"
+      }
+    >
+      {emailVerified ? "Verificado" : "Sin verificar"}
+    </Badge>
+  );
+}

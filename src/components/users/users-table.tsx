@@ -30,11 +30,13 @@ export function UsersTable({ initialUsers, pagination }: UsersTableProps) {
     setUserToDelete,
     upsertUser,
     deactivateUser,
+    sendVerification,
   } = useUsersTable(initialUsers);
 
   const columns = getUsersColumns({
     onEdit: setEditingUser,
     onDelete: setUserToDelete,
+    onSendVerification: sendVerification,
   });
 
   return (
@@ -46,6 +48,7 @@ export function UsersTable({ initialUsers, pagination }: UsersTableProps) {
               id: "",
               name: "",
               email: "",
+              emailVerified: false,
               role: "COLLABORATOR",
               isActive: true,
               createdAt: new Date(),

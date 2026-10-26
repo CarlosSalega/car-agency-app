@@ -117,9 +117,11 @@ email as a second factor (TOTP only), and any change to the car/seller domain.
 - [x] T3 — Session revocation on the admin password path in
       `PUT /api/users/[id]`, inside the existing transaction, sparing the acting
       admin's own session. Route: inline. Covers S5. Commit: `e013ef5`.
-- [ ] T4 — Email verification: `sendVerificationEmail`, `/verify-email`
-      landing page, and a verification status plus resend action in the admin
-      users table. Route: inline. Covers S6.
+- [x] T4 — Email verification: `emailVerification.sendVerificationEmail`, the
+      `/verify-email` landing page in the `(auth)` group, an admin-only send
+      route at `/api/users/[id]/verify-email` (address taken from the row), and
+      a verification badge plus a send action in the admin users table. Route:
+      inline. Covers S6. Commit: pending.
 - [ ] T5 — 2FA: `twoFactor()` plugin, Prisma migration for
       `User.twoFactorEnabled` and the `TwoFactor` model, `/admin/security`
       (enable, QR, confirm, backup codes, disable), `/two-factor` (login step),
@@ -249,3 +251,38 @@ email for the reset link"}`. Repeated requests → `429`, which is per-IP and
   `/forgot-password` static and `/reset-password` dynamic; `prettier --check`
   clean; `lint` 30 problems (6 errors, 24 warnings) — identical to the
   post-migration baseline, so nothing new was introduced.
+- **L13** — T4 shipped. Two things were not in the plan and are worth naming:
+  - The admin action takes the address **from the database row**, never from the
+    request. better-auth's `/send-verification-email` accepts an arbitrary
+    `email` in its body, so a thin pass-through would have been a mail-bombing
+    primitive for anyone with a session. A test pins that the DB address wins.
+  - `isEmailConfigured()` was added so the admin action answers `503` instead of
+    claiming success when `RESEND_API_KEY` or `RESEND_FROM_EMAIL` is missing.
+    The auth flows stay silent about delivery on purpose; an admin who clicked
+    "send" does not need that silence.
+- **L14** — Known limitation, deliberately not papered over: when the provider
+  **rejects** a message (as `onboarding@resend.dev` does for any address but the
+  account owner's), the admin action still reports success. better-auth awaits
+  the send inside `runInBackgroundOrAwait` and discards the result, and the
+  failure policy that makes reset safe — never throw — is the same one that
+  hides this. With a verified domain the distinction stops mattering. The
+  server log carries the truth today.
+- **L15** — T4 end-to-end evidence, same running build and seed-state database:
+  - `/verify-email` renders the success state; `/verify-email?error=INVALID_TOKEN`
+    renders the failure state. Both `200` without a session.
+  - `POST /api/users/<id>/verify-email` as admin → `200
+{"success":true,...}`, and the server logged a real Resend attempt. Without
+    a session → `401`.
+  - A real verification JWT, minted with `createEmailVerificationToken` and the
+    app secret, hit `/api/auth/verify-email?token=…&callbackURL=…` → `302` to
+    `/verify-email` with no error, and `User.emailVerified` flipped to `true` in
+    the database. Replaying the same token is a no-op rather than an error: the
+    token is a stateless JWT, and re-verifying only re-sets a boolean.
+  - `/admin/users` shows the new column: "Sin verificar" plus the send button
+    for an unverified user, and no button once verified.
+  - Cleanup: `emailVerified` back to `false`, sessions and verification rows
+    deleted, `admin1234` still logs in.
+- **L16** — Verification totals after T4: `tsc` clean; `test` 18 files / 114
+  tests; `build` clean with `/verify-email` and `/api/users/[id]/verify-email`
+  in the route list; `prettier --check` clean; `lint` still 30 (6 errors, 24
+  warnings).
