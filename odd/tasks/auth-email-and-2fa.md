@@ -376,3 +376,16 @@ totpURI, backupCodes: 10}`, and the row lands with `verified: false` while
   server logs no new guard errors. Note: the `200` + meta refresh for a stale
   cookie remains, because the redirect now happens after the shell has streamed
   -- that is Next's fallback, it terminates in one hop, and it is not a loop.
+- **L26** — The user reported that "Cerrar sesión" in the admin dropdown did
+  nothing. It did navigate, but the session survived. `logout()` posted to
+  `/api/auth/sign-out` with **no body and no `Content-Type`**, and better-auth
+  answers that with `415 UNSUPPORTED_MEDIA_TYPE` ("Content-Type is required.
+  Allowed types: application/json"). The handler then redirected to `/`
+  unconditionally, so the app looked logged out while the cookie stayed valid.
+  Reproduced in headless Chrome by clicking the real menu item: sign-out `415`,
+  URL `/`, `get-session` still returned a session. Fixed by sending
+  `Content-Type: application/json` with a `{}` body, checking `res.ok`, and
+  surfacing a failure with a toast instead of redirecting. Verified: sign-out
+  `200`, URL `/`, session gone. Two tests pin the request shape and the failure
+  path. One change fixes both call sites (dropdown and sidebar) because they
+  share `logout()`.
