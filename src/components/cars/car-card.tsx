@@ -2,6 +2,7 @@
 
 import type { Car } from "@generated/prisma/client";
 import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 
 import { CarImage } from "@/components/cars";
 import { getCarBadge } from "@/components/status-badges";
@@ -28,69 +29,66 @@ export function CarCard({ car }: CarCardProps) {
   const badge = getCarBadge(car.status);
 
   return (
-    <Link href={`/autos/${slug}`} className="group block w-full">
-      <div className="hover:border-border relative overflow-hidden rounded-xl border border-neutral-800 bg-neutral-900 transition-all duration-500 hover:shadow-[0_8px_30px_-10px_rgba(209,213,219,0.2)]">
+    <Link href={`/autos/${slug}`} className="group block h-full w-full">
+      <article className="flex h-full flex-col overflow-hidden rounded-xl border border-[#2a2a2a] bg-[#1c1c1c] transition-all duration-300 group-hover:border-[#444444]">
         {/* IMAGE */}
-        <div className="relative aspect-16/10 overflow-hidden">
-          {/* gradient overlay */}
-          <div className="absolute bottom-0 left-0 z-10 h-16 w-full bg-linear-to-t from-neutral-900 to-transparent" />
-
+        <div className="relative aspect-16/10 w-full overflow-hidden bg-[#141414]">
           <CarImage
             imageKey={imageKey}
             alt={title}
-            className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
           />
 
-          {/* top hover line */}
-          <div className="bg-muted-foreground absolute top-0 left-0 z-20 h-0.5 w-0 transition-all duration-500 group-hover:w-full" />
-
-          <span
-            className={`absolute top-3 left-3 z-20 rounded-md px-2 py-0.5 text-xs font-medium uppercase ${badge.className}`}
-          >
-            {badge.label}
-          </span>
+          {badge ? (
+            <span
+              className={`absolute top-3 left-3 z-10 rounded-sm px-2 py-0.5 font-mono text-[10px] font-semibold tracking-[0.08em] uppercase ${badge.className}`}
+            >
+              {badge.label}
+            </span>
+          ) : null}
         </div>
 
         {/* CONTENT */}
-        <div className="flex flex-col gap-1.5 px-4 pt-3 pb-4">
-          {/* TITLE */}
-          <h3 className="group-hover:text-muted-foreground text-background truncate text-sm font-medium tracking-tight transition-colors duration-300">
-            {title}
-          </h3>
+        <div className="flex flex-1 flex-col justify-between gap-4 p-5">
+          <div className="flex flex-col gap-1.5">
+            {/* EYEBROW: marca + año */}
+            <div className="flex items-center justify-between font-mono text-[10px] leading-[14px] font-semibold tracking-[0.08em] text-[#a3a3a3] uppercase">
+              <span className="min-w-0 truncate">{brand.name}</span>
+              <span className="shrink-0">{year}</span>
+            </div>
 
-          {/* PRICE */}
-          <p className="text-muted-foreground text-base font-semibold">
-            {formatPrice(price, currency)}
-          </p>
+            {/* TITLE */}
+            <h3 className="truncate text-[18px] leading-6 font-semibold tracking-tight text-[#f5f5f5] transition-colors group-hover:text-white">
+              {title}
+            </h3>
 
-          {/* BRAND + YEAR */}
-          <div className="flex items-center text-sm text-white/70">
-            <span className="font-medium">{brand.name}</span>
-            <span className="text-secondary-foreground mx-2">|</span>
-            <span>{year}</span>
+            {/* SPECS */}
+            <p className="pt-0.5 text-xs leading-[18px] tracking-[0.01em] text-[#a3a3a3]">
+              {formatKm(kilometers)} km · {fuelLabels[fuelType] ?? fuelType}
+            </p>
           </div>
 
-          {/* DIVIDER */}
-          <div className="h-px bg-neutral-800 transition-colors duration-300 group-hover:bg-neutral-700" />
-
-          {/* EXTRA INFO */}
-          <div className="flex items-center justify-between text-xs tracking-wider text-white/60 uppercase">
-            <span className="min-w-0 truncate">
-              {formatKm(kilometers)} km • {fuelLabels[fuelType] ?? fuelType}
-            </span>
-
-            <div className="flex shrink-0 items-center gap-2">
-              <span>Ver</span>
-
-              <div className="group-hover:border-border flex size-7 items-center justify-center rounded-full border border-neutral-600 transition-all duration-300">
-                <span className="text-neutral-400 transition-colors group-hover:text-white">
-                  →
+          <div className="flex flex-col gap-3 border-t border-[#2a2a2a] pt-4">
+            {/* PRICE */}
+            <div className="flex items-baseline justify-between gap-2">
+              <div className="flex items-baseline gap-1">
+                <span className="font-mono text-2xl leading-7 font-bold tracking-[-0.02em] text-[#f5f5f5]">
+                  {formatPrice(price, currency)}
+                </span>
+                <span className="font-mono text-xs font-medium text-[#a3a3a3]">
+                  {currency}
                 </span>
               </div>
             </div>
+
+            {/* CTA (visual: el Link ya envuelve toda la card) */}
+            <span className="flex w-full items-center justify-center gap-1.5 rounded-lg border border-[#333333] bg-[#242424] px-4 py-2.5 font-mono text-xs font-medium tracking-[0.02em] text-[#f5f5f5] transition-colors group-hover:border-white group-hover:bg-white group-hover:text-[#121212]">
+              Ver vehículo
+              <ArrowRight className="size-3.5" aria-hidden="true" />
+            </span>
           </div>
         </div>
-      </div>
+      </article>
     </Link>
   );
 }
