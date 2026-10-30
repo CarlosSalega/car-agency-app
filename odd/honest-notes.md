@@ -37,12 +37,29 @@ código, no ejecutándolo. Lo marcado **_[sin verificar]_** no se miró en esta 
   concatena los segmentos a `CLOUDINARY_BASE_URL` o `S3_PUBLIC_BASE_URL` sin normalizar
   ni rechazar `..`. **Severidad: media** — depende del origen: Cloudinary no resuelve
   `..`, un S3 propio o un origen nuevo sí. _(lectura)_
-- **Sin rate limiting en login, y `src/lib/rate-limit.ts` es código muerto.** El módulo
-  tiene ~100 líneas (mapa en memoria, ventana, `checkRateLimit`, limpieza) y **cero
-  importadores**: `grep "from \"@/lib/rate-limit\"" src/` fuera del propio archivo
-  devuelve 0. El login (`/api/auth/sign-in/email`, hoy de better-auth) no tiene ningún
-  límite. **Severidad: media-alta** en un sitio público: password spraying contra una
-  cuenta `ADMIN`. _(lectura)_
+- **`src/lib/rate-limit.ts` es código muerto, y el login depende del limitador
+  implícito de better-auth.** El limiter casero (`src/lib/rate-limit.ts`, 107 líneas,
+  5 intentos / 15 min por IP, con limpieza cada 30 min) **se borró el 2026-10-29**: era
+  el consumidor de `src/app/api/auth/login/route.ts`, que la migración `fa06894` borró
+  junto con sus 221 líneas de tests, y no tenía otro importador. Lo que sí limita el
+  login hoy es el default de la librería:
+  `enabled: options.rateLimit?.enabled ?? isProduction`
+  (`node_modules/better-auth/dist/context/create-context.mjs:172`), con reglas
+  especiales de **3 requests / 10 s** para `/sign-in`, `/sign-up`, `/change-password` y
+  `/change-email`, 3 / 60 s para reset y verificación
+  (`dist/api/rate-limiter/index.mjs:301-315`) y 3 / 10 s para `/two-factor/*`
+  (`dist/plugins/two-factor/index.mjs:340-347`). `server.ts` no configura `rateLimit`,
+  así que es todo default. O sea: **en producción el login ya está limitado; en
+  desarrollo no** (`isProduction` = `NODE_ENV=production`), y por eso nunca se ve
+  probando localmente. **Severidad: media**, no alta, por dos agujeros concretos:
+  (1) el storage es `"memory"` (`create-context.mjs:175`) y no hay `secondaryStorage`:
+  cada instancia serverless tiene su propio mapa, así que el límite real es "3 / 10 s
+  por instancia caliente" y un cold start lo borra; se cierra con `secondaryStorage`
+  (Redis/Upstash) o `rateLimit.storage: "database"`. (2) Sin
+  `advanced.ipAddress.ipAddressHeaders`/`trustedProxies`, la librería no resuelve la IP
+  y cae a un bucket compartido por path avisando por log
+  (`dist/api/rate-limiter/index.mjs:43-49`): eso ya no es bypass sino **DoS**, porque 3
+  intentos de cualquiera bloquean a todos. _(lectura)_
 - **Sin headers de seguridad.** `src/proxy.ts:53,57` setea únicamente `Cache-Control`.
   No hay CSP, HSTS, `X-Frame-Options`, `X-Content-Type-Options` ni `Referrer-Policy`.
   **Severidad: baja-media**, sube el día del primer deploy. _(lectura)_
@@ -127,8 +144,8 @@ todavía falla, así que **no puede ser gate**.
   lo pincha: `src/lib/queries/__tests__/cars.test.ts:235`. `grep "user: true" src/` = 0.
 - **`GET /api/settings` sin guard** (era M-1) → `src/app/api/settings/route.ts:8-11`
   exige `ADMIN`.
-- **Faltaba `.env.example`** → existe, con `DATABASE_URL` + `sslmode=verify-full`
-  (×2), `RESEND_API_KEY`, `RESEND_FROM_EMAIL`, `BETTER_AUTH_*` y
+- **Faltaba `.env.example`** → existe, con `DATABASE_URL` + `sslmode=verify-full` (×2),
+  `RESEND_API_KEY`, `RESEND_FROM_EMAIL`, `BETTER_AUTH_*` y
   `NEXT_PUBLIC_SITE_URL=http://localhost:3000`.
 - **`NEXT_PUBLIC_SITE_URL` "apuntando a vercel.app"** → falso: no existe `.vercel/`, el
   proyecto nunca se deployó. La línea vieja contradecía la corrección del 2026-09-27 del
@@ -147,6 +164,11 @@ todavía falla, así que **no puede ser gate**.
 - **Auditoría de autorización 2026-09-26:** `isActive` re-chequeado en el choke point
   (`getSession()`), `GET /api/cars/[id]` con guard y `select` acotado,
   `DELETE /api/upload` deniega keys sin dueño.
+- **Código muerto de auth borrado (2026-10-29)** → `src/lib/rate-limit.ts` completo, y
+  de `src/lib/auth/auth-middleware.ts` los wrappers `withAuth` / `withAdmin`. Sobreviven
+  `requireAuth` / `requireAdmin` (siguen con cero call sites, ver _Abierto_). El wrapper
+  se borró porque su firma `(request)` descartaba el segundo argumento de Next
+  (`{ params }`): adoptarlo roto habría dejado sin `params` a toda ruta dinámica.
 - **`@neondatabase/serverless` eliminado** — la base es Prisma Postgres, no Neon.
 - **Hook de pre-commit autosuficiente**: exporta `PNPM_HOME`/`PATH` si `pnpm` no
   resuelve, así no muere con 127 desde VS Code o un GUI de git.
