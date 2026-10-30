@@ -1,25 +1,23 @@
 // @vitest-environment node
-import { NextRequest } from "next/server";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import {
-  requireAdmin,
-  requireAuth,
-  withAdmin,
-  withAuth,
-} from "@/lib/auth/auth-middleware";
+import { requireAdmin, requireAuth } from "@/lib/auth/auth-middleware";
 
 /**
- * Characterization tests for the route guards.
+ * Characterization tests for the two route guards.
  *
- * `requireAuth` / `requireAdmin` / `withAuth` / `withAdmin` are the boundary
- * every protected route relies on, so their status codes must survive the
- * better-auth migration unchanged: 401 for "no session", 403 for "not an
- * admin".
+ * `requireAuth` / `requireAdmin` encode the status codes a protected route must
+ * answer: 401 for "no session", 403 for "not an admin" or "inactive".
+ *
+ * Read this honestly: **no route imports these two today.** The live boundary is
+ * `requireAuthSession()` in `./session.ts` plus the cookie check in
+ * `src/proxy.ts`, and the 401s routes actually return are written inline. These
+ * tests therefore protect the intended shape of the guards, not a boundary the
+ * app currently exercises -- which is exactly why the green here was misleading
+ * while `withAuth` / `withAdmin` also lived in the module, unused.
  *
  * The session object is flat -- `{ sessionToken, userId, expires, user }` --
- * because that is exactly what `getSession()` returns and what the 63 call
- * sites of `session.user` expect.
+ * because that is what `getSession()` returns.
  */
 
 type Role = "ADMIN" | "COLLABORATOR";
@@ -110,47 +108,5 @@ describe("requireAdmin", () => {
 
   it("throws 401 before checking the role when there is no session", async () => {
     await expect(requireAdmin()).rejects.toMatchObject({ statusCode: 401 });
-  });
-});
-
-describe("withAuth / withAdmin", () => {
-  const request = new NextRequest("http://localhost/api/protected");
-
-  it("withAuth passes the user to the handler", async () => {
-    state.session = buildSession("COLLABORATOR");
-    const handler = vi.fn(async () => Response.json({ ok: true }) as never);
-
-    const response = await withAuth(handler)(request);
-
-    expect(handler).toHaveBeenCalledOnce();
-    expect(await response.json()).toEqual({ ok: true });
-  });
-
-  it("withAuth answers 401 instead of throwing", async () => {
-    const response = await withAuth(async () => Response.json({}) as never)(
-      request,
-    );
-
-    expect(response.status).toBe(401);
-  });
-
-  it("withAdmin answers 403 for a collaborator", async () => {
-    state.session = buildSession("COLLABORATOR");
-
-    const response = await withAdmin(async () => Response.json({}) as never)(
-      request,
-    );
-
-    expect(response.status).toBe(403);
-  });
-
-  it("withAdmin lets an admin through", async () => {
-    state.session = buildSession("ADMIN");
-    const handler = vi.fn(async () => Response.json({ ok: true }) as never);
-
-    const response = await withAdmin(handler)(request);
-
-    expect(handler).toHaveBeenCalledOnce();
-    expect(response.status).toBe(200);
   });
 });

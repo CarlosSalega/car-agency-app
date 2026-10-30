@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 
 import { getSession } from "@/lib/auth";
 
@@ -6,7 +6,18 @@ export type AuthenticatedUser = NonNullable<
   Awaited<ReturnType<typeof getSession>>
 >["user"];
 
-class AuthError extends Error {
+/**
+ * The guards' failure mode.
+ *
+ * Exported on purpose: a route that catches this has to be able to map
+ * `statusCode` onto a response, and an error nobody can identify is a trap.
+ *
+ * `withAuth` / `withAdmin` used to do that mapping here. They were removed
+ * because no route ever imported them and their `(request)` signature silently
+ * dropped Next's second handler argument (`{ params }`), so adopting them as-is
+ * would have broken every dynamic route such as `/api/cars/[id]`.
+ */
+export class AuthError extends Error {
   constructor(
     message: string,
     public statusCode: number,
@@ -45,54 +56,4 @@ export async function requireAdmin(request?: NextRequest) {
   }
 
   return user;
-}
-
-export function withAuth(
-  handler: (
-    request: NextRequest,
-    user: AuthenticatedUser,
-  ) => Promise<NextResponse>,
-) {
-  return async (request: NextRequest) => {
-    try {
-      const user = await requireAuth(request);
-      return handler(request, user);
-    } catch (error) {
-      if (error instanceof AuthError) {
-        return NextResponse.json(
-          { error: error.message },
-          { status: error.statusCode },
-        );
-      }
-      return NextResponse.json(
-        { error: "Error de autenticación" },
-        { status: 500 },
-      );
-    }
-  };
-}
-
-export function withAdmin(
-  handler: (
-    request: NextRequest,
-    user: AuthenticatedUser,
-  ) => Promise<NextResponse>,
-) {
-  return async (request: NextRequest) => {
-    try {
-      const user = await requireAdmin(request);
-      return handler(request, user);
-    } catch (error) {
-      if (error instanceof AuthError) {
-        return NextResponse.json(
-          { error: error.message },
-          { status: error.statusCode },
-        );
-      }
-      return NextResponse.json(
-        { error: "Error de autenticación" },
-        { status: 500 },
-      );
-    }
-  };
 }
