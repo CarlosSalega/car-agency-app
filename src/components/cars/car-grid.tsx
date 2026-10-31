@@ -40,16 +40,19 @@ export function CarGrid({
     return (
       <div
         role="status"
-        className="flex min-h-[320px] flex-1 flex-col items-center justify-center gap-4 rounded-xl border border-dashed border-[#2a2a2a] bg-[#1c1c1c] px-6 py-16 text-center sm:py-20"
+        className="border-border bg-popover flex min-h-[320px] flex-1 flex-col items-center justify-center gap-4 rounded-xl border border-dashed px-6 py-16 text-center sm:py-20"
       >
-        <div className="flex size-12 items-center justify-center rounded-lg border border-[#333333] bg-[#242424]">
-          <SearchX className="size-6 text-[#a3a3a3]" aria-hidden="true" />
+        <div className="border-input bg-accent flex size-12 items-center justify-center rounded-lg border">
+          <SearchX
+            className="text-muted-foreground size-6"
+            aria-hidden="true"
+          />
         </div>
         <div className="flex flex-col gap-1">
-          <p className="text-lg font-medium text-[#f5f5f5]">
+          <p className="text-foreground text-lg font-medium">
             Sin resultados con esos filtros
           </p>
-          <p className="text-sm text-[#a3a3a3]">
+          <p className="text-muted-foreground text-sm">
             Probá ampliando el precio o quitando algún filtro.
           </p>
         </div>

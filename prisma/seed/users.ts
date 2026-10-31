@@ -4,7 +4,7 @@ import type { SeedUser } from "./types";
 export const seedUsers: SeedUser[] = [
   {
     key: "admin",
-    email: "admin@caragency.com",
+    email: "admin@glautos.ar",
     password: "admin1234",
     name: "Administrador",
     role: Role.ADMIN,

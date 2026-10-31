@@ -27,7 +27,7 @@ export function SearchComponent() {
 
           <Button
             type="submit"
-            className="bg-foreground text-background px-6 hover:bg-neutral-800"
+            className="bg-primary text-primary-foreground hover:bg-primary/90 px-6"
           >
             <Search className="size-5" />
           </Button>

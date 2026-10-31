@@ -18,9 +18,9 @@ import { NavbarServer } from "../(landing)/components/NavbarServer";
 export const revalidate = 300;
 
 export const metadata: Metadata = {
-  title: "Catálogo de autos usados y 0km en Santa Fe | Car Agency App",
+  title: "Catálogo de autos usados y 0km en Santa Fe | GL Autos",
   description:
-    "Explorá el catálogo de Car Agency App: autos usados y 0km en Santa Fe con revisión mecánica garantizada y financiación a medida. ¡Encontrá el tuyo hoy!",
+    "Explorá el catálogo de GL Autos: autos usados y 0km en Santa Fe con revisión mecánica garantizada y financiación a medida. ¡Encontrá el tuyo hoy!",
   alternates: {
     canonical: "/autos",
   },
@@ -87,7 +87,7 @@ export default async function AutosPage({ searchParams }: PageProps<"/autos">) {
             aria-live="polite"
             className="lg:col-start-2 lg:row-start-1"
           >
-            <Badge variant="outline" className="border-secondary text-primary">
+            <Badge variant="outline" className="border-primary text-primary">
               {total === 0
                 ? "No se encontraron vehículos"
                 : total === 1

@@ -135,13 +135,13 @@ export function LoginForm() {
 
           <Button
             type="submit"
-            className="text-accent w-full bg-black/95 hover:bg-black/80"
+            className="text-primary-foreground bg-primary hover:bg-primary/90 w-full"
             disabled={isSubmitting}
           >
             {isSubmitting ? (
-              <span className="bg-black/80 text-base">Ingresando...</span>
+              <span className="text-base">Ingresando...</span>
             ) : (
-              <span className="bg-black/80 text-base">Ingresar</span>
+              <span className="text-base">Ingresar</span>
             )}
           </Button>
 

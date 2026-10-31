@@ -4,19 +4,19 @@ export const HERO_FEATURES = [
     id: "garantia",
     label: "Garantía",
     icon: "✓",
-    iconColor: "text-green-400",
+    iconColor: "text-success",
   },
   {
     id: "historial",
     label: "Historial",
     icon: "✓",
-    iconColor: "text-green-400",
+    iconColor: "text-success",
   },
   {
     id: "financiacion",
     label: "Financiación",
     icon: "✓",
-    iconColor: "text-green-400",
+    iconColor: "text-success",
   },
 ];
 
@@ -38,7 +38,7 @@ export const HERO_CONTENT = {
     id: "whatsapp",
     label: "¿Necesitás asesoramiento?",
     actionText: "Contactanos",
-    href: "https://api.whatsapp.com/send?phone=5491234567890&text=%C2%BFBuscas%20vender%20o%20comprar%20tu%20auto%3F",
-    icon: "/whatsapp.png",
+    href: "https://api.whatsapp.com/send?phone=5493425777646&text=%C2%BFBuscas%20vender%20o%20comprar%20tu%20auto%3F",
+    icon: "/whatsapp.svg",
   },
 };

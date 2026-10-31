@@ -76,9 +76,9 @@ const TOTAL_REVIEWS = 249;
 function PartialStar({ fill }: { fill: number }) {
   return (
     <span className="relative inline-block leading-none" aria-hidden="true">
-      <span className="text-zinc-300">★</span>
+      <span className="text-subtle-foreground">★</span>
       <span
-        className="absolute inset-0 overflow-hidden text-yellow-400"
+        className="text-warning absolute inset-0 overflow-hidden"
         style={{ width: `${fill * 100}%` }}
       >
         ★
@@ -107,7 +107,7 @@ function Stars({
       {[1, 2, 3, 4, 5].map((s) => {
         if (s < rating) {
           return (
-            <span key={s} className="text-yellow-400">
+            <span key={s} className="text-warning">
               ★
             </span>
           );
@@ -116,7 +116,7 @@ function Stars({
           return <PartialStar key={s} fill={lastStarFill} />;
         }
         return (
-          <span key={s} className="text-zinc-300">
+          <span key={s} className="text-subtle-foreground">
             ★
           </span>
         );
@@ -126,21 +126,11 @@ function Stars({
 }
 
 function Avatar({ initials }: { initials: string }) {
-  const colors = [
-    "bg-blue-600",
-    "bg-emerald-600",
-    "bg-violet-600",
-    "bg-rose-600",
-    "bg-amber-600",
-    "bg-cyan-600",
-  ];
-
-  const idx = (initials.charCodeAt(0) + initials.charCodeAt(1)) % colors.length;
-
+  // Monochrome on purpose. The previous six-colour rotation (blue, emerald,
+  // violet, rose, amber, cyan) fought the brand: six hues that appear nowhere
+  // else in the palette, on a card that is otherwise neutral.
   return (
-    <div
-      className={`flex size-10 items-center justify-center rounded-full ${colors[idx]} text-sm font-bold text-white`}
-    >
+    <div className="bg-accent text-foreground flex size-10 items-center justify-center rounded-full text-sm font-bold">
       {initials}
     </div>
   );
@@ -156,7 +146,7 @@ function ReviewCard({ review, index }: { review: Review; index: number }) {
   return (
     <article
       ref={ref}
-      className={`rounded-lg border border-zinc-200 bg-neutral-100 p-6 shadow-sm transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] hover:border-zinc-300 hover:shadow-md ${
+      className={`border-border bg-card hover:border-foreground/25 rounded-lg border p-6 shadow-sm transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] hover:shadow-md ${
         isVisible
           ? "translate-y-0 opacity-100"
           : index % 2 === 0
@@ -171,8 +161,8 @@ function ReviewCard({ review, index }: { review: Review; index: number }) {
         <Avatar initials={review.avatar} />
 
         <div className="flex-1">
-          <p className="text-sm font-bold text-zinc-900">{review.name}</p>
-          <p className="text-xs text-zinc-400">{review.date}</p>
+          <p className="text-foreground text-sm font-bold">{review.name}</p>
+          <p className="text-muted-foreground text-xs">{review.date}</p>
         </div>
 
         {review.photo && (
@@ -189,7 +179,7 @@ function ReviewCard({ review, index }: { review: Review; index: number }) {
 
       <Stars rating={review.rating} />
 
-      <p className="mt-3 text-sm leading-relaxed text-zinc-600">
+      <p className="text-subtle-foreground mt-3 text-sm leading-relaxed">
         {review.text}
       </p>
     </article>
@@ -217,14 +207,14 @@ export default function Reviews() {
             target="_blank"
             rel="noopener noreferrer"
             aria-label={`Calificación ${OVERALL_RATING} de 5 en Google con ${TOTAL_REVIEWS} reseñas`}
-            className="mt-2 inline-flex max-w-full items-center gap-2 rounded-full border border-zinc-200 bg-white py-2 pr-4 pl-3 shadow-sm transition-all hover:scale-[1.03] hover:shadow-md sm:gap-2.5 sm:pr-5"
+            className="border-border bg-card mt-2 inline-flex max-w-full items-center gap-2 rounded-full border py-2 pr-4 pl-3 shadow-sm transition-all hover:scale-[1.03] hover:shadow-md sm:gap-2.5 sm:pr-5"
           >
             <GoogleLogo className="size-5 shrink-0" />
-            <span className="text-xl font-black text-zinc-900">
+            <span className="text-foreground text-xl font-black">
               {OVERALL_RATING}
             </span>
             <Stars rating={5} size="sm" lastStarFill={0.9} />
-            <span className="truncate text-xs text-zinc-500 sm:text-sm">
+            <span className="text-muted-foreground truncate text-xs sm:text-sm">
               {TOTAL_REVIEWS} reseñas
             </span>
           </a>
@@ -246,7 +236,7 @@ export default function Reviews() {
               : "translate-y-10 opacity-0"
           }`}
         >
-          <p className="text-center text-base text-zinc-500">
+          <p className="text-muted-foreground text-center text-base">
             ¿Ya compraste o vendiste con nosotros? <br /> Contanos tu
             experiencia
           </p>
@@ -255,7 +245,7 @@ export default function Reviews() {
             href={GOOGLE_REVIEW_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex h-14 w-full max-w-sm items-center justify-center gap-2.5 rounded-lg bg-zinc-900 px-6 font-bold tracking-widest whitespace-nowrap text-white uppercase transition-all hover:scale-105 hover:bg-black active:scale-95"
+            className="bg-primary text-primary-foreground hover:bg-primary/90 flex h-14 w-full max-w-sm items-center justify-center gap-2.5 rounded-lg px-6 font-bold tracking-widest whitespace-nowrap uppercase transition-all hover:scale-105 active:scale-95"
           >
             <GoogleLogo className="size-4" />
             <span className="text-xs md:text-base">

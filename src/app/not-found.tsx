@@ -79,7 +79,7 @@ export default function NotFound() {
   }, []);
 
   return (
-    <section className="relative flex min-h-svh w-full items-center justify-center overflow-hidden bg-zinc-900 py-32">
+    <section className="bg-background relative flex min-h-svh w-full items-center justify-center overflow-hidden py-32">
       <div
         className="pointer-events-none absolute inset-0 opacity-[0.04]"
         style={{
@@ -140,11 +140,11 @@ export default function NotFound() {
 
       <div className="relative z-20 px-4 text-center">
         <span
-          className={`mb-4 block text-base font-bold tracking-[0.3em] text-zinc-400 uppercase transition-all duration-700 ${
+          className={`text-muted-foreground mb-4 block text-base font-bold tracking-[0.3em] uppercase transition-all duration-700 ${
             mounted ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"
           }`}
         >
-          F<span className="normal-case">y</span>F Automotores
+          GL Autos
         </span>
 
         <h1
@@ -156,7 +156,7 @@ export default function NotFound() {
         </h1>
 
         <p
-          className={`mb-3 text-sm font-bold tracking-[0.25em] text-zinc-500 uppercase transition-all delay-200 duration-700 ${
+          className={`text-muted-foreground mb-3 text-sm font-bold tracking-[0.25em] uppercase transition-all delay-200 duration-700 ${
             mounted ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"
           }`}
           style={{ minHeight: "1.5em" }}
@@ -165,7 +165,7 @@ export default function NotFound() {
         </p>
 
         <p
-          className={`mx-auto mb-10 max-w-md text-lg text-zinc-300 transition-all delay-300 duration-700 ${
+          className={`text-subtle-foreground mx-auto mb-10 max-w-md text-lg transition-all delay-300 duration-700 ${
             mounted ? "translate-y-0 opacity-100" : "translate-y-6 opacity-0"
           }`}
         >
@@ -180,7 +180,7 @@ export default function NotFound() {
         >
           <Link
             href="/"
-            className="w-full rounded-lg bg-white px-10 py-4 text-sm font-bold tracking-widest text-black uppercase transition-all hover:scale-105 hover:bg-zinc-200 active:scale-95 md:w-auto"
+            className="bg-primary text-primary-foreground hover:bg-primary/90 w-full rounded-lg px-10 py-4 text-sm font-bold tracking-widest uppercase transition-all hover:scale-105 active:scale-95 md:w-auto"
           >
             Volver al inicio
           </Link>

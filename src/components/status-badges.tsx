@@ -15,23 +15,23 @@ export interface CarBadgeInfo {
 export const carStatusMap: Record<CarStatusKey, CarBadgeInfo> = {
   AVAILABLE: {
     label: "Disponible",
-    className: "bg-green-600 text-white",
+    className: "bg-success text-success-foreground",
   },
   BY_APPOINTMENT: {
     label: "Con cita previa",
-    className: "bg-orange-500 text-white",
+    className: "bg-warning text-warning-foreground",
   },
   RESERVED: {
     label: "Reservado",
-    className: "bg-yellow-500 text-white",
+    className: "bg-info text-info-foreground",
   },
   SOLD: {
     label: "Vendido",
-    className: "bg-blue-600 text-white",
+    className: "bg-accent text-foreground",
   },
   INACTIVE: {
     label: "Inactivo",
-    className: "bg-gray-500 text-white",
+    className: "bg-muted text-muted-foreground",
   },
 };
 
@@ -39,7 +39,7 @@ export function getCarBadge(status: string): CarBadgeInfo {
   return (
     carStatusMap[status as CarStatusKey] ?? {
       label: status,
-      className: "bg-gray-500 text-white",
+      className: "bg-muted text-muted-foreground",
     }
   );
 }
@@ -51,7 +51,7 @@ interface CarStatusBadgeProps {
 export function CarStatusBadge({ status }: CarStatusBadgeProps) {
   const statusInfo = carStatusMap[status as CarStatusKey] || {
     label: status,
-    className: "bg-gray-500 text-white",
+    className: "bg-muted text-muted-foreground",
   };
 
   return <Badge className={statusInfo.className}>{statusInfo.label}</Badge>;
@@ -62,11 +62,11 @@ type UserRole = "ADMIN" | "COLLABORATOR";
 const userRoleMap: Record<UserRole, { label: string; className: string }> = {
   ADMIN: {
     label: "Administrador",
-    className: "bg-blue-600 text-white",
+    className: "bg-primary text-primary-foreground",
   },
   COLLABORATOR: {
     label: "Colaborador",
-    className: "bg-gray-600 text-white",
+    className: "bg-accent text-foreground",
   },
 };
 
@@ -77,7 +77,7 @@ interface UserRoleBadgeProps {
 export function UserRoleBadge({ role }: UserRoleBadgeProps) {
   const roleInfo = userRoleMap[role as UserRole] || {
     label: role,
-    className: "bg-gray-500 text-white",
+    className: "bg-muted text-muted-foreground",
   };
 
   return <Badge className={roleInfo.className}>{roleInfo.label}</Badge>;
@@ -86,11 +86,11 @@ export function UserRoleBadge({ role }: UserRoleBadgeProps) {
 const activeStatusMap = {
   active: {
     label: "Activo",
-    className: "bg-green-600 text-white",
+    className: "bg-success text-success-foreground",
   },
   inactive: {
     label: "Inactivo",
-    className: "bg-gray-800 text-white",
+    className: "bg-muted text-muted-foreground",
   },
 };
 
@@ -129,7 +129,9 @@ export function EmailVerifiedBadge({ emailVerified }: EmailVerifiedBadgeProps) {
   return (
     <Badge
       className={
-        emailVerified ? "bg-green-600 text-white" : "bg-amber-500 text-white"
+        emailVerified
+          ? "bg-success text-success-foreground"
+          : "bg-warning text-warning-foreground"
       }
     >
       {emailVerified ? "Verificado" : "Sin verificar"}

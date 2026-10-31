@@ -81,7 +81,7 @@ export default function Hero() {
   }
 
   return (
-    <section className="relative flex min-h-svh w-full items-center justify-center overflow-hidden bg-zinc-900 py-32">
+    <section className="bg-background relative flex min-h-svh w-full items-center justify-center overflow-hidden py-32">
       {BG_IMAGES.map((src, i) => {
         const isActive = i === current;
         const isNext = i === next;
@@ -134,7 +134,7 @@ export default function Hero() {
         }}
       />
 
-      <div className="absolute inset-0 bg-linear-to-b from-zinc-900/20 via-transparent to-zinc-900/60" />
+      <div className="from-background/20 to-background/60 absolute inset-0 bg-linear-to-b via-transparent" />
 
       <div className="absolute bottom-20 left-1/2 z-20 flex -translate-x-1/2 gap-2 p-8">
         {BG_IMAGES.map((_, i) => (
@@ -145,7 +145,7 @@ export default function Hero() {
             aria-label={`Cambiar a imagen ${i + 1}`}
             aria-current={i === activeDot}
             className={`h-0.75 rounded-full transition-all duration-500 ${
-              i === activeDot ? "bg-secondary w-8" : "w-3 bg-white/30"
+              i === activeDot ? "bg-primary w-8" : "w-3 bg-white/30"
             }`}
           />
         ))}
@@ -153,11 +153,11 @@ export default function Hero() {
 
       <div className="relative z-10 px-4 text-center">
         <span
-          className={`mb-4 block text-base font-bold tracking-[0.3em] text-zinc-400 uppercase transition-all duration-700 ${
+          className={`text-muted-foreground mb-4 block text-base font-bold tracking-[0.3em] uppercase transition-all duration-700 ${
             mounted ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"
           }`}
         >
-          F<span className="normal-case">y</span>F Automotores
+          GL Autos
         </span>
 
         <h1
@@ -166,11 +166,11 @@ export default function Hero() {
           }`}
         >
           Tu próximo <br /> auto{" "}
-          <span className="text-secondary">te espera acá</span>
+          <span className="text-primary">te espera acá</span>
         </h1>
 
         <p
-          className={`mx-auto mb-10 max-w-xl text-lg text-zinc-300 transition-all delay-300 duration-700 lg:text-xl ${
+          className={`text-subtle-foreground mx-auto mb-10 max-w-xl text-lg transition-all delay-300 duration-700 lg:text-xl ${
             mounted ? "translate-y-0 opacity-100" : "translate-y-6 opacity-0"
           }`}
         >
@@ -185,7 +185,7 @@ export default function Hero() {
         >
           <Link
             href="/autos"
-            className="h-14 w-full rounded-lg bg-white px-10 py-4 text-sm font-bold tracking-widest text-black uppercase transition-all hover:scale-105 hover:bg-zinc-200 active:scale-95 md:w-auto"
+            className="bg-primary text-primary-foreground hover:bg-primary/90 h-14 w-full rounded-lg px-10 py-4 text-sm font-bold tracking-widest uppercase transition-all hover:scale-105 active:scale-95 md:w-auto"
           >
             Ver vehículos
           </Link>

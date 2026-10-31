@@ -53,7 +53,7 @@ export function AdminTable<T>({
 
   return (
     <div
-      className={`h-full overflow-hidden rounded-lg border border-gray-300 shadow-xl/30 ${className ?? ""}`}
+      className={`border-border h-full overflow-hidden rounded-lg border shadow-xl/30 ${className ?? ""}`}
     >
       <Table className="bg-card overflow-hidden rounded-lg">
         <TableHeader className="hover:bg-card/80 focus:bg-card/80">

@@ -29,7 +29,7 @@ export function CarCard({ car }: CarCardProps) {
 
   return (
     <Link href={`/autos/${slug}`} className="group block w-full">
-      <article className="relative aspect-4/3 overflow-hidden rounded-xl bg-[#141414]">
+      <article className="bg-card relative aspect-4/3 overflow-hidden rounded-xl">
         {/* IMAGE */}
         <CarImage
           imageKey={imageKey}
@@ -38,7 +38,7 @@ export function CarCard({ car }: CarCardProps) {
         />
 
         {/* GRADIENT: neutro, sin tintes de color (design system) */}
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-3/5 bg-linear-to-t from-[#121212] via-[#121212]/80 to-transparent" />
+        <div className="from-background via-background/80 pointer-events-none absolute inset-x-0 bottom-0 h-3/5 bg-linear-to-t to-transparent" />
 
         {badge ? (
           <span
@@ -51,26 +51,26 @@ export function CarCard({ car }: CarCardProps) {
         {/* CONTENT OVERLAY */}
         <div className="absolute inset-x-0 bottom-0 z-10 flex flex-col gap-2.5 p-3.5">
           <div className="flex flex-col gap-0.5">
-            <h3 className="truncate text-base leading-6 font-semibold tracking-tight text-[#f5f5f5]">
+            <h3 className="text-foreground truncate text-base leading-6 font-semibold tracking-tight">
               {title}
             </h3>
-            <p className="truncate text-xs leading-[18px] tracking-[0.01em] text-[#c4c7c8]">
+            <p className="text-subtle-foreground truncate text-xs leading-[18px] tracking-[0.01em]">
               {year} · {fuelLabels[fuelType] ?? fuelType} ·{" "}
               {formatKm(kilometers)} km
             </p>
           </div>
 
-          <div className="flex items-center justify-between gap-3 border-t border-white/10 pt-2.5">
+          <div className="border-border flex items-center justify-between gap-3 border-t pt-2.5">
             <div className="flex min-w-0 items-baseline gap-1">
-              <span className="truncate font-mono text-lg leading-6 font-bold tracking-[-0.02em] text-[#f5f5f5]">
+              <span className="text-foreground truncate font-mono text-lg leading-6 font-bold tracking-[-0.02em]">
                 {formatPrice(price, currency)}
               </span>
-              <span className="font-mono text-[10px] font-medium text-[#a3a3a3]">
+              <span className="text-muted-foreground font-mono text-[10px] font-medium">
                 {currency}
               </span>
             </div>
 
-            <span className="flex shrink-0 items-center gap-1.5 rounded-lg border border-[#333333] bg-[#121212]/80 px-3 py-1.5 font-mono text-xs font-medium whitespace-nowrap text-[#f5f5f5] backdrop-blur-md transition-colors group-hover:border-white group-hover:bg-white group-hover:text-[#121212]">
+            <span className="border-input bg-background/80 text-foreground group-hover:border-primary-foreground group-hover:bg-primary group-hover:text-primary-foreground flex shrink-0 items-center gap-1.5 rounded-lg border px-3 py-1.5 font-mono text-xs font-medium whitespace-nowrap backdrop-blur-md transition-colors">
               Ver
               <ArrowRight className="size-3.5" aria-hidden="true" />
             </span>

@@ -5,12 +5,11 @@ const SITE_URL =
     ? `https://${process.env.VERCEL_URL}`
     : "http://localhost:3000");
 export const SITE_CONFIG = {
-  name: "Car Agency App",
+  name: "GL Autos",
   description: "Vení y encontrá el auto de tus sueños.",
   url: SITE_URL,
   previewPath: "/preview.webp",
   locale: "es_AR",
-  twitterHandle: "@Car Agency Appautomotores",
   imageConfig: {
     preview: {
       large: {
@@ -50,6 +49,5 @@ export const siteMetadata: Metadata = {
     title: SITE_CONFIG.name,
     description: SITE_CONFIG.description,
     images: [`${SITE_CONFIG.url}${SITE_CONFIG.previewPath}`],
-    creator: SITE_CONFIG.twitterHandle,
   },
 };
