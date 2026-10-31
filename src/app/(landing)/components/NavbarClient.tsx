@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { HeaderUser } from "@/components/header/header-user";
@@ -11,6 +12,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { XRoundedIcon } from "@/components/ui/sheet";
+import { HEADER_CONTENT } from "@/data/header";
 import { isActiveRoute } from "@/lib/constants/navigation";
 import type { AuthUser } from "@/types/auth";
 
@@ -51,6 +53,7 @@ function MenuRoundedIcon({ className }: { className?: string }) {
 }
 
 export default function NavbarClient({ user }: NavbarClientProps) {
+  const { logo } = HEADER_CONTENT;
   const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -77,13 +80,13 @@ export default function NavbarClient({ user }: NavbarClientProps) {
       <div
         className={`transition-transform duration-500 ${scrolled ? "scale-95" : "scale-100"}`}
       >
-        <Link href="/" aria-label="Ir al inicio">
-          <img
-            src="/logo.png"
-            alt="GL Autos"
-            width={65}
-            height={64}
-            className="h-16"
+        <Link href="/" aria-label="Ir al inicio" className="flex items-center">
+          <Image
+            src={logo.src}
+            alt={logo.alt}
+            width={logo.width}
+            height={logo.height}
+            className={logo.className}
           />
         </Link>
       </div>

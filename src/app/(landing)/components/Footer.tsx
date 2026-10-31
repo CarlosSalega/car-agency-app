@@ -2,10 +2,12 @@
 
 import Link from "next/link";
 import { MapPin, PhoneIcon } from "lucide-react";
+import { HEADER_CONTENT } from "@/data/header";
 import { track } from "@/lib/meta-pixel";
 import { useScrollAnimation } from "../hooks/useScrollAnimation";
 
 export default function Footer() {
+  const { logo } = HEADER_CONTENT;
   const { ref, isVisible } = useScrollAnimation({ threshold: 0.1 });
   const instagramUrl =
     process.env.NEXT_PUBLIC_INSTAGRAM_URL ??
@@ -31,11 +33,11 @@ export default function Footer() {
         <div className="col-span-1">
           <Link href="/" aria-label="Ir al inicio">
             <img
-              src="/logo.png"
-              alt="Logo de Car Agency App"
-              width={69}
-              height={64}
-              className="h-16"
+              src={logo.src}
+              alt={logo.alt}
+              width={logo.width}
+              height={logo.height}
+              className="h-9 w-auto"
             />
           </Link>
           <p className="text-muted-foreground text-sm leading-relaxed tracking-tight uppercase">

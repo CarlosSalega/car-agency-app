@@ -45,7 +45,9 @@ S1, S6, S7 | route: inline | done | commit `c187b52`
 T3 — Shared and admin surface: status badges, stats, tables, search, car-card,
 car-grid, contact, login/2fa. S3, S5 | route: inline | done | commit `961be3b`
 T4 — Regenerate `public/favicon.ico` and `public/apple-touch-icon.png` from the new
-mark. S1 | route: inline | done | commit `(T4)`
+mark. S1 | route: inline | done | commit `5c1ccf6`
+T5 — Transparent logo variants: the black field and the collapse deformation.
+S1, S7 | route: inline | done | commit `(T5)`
 
 Checks: `tsc --noEmit` clean, `pnpm test` 21 files / 119 tests passed,
 `pnpm build` exit 0. Compiled CSS carries `--primary:#fe0000`,
@@ -145,3 +147,42 @@ Pillow matches by exact size.
 L12 (limits, reported): the ICO frame is that 43x18 source, so the 180px icon is a
 2.8x magnification. If the original SVG or HD logo exists, regenerating from it is
 a one-command change; this is the ceiling of the current asset.
+
+L13 (user report, verbatim): "si sidebar de admin es mas claro, entonces el logo se
+nota mucho que es una imagen porque tiene color mas oscuro. Tambien revisa que al
+momento de dar collapse al sidebar este deforma el logo, para este caso podemos
+agregarle un icono o solo las letras GL."
+
+L14 (measurements that explain it): the artwork inside `logo.png` is 179x19 and the
+canvas is 204x192, so 87.5% of the file is empty black. In the sidebar the
+`size-16` box drew that wordmark at 57x8.5px, inside a black square on a `#1c1c1c`
+surface: the rectangle and the unreadable size were the same defect.
+
+L15 (second defect, real bug): `SIDEBAR_WIDTH_ICON` is 3rem (48px) and
+`SidebarHeader` carries `p-2`, so the collapsed rail leaves 32px. The logo is a
+flex item with `size-16` and default `flex-shrink: 1`, which shrinks the main-axis
+size only: 64px wide became 16px wide while the height stayed 64px. A 16x64 sliver,
+not a scaled logo. Fixed with `shrink-0` + `w-auto`, and by collapsing the header
+padding to `p-0` so the monogram actually fits.
+
+L16 (third defect, not reported by the user): the same baked black field was in the
+public navbar and the footer.
+
+L17 (user decision, verbatim selection): "Wordmark expandido + "GL" al colapsar".
+
+L18 (constraint found while sizing): the wordmark is a 9.4:1 lockup (179x19). In the
+224px the 16rem sidebar leaves after its own padding, the ceiling is ~23px tall, so
+`h-7` would have asked for 264px. It renders at `h-5` (188px wide), which is also
+1.05x of native, so it stays crisp. The rail monogram is `w-8` (32x14) inside 48px.
+
+L19 (open question, not changed): the footer and the hero still read "FyF
+Automotores". That may be the legal name behind the GL Autos trade name, so it is
+the user's call, not a silent rename.
+
+Checks: the two assets are derived by keying the black field out and
+unpremultiplying, so the antialiased edges carry alpha without a dark fringe; the
+six `group-data-[collapsible=icon]` utilities used are all present in the compiled
+stylesheet; both PNGs are served (1889b / 645b, `image/png`) and the landing HTML
+references the wordmark through `next/image` with a 1x/2x srcset; `tsc` clean,
+119/119 tests, `pnpm build` exit 0. Geometry is computed, and the two rail states
+were rasterised and inspected, not checked in a browser.
