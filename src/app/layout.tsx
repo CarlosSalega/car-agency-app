@@ -6,6 +6,7 @@ import Script from "next/script";
 
 import { Toaster } from "@/components/ui/sonner";
 import { siteMetadata } from "@/data/metadata";
+import { AttributionCapture } from "@/components/leads";
 import { MetaPixelProvider } from "@/lib/meta-pixel";
 
 import "./globals.css";
@@ -88,6 +89,7 @@ export default function RootLayout({
             }}
           />
         ) : null}
+        <AttributionCapture />
         <MetaPixelProvider>{children}</MetaPixelProvider>
         <Toaster richColors />
         <SpeedInsights />

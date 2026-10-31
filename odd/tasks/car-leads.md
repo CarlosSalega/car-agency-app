@@ -124,3 +124,53 @@ L16 (review load, needs a delivery decision): the branch is at ~2879 authored li
 across 9 commits, far past a single reviewable slice. The natural split is three PRs:
 T0.1+T0.3 hygiene, the lead layer (model, endpoint, form, notification), and the panel
 section. Chained rather than one big merge.
+
+L17 (T1.5, deviation from the plan): the roadmap said "utm/referrer into `source`". It
+became four columns — `utmSource`, `utmMedium`, `utmCampaign`, `referrer` — because
+T1.6 groups leads by channel, and parsing a packed string in every query is the debt
+that compounds. `source` stays as it was: the page on our own site that produced the
+inquiry, from the POST referer.
+
+L18 (why the browser has to send it): UTMs live on the page the visitor browsed, not
+on the URL the form posts to, and the POST's `referer` header is our own car page.
+The external source is `document.referrer`, which only the browser knows.
+
+L19 (where it mounts, and where it cannot): `MetaPixelProvider` was the natural
+neighbour but it is mounted only when `NEXT_PUBLIC_META_PIXEL_ID` is set, so
+attribution would silently stop working on a deployment without a pixel.
+`AttributionCapture` is a null-rendering client component mounted unconditionally in
+the root layout. First touch wins, so a later landing with no campaign cannot erase
+the one that brought the visitor.
+
+L20 (verification, with one harness correction): live POST with attribution stored
+`instagram/cpc/hilux-octubre` plus the referrer, a POST without it stored NULLs and
+still answered 201, and a 130-character utm answered 400. My first attempt to prove
+the panel _shows_ the channel grepped the server-rendered HTML and "passed" for the
+wrong reason: the match was in serialized React props, and the dialog only renders on
+open. Replaced with a kept render test that opens the dialog and asserts the channel
+line, the referrer and the landing page. The capture component's mount is proven by
+its presence in a client chunk, not by the HTML.
+
+L21 (deleted, not kept): an `eslint-disable no-control-regex` that no rule required.
+A stale suppression hides the next real finding from the same rule.
+
+L22 (T1.6, delegated then verified): the dashboard was handed to a worker with narrow
+edit surfaces; the data layer (`metrics.ts`) stayed mine and untouched. It delivered 10
+files and 3 render tests. The brief quoted a stale baseline (32/212) because the metrics
+tests had landed in between; the real baseline was 33/228 and the worker caught the
+discrepancy instead of silently matching my number.
+
+L23 (two harness corrections of mine, again): asserting `<svg` to prove a chart rendered
+is wrong in a page full of lucide icons — the empty state showed 18 icon SVGs and zero
+charts. The distinguishing signal is recharts' own markup: 0 nodes on the empty page, 1
+with data. And a bare `7` is not an assertable total; the conversion rate (50% from one
+WON and one LOST) plus the queue names prove the wiring instead.
+
+L24 (product decision taken, stated): the waiting queue shows the visitor's name. "Who is
+waiting" is the name first and the car second. That needed `name` in the select and a
+`DashboardLead` type that extends `MetricsLead`, so the aggregation still knows nothing
+about people.
+
+L25 (Phase 1 complete): T1.1 through T1.6 are done. Inquiries are captured from the car
+page, stored with car, seller, consent and first-touch attribution, announced by email,
+managed with statuses and an audit trail, and measured on the panel landing page.

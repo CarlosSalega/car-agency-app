@@ -84,7 +84,7 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const { name, phone, email, message, carSlug } = parsed.data;
+  const { name, phone, email, message, carSlug, attribution } = parsed.data;
 
   try {
     // The slug comes from the page the visitor was on. Resolving it here is what
@@ -119,7 +119,14 @@ export async function POST(request: NextRequest) {
         sellerId,
         // Server clock, never the client's: this is the consent record.
         consentAt: new Date(),
+        // Our own page that produced it, from the POST referer.
         source: sourceFrom(request),
+        // First-touch campaign, from the browser. Not trusted for anything but
+        // reporting, and normalised by the schema before it gets here.
+        utmSource: attribution?.utmSource,
+        utmMedium: attribution?.utmMedium,
+        utmCampaign: attribution?.utmCampaign,
+        referrer: attribution?.referrer,
       },
       select: { id: true },
     });

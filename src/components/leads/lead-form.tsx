@@ -5,6 +5,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { readAttribution } from "@/lib/leads/attribution";
 import { LEAD_HONEYPOT_FIELD } from "@/lib/leads/honeypot";
 
 /**
@@ -62,7 +63,14 @@ export function LeadForm({ carSlug, carTitle }: LeadFormProps) {
       const response = await fetch("/api/leads", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...values, carSlug }),
+        // Read at submit time, not at mount: the visitor may have landed with
+        // campaign parameters on a previous page and `captureFirstTouch` stored
+        // them in sessionStorage since this form rendered.
+        body: JSON.stringify({
+          ...values,
+          carSlug,
+          attribution: readAttribution(),
+        }),
       });
 
       const payload = (await response.json().catch(() => null)) as {

@@ -295,8 +295,17 @@ model Lead {
   email     String?
   message   String?
   status    LeadStatus @default(NEW)
-  /// Where it came from: utm/referrer captured at submit time.
+  /// The page on our own site that produced the inquiry (the POST referer).
   source    String?
+  /// First-touch attribution. These are separate columns instead of a packed
+  /// string because T1.6 groups by channel: parsing a blob in every query is
+  /// the debt that compounds. All nullable, because most visitors arrive with
+  /// no campaign at all.
+  utmSource   String?
+  utmMedium   String?
+  utmCampaign String?
+  /// The external site that brought the visitor, when the browser sent one.
+  referrer    String?
   /// Consent to be contacted, recorded when it was given. Personal data under
   /// Ley 25.326, so the timestamp is part of the record, not an afterthought.
   consentAt DateTime?
@@ -313,4 +322,5 @@ model Lead {
   @@index([carId])
   @@index([createdAt])
   @@index([sellerId])
+  @@index([utmSource])
 }

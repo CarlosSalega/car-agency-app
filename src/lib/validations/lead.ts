@@ -1,5 +1,6 @@
 import { LeadStatus } from "@generated/prisma/enums";
 
+import { MAX_ATTRIBUTION_LENGTH } from "@/lib/leads/attribution";
 import { LEAD_HONEYPOT_FIELD } from "@/lib/leads/honeypot";
 import { z } from "zod";
 
@@ -29,6 +30,27 @@ const optionalText = (max: number, message: string) =>
     const clean = trimmed(value);
     return clean === "" ? undefined : clean;
   }, z.string().max(max, message).optional());
+
+/**
+ * Campaign attribution, sent by the browser because only it can read the page's
+ * own query string and `document.referrer`. Absent or empty is normal: most
+ * visitors arrive with no campaign at all.
+ */
+const attributionField = optionalText(
+  MAX_ATTRIBUTION_LENGTH,
+  "El dato de origen es demasiado largo",
+);
+
+export const leadAttributionSchema = z
+  .object({
+    utmSource: attributionField,
+    utmMedium: attributionField,
+    utmCampaign: attributionField,
+    referrer: attributionField,
+  })
+  .optional();
+
+export type LeadAttributionInput = z.infer<typeof leadAttributionSchema>;
 
 export const leadSubmitSchema = z.object({
   name: z.preprocess(
@@ -61,6 +83,7 @@ export const leadSubmitSchema = z.object({
     const clean = trimmed(value);
     return clean === "" ? undefined : clean;
   }, z.string().max(200).optional()),
+  attribution: leadAttributionSchema,
   // Consent is a checkbox, so the literal `true` is what a checked box sends.
   // The timestamp is recorded by the route from the server clock, never by the
   // client.
