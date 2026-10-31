@@ -78,9 +78,11 @@ export function AdminDropdown({ user }: AdminDropdownProps) {
               <DropdownMenuItem
                 key={item.id}
                 onClick={logout}
-                className="focus:text-background space-y-2 px-4 py-2"
+                className="focus:text-primary-foreground space-y-2 px-4 py-2"
               >
-                {Icon && <Icon className="focus:text-background mr-2 size-4" />}
+                {Icon && (
+                  <Icon className="focus:text-primary-foreground mr-2 size-4" />
+                )}
                 {item.label}
               </DropdownMenuItem>
             );
@@ -100,7 +102,7 @@ export function AdminDropdown({ user }: AdminDropdownProps) {
                     "flex w-full items-center rounded-md px-4 py-2 text-sm outline-none",
 
                     !active &&
-                      "data-highlighted:bg-primary data-highlighted:text-background",
+                      "data-highlighted:bg-primary data-highlighted:text-primary-foreground",
 
                     active &&
                       "data-highlighted:text-primary data-highlighted:bg-transparent",
@@ -111,7 +113,7 @@ export function AdminDropdown({ user }: AdminDropdownProps) {
                       className={cn(
                         "mr-2 size-4 shrink-0",
 
-                        active ? "text-secondary" : "text-current",
+                        active ? "text-primary" : "text-current",
 
                         active && "data-highlighted:text-primary",
                       )}
@@ -123,7 +125,7 @@ export function AdminDropdown({ user }: AdminDropdownProps) {
                       "inline-block",
 
                       active &&
-                        "text-secondary border-secondary -mb-1 border-b-2 pb-0.5",
+                        "text-primary border-primary -mb-1 border-b-2 pb-0.5",
 
                       active && "data-[highlighted]:no-border",
                     )}

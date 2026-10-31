@@ -57,13 +57,13 @@ function LinksList({ links }: { links: LinkItem[] }) {
             <Button
               className={
                 isPrimary
-                  ? "bg-card text-foreground hover:bg-card hover:text-foreground hover:border-secondary motion-safe:animate-attention-glow h-16 w-full justify-start rounded-lg border py-4 pl-6 text-center text-base font-medium transition-transform duration-150 hover:scale-105 hover:shadow-md sm:pl-24 md:pl-30"
-                  : "bg-card text-foreground hover:bg-card hover:text-foreground hover:border-secondary h-16 w-full justify-start rounded-lg border py-4 pl-6 text-center text-base font-medium transition-transform duration-150 hover:scale-105 hover:shadow-md sm:pl-24 md:pl-30"
+                  ? "bg-card text-foreground hover:bg-card hover:text-foreground hover:border-primary motion-safe:animate-attention-glow h-16 w-full justify-start rounded-lg border py-4 pl-6 text-center text-base font-medium transition-transform duration-150 hover:scale-105 hover:shadow-md sm:pl-24 md:pl-30"
+                  : "bg-card text-foreground hover:bg-card hover:text-foreground hover:border-primary h-16 w-full justify-start rounded-lg border py-4 pl-6 text-center text-base font-medium transition-transform duration-150 hover:scale-105 hover:shadow-md sm:pl-24 md:pl-30"
               }
               variant="outline"
             >
               {icon ? (
-                <span className="text-secondary mr-3 flex items-center">
+                <span className="text-primary mr-3 flex items-center">
                   {icon}
                 </span>
               ) : null}

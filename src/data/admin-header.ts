@@ -9,7 +9,7 @@ export const ADMIN_HEADER_CONTENT = {
   styles: {
     link: {
       base: "flex items-center gap-2 text-sm font-medium transition-colors",
-      active: "text-secondary",
+      active: "text-primary",
       inactive: "text-muted-foreground hover:text-foreground",
     },
     icon: "size-4",
