@@ -30,6 +30,14 @@ enum CarStatus {
   INACTIVE
 }
 
+enum LeadStatus {
+  NEW
+  CONTACTED
+  NEGOTIATING
+  WON
+  LOST
+}
+
 enum FuelType {
   GASOLINE
   DIESEL
@@ -183,6 +191,7 @@ model Seller {
   email       String?  @unique
   isActive    Boolean  @default(true)
   cars        Car[]
+  leads       Lead[]
   createdById String
   createdBy   User     @relation("UserSellers", fields: [createdById], references: [id])
   createdAt   DateTime @default(now())
@@ -224,6 +233,7 @@ model Car {
   userId         String?
   user           User?           @relation("UserCars", fields: [userId], references: [id])
   visits         Visit[]
+  leads          Lead[]
 
   @@index([userId])
   @@index([status])
@@ -273,4 +283,34 @@ model Settings {
   description String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+}
+
+/// An inquiry from the public site. Rows are created by an unauthenticated
+/// endpoint, so the route validates before writing; the columns here are the
+/// contract, not the validation.
+model Lead {
+  id        String     @id @default(uuid())
+  name      String
+  phone     String
+  email     String?
+  message   String?
+  status    LeadStatus @default(NEW)
+  /// Where it came from: utm/referrer captured at submit time.
+  source    String?
+  /// Consent to be contacted, recorded when it was given. Personal data under
+  /// Ley 25.326, so the timestamp is part of the record, not an afterthought.
+  consentAt DateTime?
+  /// Internal notes written by staff, never shown publicly.
+  notes     String?
+  carId     String?
+  car       Car?       @relation(fields: [carId], references: [id], onDelete: SetNull)
+  sellerId  String?
+  seller    Seller?    @relation(fields: [sellerId], references: [id], onDelete: SetNull)
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  @@index([status])
+  @@index([carId])
+  @@index([createdAt])
+  @@index([sellerId])
 }
