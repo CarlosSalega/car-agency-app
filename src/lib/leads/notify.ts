@@ -74,7 +74,9 @@ export async function notifyNewLead(
     message: input.message,
     carTitle: input.carTitle,
     carUrl: input.carSlug ? `${SITE_CONFIG.url}/autos/${input.carSlug}` : null,
-    adminUrl: `${SITE_CONFIG.url}/admin/leads`,
+    // T1.4 creates `/admin/leads`. Until it exists, point at the panel that does:
+    // a notification linking to a 404 is worse than one linking a level up.
+    adminUrl: `${SITE_CONFIG.url}/admin`,
     receivedAt: now(),
   });
 

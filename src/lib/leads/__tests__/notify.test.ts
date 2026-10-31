@@ -90,7 +90,9 @@ describe("notifyNewLead", () => {
     await notifyNewLead(lead, deps);
 
     expect(sent[0].html).toContain("/autos/volkswagen-taos-2025");
-    expect(sent[0].html).toContain("/admin/leads");
+    // `/admin/leads` arrives with T1.4; the test pins the page that exists today
+    // so the notification cannot ship pointing at a 404.
+    expect(sent[0].html).toContain("/admin");
   });
 
   it("does not turn visitor text into markup", async () => {
