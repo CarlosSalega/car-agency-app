@@ -1,0 +1,17 @@
+/**
+ * Date rendering for the panel.
+ *
+ * The formatter pins the time zone instead of using the runtime's: the same
+ * component is rendered on the server and hydrated in the browser, and an
+ * unpinned formatter produces two different strings when those disagree, which
+ * React reports as a hydration mismatch.
+ */
+const DATE_TIME_FORMATTER = new Intl.DateTimeFormat("es-AR", {
+  dateStyle: "short",
+  timeStyle: "short",
+  timeZone: "America/Argentina/Buenos_Aires",
+});
+
+export function formatLeadDateTime(value: Date): string {
+  return DATE_TIME_FORMATTER.format(value);
+}

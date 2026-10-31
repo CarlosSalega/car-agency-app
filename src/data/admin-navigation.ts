@@ -6,6 +6,7 @@ import {
   ShieldCheck,
   LogOut,
   Globe,
+  MessageSquare,
 } from "lucide-react";
 
 import { AdminNavItem } from "@/types/navigation";
@@ -32,6 +33,15 @@ export const ADMIN_NAVIGATION: AdminNavItem[] = [
     label: "Vehículos",
     href: "/admin/cars",
     icon: Car,
+    showInHeader: true,
+    showInDropdown: true,
+  },
+  {
+    id: "leads",
+    label: "Consultas",
+    href: "/admin/leads",
+    icon: MessageSquare,
+    roles: ["ADMIN"],
     showInHeader: true,
     showInDropdown: true,
   },
