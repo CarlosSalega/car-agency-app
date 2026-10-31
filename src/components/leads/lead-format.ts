@@ -17,6 +17,22 @@ export function formatLeadDateTime(value: Date): string {
 }
 
 /**
+ * The x-axis label of a week bucket: day and month (`19/10`).
+ *
+ * Same pinned time zone as above, for the same reason: the label is produced
+ * during the server render and again during hydration, and the two must agree.
+ */
+const WEEK_FORMATTER = new Intl.DateTimeFormat("es-AR", {
+  day: "2-digit",
+  month: "2-digit",
+  timeZone: "America/Argentina/Buenos_Aires",
+});
+
+export function formatLeadWeekLabel(value: Date): string {
+  return WEEK_FORMATTER.format(value);
+}
+
+/**
  * How a lead arrived, in the order a person reads it: source, then medium, then
  * campaign (`instagram · cpc · hilux-octubre`).
  *

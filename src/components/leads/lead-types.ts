@@ -1,5 +1,7 @@
 import type { LeadStatus } from "@generated/prisma/enums";
 
+import type { MetricsLead } from "@/lib/leads/metrics";
+
 /**
  * The row shape `/admin/leads` queries and the table renders.
  *
@@ -27,4 +29,16 @@ export interface LeadWithRelations {
   updatedAt: Date;
   car: { title: string; slug: string } | null;
   seller: { firstName: string; lastName: string } | null;
+}
+
+/**
+ * The row the dashboard passes around: the metrics fields plus the visitor's
+ * name.
+ *
+ * `MetricsLead` stays as it is — the aggregation has no business knowing a
+ * person's name — and this extends it, so every bucketing function accepts it
+ * unchanged.
+ */
+export interface DashboardLead extends MetricsLead {
+  name: string;
 }
