@@ -25,7 +25,7 @@ export function WhatsAppFloatButton() {
     >
       <div className="relative flex size-16 items-center justify-center rounded-full transition-all duration-300 hover:scale-110">
         <img
-          src="/whatsapp-fixed.svg"
+          src="/whatsapp.svg"
           alt=""
           aria-hidden="true"
           width={64}
