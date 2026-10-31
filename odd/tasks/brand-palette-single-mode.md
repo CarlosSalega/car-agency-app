@@ -52,6 +52,30 @@ Checks: `tsc --noEmit` clean, `pnpm test` 21 files / 119 tests passed,
 content="dark">`. Lint: 6 pre-existing `no-explicit-any` errors, unchanged by this
 feature (L8).
 
+Adversarial self-verification (no automated test can catch a colour regression, so
+the last four checks are structural):
+
+- V1 single mode: 0 `.dark` selectors, 0 `@custom-variant`, 0 `dark:` utilities in
+  `src/` once block comments are excluded (the docblock that _describes_ the removal
+  is a false positive for a naive grep).
+- V2 no light-surface scale class remains: 0 hits for
+  `(bg|text|border|…)-(zinc|gray|neutral|…)-<number>`.
+- V3 every palette utility resolves: 57 distinct palette utilities used in `src/`,
+  all present in the built stylesheet. `@theme inline` inlines the values, so
+  `--color-*` never appears in the output; the utilities do. Ten of them are only
+  generated under a variant (`hover:bg-sidebar-accent`,
+  `focus-visible:ring-success/30`, …), which is why a bare-class grep reports false
+  negatives.
+- V4 no `text-secondary` / `border-secondary` accent left: 0 hits.
+- V5 contrast arithmetic recomputed from the shipped hex, matches L5.
+- V6 no invisible text/background pair on a single element. Eleven candidates
+  surfaced and all were state-disjoint pairs (`hover:bg-foreground` with
+  `bg-card`, `selection:text-primary-foreground` with `bg-background`,
+  `group-hover:*`) or opacity-modified fills. The one real quirk,
+  `SelectItem`'s `[&_svg:not([class*='text-'])]:text-muted-foreground`, does not
+  reach the check icon because that icon carries a `text-` class, so it inherits
+  `focus:text-background` (4.65:1 on red) as intended.
+
 Slice note: the three commits land at 284 / 498 / 678 authored lines cumulative.
 The boundary past ~400 was crossed at T2; the remaining slice was still committed
 to close the feature rather than leaving the branch half-migrated, since no single
