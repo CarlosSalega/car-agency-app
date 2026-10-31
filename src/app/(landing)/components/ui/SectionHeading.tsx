@@ -18,7 +18,7 @@ export function SectionHeading({
   titleStart,
   titleAccent,
   titleEnd,
-  accentClassName = "text-secondary",
+  accentClassName = "text-primary",
   children,
 }: SectionHeadingProps) {
   const { ref, isVisible } = useScrollAnimation<HTMLDivElement>();
@@ -30,10 +30,10 @@ export function SectionHeading({
         isVisible ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0"
       }`}
     >
-      <span className="text-xs font-bold tracking-[0.3em] text-zinc-500 uppercase">
+      <span className="text-muted-foreground text-xs font-bold tracking-[0.3em] uppercase">
         {eyebrow}
       </span>
-      <h2 className="text-4xl leading-none font-black tracking-tighter text-zinc-900 uppercase italic md:text-5xl">
+      <h2 className="text-foreground text-4xl leading-none font-black tracking-tighter uppercase italic md:text-5xl">
         {titleStart} <span className={accentClassName}>{titleAccent}</span>
         {titleEnd ? ` ${titleEnd}` : null}
       </h2>

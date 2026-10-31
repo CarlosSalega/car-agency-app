@@ -4,19 +4,19 @@ export const HERO_FEATURES = [
     id: "garantia",
     label: "Garantía",
     icon: "✓",
-    iconColor: "text-green-400",
+    iconColor: "text-success",
   },
   {
     id: "historial",
     label: "Historial",
     icon: "✓",
-    iconColor: "text-green-400",
+    iconColor: "text-success",
   },
   {
     id: "financiacion",
     label: "Financiación",
     icon: "✓",
-    iconColor: "text-green-400",
+    iconColor: "text-success",
   },
 ];
 

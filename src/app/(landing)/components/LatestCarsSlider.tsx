@@ -106,7 +106,7 @@ export function LatestCarsSlider({ cars }: LatestCarsSliderProps) {
     <section
       ref={sectionRef}
       id="stock"
-      className="relative w-full overflow-hidden bg-black/95 py-20 pb-32"
+      className="bg-background relative w-full overflow-hidden py-20 pb-32"
       tabIndex={0}
       aria-label="Últimos ingresos"
       aria-describedby={keyboardHelpId}
@@ -128,11 +128,11 @@ export function LatestCarsSlider({ cars }: LatestCarsSliderProps) {
         }`}
       >
         <div className="flex flex-col gap-1">
-          <span className="text-xs font-bold tracking-[0.3em] text-zinc-400 uppercase">
+          <span className="text-muted-foreground text-xs font-bold tracking-[0.3em] uppercase">
             Recién llegados
           </span>
-          <h2 className="text-4xl leading-none font-black tracking-tighter text-white uppercase italic md:text-5xl">
-            Últimos <span className="text-secondary">Ingresos</span>
+          <h2 className="text-foreground text-4xl leading-none font-black tracking-tighter uppercase italic md:text-5xl">
+            Últimos <span className="text-primary">Ingresos</span>
           </h2>
         </div>
 
@@ -161,13 +161,13 @@ export function LatestCarsSlider({ cars }: LatestCarsSliderProps) {
       <div className="relative">
         {/* Left fade */}
         <div
-          className={`pointer-events-none absolute inset-y-0 left-0 z-10 w-5 bg-linear-to-r from-zinc-900 to-transparent transition-opacity duration-300 md:w-20 ${
+          className={`from-background pointer-events-none absolute inset-y-0 left-0 z-10 w-5 bg-linear-to-r to-transparent transition-opacity duration-300 md:w-20 ${
             canScrollLeft ? "opacity-100" : "opacity-0"
           }`}
         />
         {/* Right fade */}
         <div
-          className={`pointer-events-none absolute inset-y-0 right-0 z-10 w-5 bg-linear-to-l from-zinc-900 to-transparent transition-opacity duration-300 md:w-20 ${
+          className={`from-background pointer-events-none absolute inset-y-0 right-0 z-10 w-5 bg-linear-to-l to-transparent transition-opacity duration-300 md:w-20 ${
             canScrollRight ? "opacity-100" : "opacity-0"
           }`}
         />
@@ -205,10 +205,12 @@ export function LatestCarsSlider({ cars }: LatestCarsSliderProps) {
           mounted ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"
         }`}
       >
-        <p className="text-base text-zinc-500">Hay más autos esperándote</p>
+        <p className="text-muted-foreground text-base">
+          Hay más autos esperándote
+        </p>
         <Link
           href="/autos"
-          className="group flex h-14 w-full max-w-xs items-center justify-center gap-2 rounded-lg bg-white px-6 py-3.5 text-sm font-bold tracking-widest whitespace-nowrap text-black uppercase transition-all hover:scale-105 hover:bg-zinc-200 active:scale-95 sm:px-8"
+          className="group bg-primary text-primary-foreground hover:bg-primary/90 flex h-14 w-full max-w-xs items-center justify-center gap-2 rounded-lg px-6 py-3.5 text-sm font-bold tracking-widest whitespace-nowrap uppercase transition-all hover:scale-105 active:scale-95 sm:px-8"
         >
           Ver todos los autos
           <ArrowRight

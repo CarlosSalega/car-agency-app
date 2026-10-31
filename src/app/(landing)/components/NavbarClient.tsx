@@ -64,13 +64,13 @@ export default function NavbarClient({ user }: NavbarClientProps) {
 
   return (
     <header
-      className={`bg-primary fixed top-0 z-50 flex h-24 w-full items-center justify-between px-4 backdrop-blur-md transition-all duration-500 md:px-8 ${
+      className={`bg-background/95 border-border fixed top-0 z-50 flex h-24 w-full items-center justify-between border-b px-4 backdrop-blur-md transition-all duration-500 md:px-8 ${
         scrolled ? "shadow-sm" : ""
       }`}
     >
       <a
         href="#main-content"
-        className="absolute top-2 left-4 -translate-y-20 rounded-md bg-white px-3 py-2 text-sm font-semibold text-black transition-transform focus:translate-y-0 focus:outline-hidden focus-visible:ring-2 focus-visible:ring-black/40"
+        className="bg-primary text-primary-foreground focus-visible:ring-ring absolute top-2 left-4 -translate-y-20 rounded-md px-3 py-2 text-sm font-semibold transition-transform focus:translate-y-0 focus:outline-hidden focus-visible:ring-2"
       >
         Saltar al contenido
       </a>
@@ -79,8 +79,8 @@ export default function NavbarClient({ user }: NavbarClientProps) {
       >
         <Link href="/" aria-label="Ir al inicio">
           <img
-            src="/logo-2.png"
-            alt="Logo de Car Agency App"
+            src="/logo.png"
+            alt="GL Autos"
             width={65}
             height={64}
             className="h-16"
@@ -103,15 +103,15 @@ export default function NavbarClient({ user }: NavbarClientProps) {
                 aria-current={isActive ? "page" : undefined}
                 className={`relative text-sm font-medium tracking-tight uppercase transition-colors ${
                   isActive
-                    ? "text-background"
-                    : "hover:text-background text-zinc-400"
+                    ? "text-foreground"
+                    : "hover:text-foreground text-muted-foreground"
                 }`}
               >
                 {link.label}
                 {isActive ? (
                   <span
                     aria-hidden="true"
-                    className="bg-background absolute -bottom-1 left-0 h-0.5 w-full rounded-full"
+                    className="bg-primary absolute -bottom-1 left-0 h-0.5 w-full rounded-full"
                   />
                 ) : null}
               </Link>
@@ -122,8 +122,8 @@ export default function NavbarClient({ user }: NavbarClientProps) {
             aria-current={ctaActive ? "page" : undefined}
             className={
               ctaActive
-                ? "text-background relative text-sm font-medium tracking-tight uppercase transition-colors"
-                : "bg-secondary text-primary hover:text-background focus-visible:ring-background/60 rounded-md px-4 py-2 text-sm font-medium tracking-tight uppercase transition-colors focus-visible:ring-2 focus-visible:outline-none"
+                ? "text-foreground relative text-sm font-medium tracking-tight uppercase transition-colors"
+                : "bg-primary text-primary-foreground focus-visible:ring-ring hover:bg-primary/90 rounded-md px-4 py-2 text-sm font-medium tracking-tight uppercase transition-colors focus-visible:ring-2 focus-visible:outline-none"
             }
           >
             {CTA_LINK.label}
@@ -144,7 +144,7 @@ export default function NavbarClient({ user }: NavbarClientProps) {
               <button
                 type="button"
                 aria-label={menuOpen ? "Cerrar menú" : "Abrir menú"}
-                className="hover:text-background focus-visible:ring-background/60 inline-flex size-11 items-center justify-center rounded-md text-zinc-200 transition-colors focus-visible:ring-2 focus-visible:outline-none lg:hidden"
+                className="hover:text-primary focus-visible:ring-ring text-foreground inline-flex size-11 items-center justify-center rounded-md transition-colors focus-visible:ring-2 focus-visible:outline-none lg:hidden"
               >
                 {menuOpen ? (
                   <XRoundedIcon className="size-7" />
@@ -170,14 +170,14 @@ export default function NavbarClient({ user }: NavbarClientProps) {
                       aria-current={isActive ? "page" : undefined}
                       className={`flex w-full items-center rounded-sm px-4 py-2 text-sm font-medium tracking-tight uppercase outline-none ${
                         isActive
-                          ? "text-secondary data-highlighted:text-secondary data-highlighted:bg-transparent"
-                          : "data-highlighted:bg-primary data-highlighted:text-background text-zinc-600"
+                          ? "text-primary data-highlighted:text-primary data-highlighted:bg-transparent"
+                          : "data-highlighted:bg-primary data-highlighted:text-primary-foreground text-muted-foreground"
                       }`}
                     >
                       <span
                         className={
                           isActive
-                            ? "border-secondary -mb-1 border-b-2 pb-0.5"
+                            ? "border-primary -mb-1 border-b-2 pb-0.5"
                             : undefined
                         }
                       >
@@ -195,14 +195,14 @@ export default function NavbarClient({ user }: NavbarClientProps) {
                   aria-current={ctaActive ? "page" : undefined}
                   className={
                     ctaActive
-                      ? "text-secondary data-highlighted:text-secondary flex w-full items-center rounded-sm px-4 py-2 text-sm font-medium tracking-tight uppercase outline-none data-highlighted:bg-transparent"
-                      : "bg-secondary text-primary data-highlighted:bg-secondary data-highlighted:text-background flex w-full items-center justify-start rounded-md border-0 px-4 py-2.5 text-sm font-medium tracking-tight uppercase shadow-none transition-colors outline-none"
+                      ? "text-primary data-highlighted:text-primary flex w-full items-center rounded-sm px-4 py-2 text-sm font-medium tracking-tight uppercase outline-none data-highlighted:bg-transparent"
+                      : "bg-primary text-primary-foreground data-highlighted:bg-primary/90 data-highlighted:text-primary-foreground flex w-full items-center justify-start rounded-md border-0 px-4 py-2.5 text-sm font-medium tracking-tight uppercase shadow-none transition-colors outline-none"
                   }
                 >
                   <span
                     className={
                       ctaActive
-                        ? "border-secondary -mb-1 border-b-2 pb-0.5"
+                        ? "border-primary -mb-1 border-b-2 pb-0.5"
                         : undefined
                     }
                   >

@@ -1,7 +1,7 @@
 export const HEADER_CONTENT = {
   logo: {
-    src: "/logo-2.png",
-    alt: "logo",
+    src: "/logo.png",
+    alt: "GL Autos",
     className: "size-16",
     width: 64,
     height: 64,

@@ -45,7 +45,7 @@ export default function FeatureCards() {
               style={{ backgroundImage: `url(${card.bg})` }}
             />
 
-            <div className="absolute inset-0 bg-zinc-950/50 transition-colors duration-300 group-hover:bg-zinc-950/40" />
+            <div className="bg-background/60 group-hover:bg-background/50 absolute inset-0 transition-colors duration-300" />
 
             <div
               className="pointer-events-none absolute inset-0"
@@ -68,7 +68,9 @@ export default function FeatureCards() {
               <h2 className="mb-4 text-3xl font-black uppercase italic">
                 {card.title}
               </h2>
-              <p className="leading-relaxed text-zinc-300">{card.desc}</p>
+              <p className="text-subtle-foreground leading-relaxed">
+                {card.desc}
+              </p>
             </div>
           </Link>
         ))}

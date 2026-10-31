@@ -87,7 +87,7 @@ export default async function AutosPage({ searchParams }: PageProps<"/autos">) {
             aria-live="polite"
             className="lg:col-start-2 lg:row-start-1"
           >
-            <Badge variant="outline" className="border-secondary text-primary">
+            <Badge variant="outline" className="border-primary text-primary">
               {total === 0
                 ? "No se encontraron vehículos"
                 : total === 1

@@ -14,21 +14,21 @@ export default function ServicesSection() {
           accentClassName="text-muted-foreground"
         >
           <div className="flex flex-wrap items-center justify-center gap-2">
-            <Badge variant="outline" className="border-secondary text-primary">
+            <Badge variant="outline" className="border-primary text-primary">
               Autos usados
             </Badge>
-            <Badge variant="outline" className="border-secondary text-primary">
+            <Badge variant="outline" className="border-primary text-primary">
               0km
             </Badge>
           </div>
         </SectionHeading>
 
         {/* CONTENT */}
-        <div className="space-y-10 text-lg leading-relaxed text-zinc-600 md:text-xl">
+        <div className="text-subtle-foreground space-y-10 text-lg leading-relaxed md:text-xl">
           <p>
             Comprá, vendé o cambiá tu vehículo de forma simple, segura y sin
             vueltas. Te ofrecemos{" "}
-            <strong className="text-zinc-900">
+            <strong className="text-foreground">
               compra directa, venta y consignación
             </strong>
             , adaptándonos a lo que necesitás en cada momento.
@@ -36,17 +36,17 @@ export default function ServicesSection() {
 
           <p>
             Accedé a tu próximo auto con{" "}
-            <strong className="text-zinc-900">
+            <strong className="text-foreground">
               créditos de rápida aprobación
             </strong>{" "}
             o entregando tu vehículo en parte de pago mediante{" "}
-            <strong className="text-zinc-900">permuta</strong>, sin
+            <strong className="text-foreground">permuta</strong>, sin
             complicaciones.
           </p>
 
           <p>
             Todas nuestras unidades de usados cuentan con{" "}
-            <strong className="text-zinc-900">
+            <strong className="text-foreground">
               garantía en motor, caja y embrague
             </strong>
             , para que tomes la decisión con total tranquilidad.

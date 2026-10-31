@@ -20,7 +20,7 @@ export default function Footer() {
     <footer
       id="contacto"
       ref={ref as React.RefObject<HTMLElement>}
-      className="w-full bg-black/95 px-8 py-24 text-white"
+      className="bg-background text-foreground w-full px-8 py-24"
     >
       <div
         className={`mx-auto mb-20 grid max-w-7xl grid-cols-1 gap-16 transition-all duration-700 md:grid-cols-3 ${
@@ -38,10 +38,10 @@ export default function Footer() {
               className="h-16"
             />
           </Link>
-          <p className="text-sm leading-relaxed tracking-tight text-zinc-500 uppercase">
+          <p className="text-muted-foreground text-sm leading-relaxed tracking-tight uppercase">
             F<span className="normal-case">y</span>F Automotores
           </p>
-          <p className="text-sm leading-relaxed tracking-tight text-zinc-500 uppercase">
+          <p className="text-muted-foreground text-sm leading-relaxed tracking-tight uppercase">
             Autos usados <span className="normal-case">y</span> 0km en Santa Fe
           </p>
         </div>
@@ -52,14 +52,14 @@ export default function Footer() {
             isVisible ? "translate-y-0 opacity-100" : "translate-y-10 opacity-0"
           }`}
         >
-          <h3 className="mb-8 text-xs font-bold tracking-widest text-zinc-500 uppercase underline">
+          <h3 className="text-muted-foreground mb-8 text-xs font-bold tracking-widest uppercase underline">
             Navegación
           </h3>
-          <ul className="space-y-4 text-xs font-bold text-zinc-500 uppercase">
+          <ul className="text-muted-foreground space-y-4 text-xs font-bold uppercase">
             <li>
               <Link
                 href="/autos"
-                className="transition-colors hover:text-zinc-400"
+                className="hover:text-foreground transition-colors"
               >
                 Nuestro Stock
               </Link>
@@ -67,7 +67,7 @@ export default function Footer() {
             <li>
               <a
                 href="/ventas"
-                className="transition-colors hover:text-zinc-400"
+                className="hover:text-foreground transition-colors"
               >
                 Vende tu vehículo
               </a>
@@ -78,7 +78,7 @@ export default function Footer() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Seguinos en Instagram (se abre en una pestaña nueva)"
-                className="transition-colors hover:text-zinc-400"
+                className="hover:text-foreground transition-colors"
               >
                 Seguínos en nuestras Redes
               </a>
@@ -92,17 +92,17 @@ export default function Footer() {
             isVisible ? "translate-y-0 opacity-100" : "translate-y-10 opacity-0"
           } not-italic`}
         >
-          <h3 className="mb-8 text-xs font-bold tracking-widest text-zinc-500 uppercase underline">
+          <h3 className="text-muted-foreground mb-8 text-xs font-bold tracking-widest uppercase underline">
             Contacto
           </h3>
-          <ul className="space-y-4 text-xs font-bold text-zinc-500 uppercase">
+          <ul className="text-muted-foreground space-y-4 text-xs font-bold uppercase">
             <li>
               <a
                 href={mapsUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Ver ubicación en Google Maps (se abre en una pestaña nueva)"
-                className="flex min-w-0 items-center gap-2 break-words transition-colors hover:text-zinc-400"
+                className="hover:text-foreground flex min-w-0 items-center gap-2 break-words transition-colors"
               >
                 <MapPin size={16} className="shrink-0" />
                 Estanislao Zeballos 3556, Santa Fe
@@ -112,7 +112,7 @@ export default function Footer() {
               <a
                 href={phoneHref}
                 onClick={() => track("Contact", { method: "phone" })}
-                className="flex items-center gap-2 transition-colors hover:text-zinc-400"
+                className="hover:text-foreground flex items-center gap-2 transition-colors"
               >
                 <PhoneIcon size={16} />
                 {phoneDisplay}
@@ -122,11 +122,11 @@ export default function Footer() {
         </address>
       </div>
 
-      <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-4 border-t border-zinc-900 pt-8 text-[10px] font-bold text-zinc-500 uppercase">
-        <Link href="/admin" className="transition-colors hover:text-zinc-400">
+      <div className="border-border text-muted-foreground mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-4 border-t pt-8 text-[10px] font-bold uppercase">
+        <Link href="/admin" className="hover:text-foreground transition-colors">
           Acceso
         </Link>
-        <p className="flex flex-col items-center text-zinc-500">
+        <p className="text-muted-foreground flex flex-col items-center">
           <span>
             &copy; {new Date().getFullYear()} F
             <span className="normal-case">y</span>F Automotores.
