@@ -86,12 +86,10 @@ const landingJsonLd = {
       closes: "12:30",
     },
   ],
-  aggregateRating: {
-    "@type": "AggregateRating",
-    ratingValue: 4.9,
-    reviewCount: 249,
-    bestRating: 5,
-  },
+  // No `aggregateRating`. Self-published ratings for a LocalBusiness are not
+  // allowed by Google's structured data policy, and the 4.9/249 that used to be
+  // here had no verifiable source behind it. It comes back in T4.1, wired to
+  // real reviews, not typed in by hand.
 };
 
 export default async function LandingPage() {
