@@ -24,10 +24,26 @@ models, linktree, settings and sessions. Guard it: abort unless
 is about to delete. Acceptance: `pnpm db:seed` on a non-dev env exits non-zero
 without touching a row.
 
-T0.2 — Backups with a proven restore. **M**
+T0.2 — Backups with a proven restore. **M — DEFERRED (MVP, no production yet)**
 Automated snapshot (Neon branch or `pg_dump` cron) plus a documented restore. The
 proof is a restore into a scratch database, not a checkbox: if nobody has restored
 one, there is no backup.
+
+Deferred by the owner while the product is a development MVP with no production
+database. Recorded here so nobody re-diagnoses it from zero:
+
+- A weekly backup workflow **already exists**, `.github/workflows/database-backup.yml`,
+  and has been failing since the `fyf` rename (runs from 2026-10-11 onward are red).
+  Its `BACKUP_REPO` is `Car Agency Appautomotores/Car Agency App-backups` — a GitHub
+  path with spaces, produced by the same blind rename, which cannot exist.
+- `gh secret list` comes back empty, so `BACKUP_REPO_SSH_KEY` is probably missing too.
+
+So this is not "build a pipeline": it is "point the existing one at the real backup
+repository". That needs the repository name from the owner, and guessing the path of a
+backup is how a backup is lost.
+
+While it stays deferred, T0.1 (the seed guard) is the only thing standing between a
+mistyped command and an emptied database, which is why that guard is not optional.
 
 T0.3 — Make `aggregateRating` honest. **S**
 The landing JSON-LD publishes `4.9 / 249` reviews. Structured data must reflect
@@ -141,8 +157,8 @@ a client's production.
 
 ## Ordering
 
-Flagship delivery: `T0.1, T0.2, T0.3, T0.4, T0.5` then `T1.1 -> T1.6`, then `T2.1,
-T2.2, T2.3`.
+Flagship delivery: `T0.1, T0.3, T0.4, T0.5` then `T1.1 -> T1.6` (done), then `T2.1,
+T2.2, T2.3`. `T0.2` is deferred while there is no production database.
 
 Productization, before agency #2: `T0.6, T0.7, T3.1, T5.1, T5.2, T5.3`.
 
@@ -155,7 +171,18 @@ Not now: online payments or deposits, a full CRM/ERP, multi-tenant.
   unchanged across them.
 - T0.3 (aggregateRating) — done, `bd4c3f7`. Verified absent from the rendered
   JSON-LD while the rest of the AutoDealer block survives.
-- Next in code, no input needed: T1.1 -> T1.4 (the lead layer).
-- Next that needs the owner: T0.2 (backup provider and restore drill), T0.4 (DNS,
-  `BETTER_AUTH_URL`, sending domain), T0.5 (privacy text and legal review).
+- T1.1 -> T1.4 (the lead layer) — done. `041601a`, `a96809c`, `65b0868`, `327d3d0`;
+  the car page records inquiries, notifies by email, and the panel lists them with
+  statuses and an audit row per change. Detail in `odd/tasks/car-leads.md`.
+- T1.5 (attribution) and T1.6 (the numbers on /admin) — done. `7dd92ed`, `f9bbde3`,
+  `9fe5718`. First-touch campaign capture in four columns, and a dashboard on `/admin`
+  with counters, a 12-week series, channel/status bars, a ranked car table and the
+  unanswered queue. Detail in `odd/tasks/car-leads.md`. Phase 1 is complete.
+- Dependencies are now pinned exactly, enforced by
+  `src/__tests__/dependencies.test.ts` (`45a8e37`).
+- Next, and the only thing left before handing over: Phase 0 items that need the owner
+  (T0.2 backups, T0.4 domain and sending domain, T0.5 privacy), then T0.6 brand config
+  before a second agency.
+- Next that needs the owner: T0.4 (DNS, `BETTER_AUTH_URL`, sending domain) and T0.5
+  (privacy text and legal review). T0.2 is deferred until production exists.
 - T0.6 (brand config) before any second agency, not before GL Autos.

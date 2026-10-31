@@ -13,6 +13,7 @@ import { SITE_CONFIG } from "@/data/metadata";
 import Footer from "@/app/(landing)/components/Footer";
 import { NavbarServer } from "@/app/(landing)/components/NavbarServer";
 import { MetaPixelViewContent } from "@/components/ui/meta-pixel-view-content";
+import { LeadForm } from "@/components/leads";
 import { WhatsAppButton } from "@/components/ui/whatsapp-button";
 
 export const revalidate = 600;
@@ -156,15 +157,24 @@ export default async function CarDetailPage({
           <CarDetailSpecs car={car} />
         </div>
 
-        {whatsappHref ? (
-          <div className="border-border flex justify-center border-t pt-8">
-            <WhatsAppButton
-              href={whatsappHref}
-              label="Consultar por WhatsApp"
-              className="hover:bg-primary/90 h-14 w-full px-8 transition-transform duration-300 hover:scale-105 sm:w-fit"
-            />
+        <section className="border-border border-t pt-8">
+          <div className="mx-auto max-w-xl">
+            <LeadForm carSlug={car.slug} carTitle={car.title} />
           </div>
-        ) : null}
+
+          {whatsappHref ? (
+            <div className="mt-6 flex flex-col items-center gap-2">
+              <span className="text-muted-foreground text-sm">
+                o si preferís
+              </span>
+              <WhatsAppButton
+                href={whatsappHref}
+                label="Consultar por WhatsApp"
+                className="hover:bg-primary/90 h-14 w-full px-8 transition-transform duration-300 hover:scale-105 sm:w-fit"
+              />
+            </div>
+          ) : null}
+        </section>
       </div>
 
       <Footer />
