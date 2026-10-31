@@ -235,3 +235,11 @@ Checks: `tsc` clean, 119/119 tests, `pnpm build` exit 0. Rendered HTML verified:
 new site name in `<title>` and `og:site_name`, `wa.me/5493425777646` with no `+`, and
 zero occurrences of `5281841` on the home page. The local `.env` placeholders were
 filled with the real phone and Instagram (that file is untracked).
+
+L28 (applied, with explicit consent): the three `linkTreeLink` rows that had real
+values were updated in place (`telefono`, `whatsapp`, `instagram`) with a one-off
+Prisma `update({ where: { id } })` script, not with `pnpm db:seed`. Verified on the
+rendered `/contacto`: the new telephone appears 3x and `5281841` 0x, `gl.autos.sf`
+3x and `autos.usados.santafe` 0x, the new WhatsApp number 2x, the new address 3x and
+the opening hours 1x. `email` (`info@caragency.com`) and `ubicacion` (the
+`maps.app.goo.gl` short link) were left untouched because no real value was given.
