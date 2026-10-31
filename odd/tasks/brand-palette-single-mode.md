@@ -289,3 +289,51 @@ L35 (applied, with consent): DB rows `ubicacion` (new place URL) and `email`
 link, `/whatsapp.svg` served, no `twitter:site`/`twitter:creator`, and on `/contacto`
 no `caragency.com`, no `facebook.com/people`, no tiktok junk and no `maps.app.goo.gl`.
 `tsc` clean, 22 files / 123 tests passing, `pnpm build` exit 0.
+
+L36 (user request, verbatim): "modifica el seed con los datos de gl autos, y vuelve a
+repopular la DB, de momento no es produccion sino un mvp", followed by "usemos el
+dominio glautos.ar".
+
+L37 (seed data): `admin@caragency.com` -> `admin@glautos.ar` and
+`facundo@caragency.com` -> `facundo@glautos.ar`, plus the seller phone from the old
+`+54 9 342 528 1841` to `+54 9 342 577 7646`. Those were the last two inherited
+domains in the seed (`prisma/seed/{users,sellers}.ts`); nothing else in the seed
+carried brand copy.
+
+L38 (safety of the destructive run, checked before running): `main()` is
+`assertCloudinaryConfigured -> configureCloudinary -> assertCloudinaryAccessible ->
+validateImageManifest -> resetDatabase`, so a credential or manifest failure aborts
+before the wipe. The tables resetDatabase empties are exactly the ones the seed
+recreates, and the `settings` table was already empty (0 rows), so nothing
+unrecoverable was destroyed. Grant was explicit: MVP, not production.
+
+L39 (re-seed result, from the script's own summary): 1 user, 22 brands, 223 models,
+18/18 vehicles, 62 images matched, 0 upload failures, 4 cars on the placeholder image
+(`renault-clio-2013`, `peugeot-207-2013`, `fiat-palio-2011`, `ford-focus-2018`).
+Read back from the DB afterwards: user `admin@glautos.ar` (ADMIN, credential account
+with a hash), seller `facundo@glautos.ar` / `+54 9 342 577 7646`, 4 link rows
+(telefono, instagram, whatsapp, ubicacion) and no email row, 18 cars, 0 settings.
+
+L40 (login verified, two ways, because the first attempt was inconclusive): the first
+HTTP test returned 403 for every request including the negative controls, which means
+it was rejected before checking credentials — `BETTER_AUTH_URL` is
+`http://localhost:3000` and better-auth refuses any other origin. Definitive checks:
+`verifyPassword` from `better-auth/crypto` against the stored hash returns true for
+`admin1234` and false for a wrong password; the old email no longer exists; and on
+port 3000, sign-in 200 with a session cookie, `get-session` 200 as `admin@glautos.ar`
+ADMIN, `/admin` 200 rendering the shell, while a wrong password and the old email both
+return 401.
+
+L41 (observed, pre-existing, out of scope): with a valid session, `/admin/login`
+returned 200 instead of the 307 the layout's `isLoginPage` branch intends, so
+`x-pathname` may not be reaching the RSC render. The proxy itself works (no cookie
+does redirect to `/admin/login`). Unrelated to this seed work; needs its own look.
+
+L42 (deployment note, not changed): `.env` still has
+`NEXT_PUBLIC_SITE_URL=https://car-agency-app.vercel.app` and
+`BETTER_AUTH_URL=http://localhost:3000`. Both are hosting config, not brand copy:
+pointing the site URL at `glautos.ar` before DNS resolves would publish canonical,
+sitemap and og:image URLs on a dead host, and leaving BETTER_AUTH_URL at localhost in
+the deploy breaks sign-in with the same 403 seen in L40. They belong in the host's
+environment variables, and the seeded `admin1234` password must change before this
+stops being an MVP.
