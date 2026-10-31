@@ -147,3 +147,15 @@ T2.2, T2.3`.
 Productization, before agency #2: `T0.6, T0.7, T3.1, T5.1, T5.2, T5.3`.
 
 Not now: online payments or deposits, a full CRM/ERP, multi-tenant.
+
+## Progress
+
+- T0.1 (seed guard) — done, `860a9cc`. Decision in `prisma/seed/guard.ts`, 17 unit
+  tests, runtime-controlled with three negative/positive controls, row counts
+  unchanged across them.
+- T0.3 (aggregateRating) — done, `bd4c3f7`. Verified absent from the rendered
+  JSON-LD while the rest of the AutoDealer block survives.
+- Next in code, no input needed: T1.1 -> T1.4 (the lead layer).
+- Next that needs the owner: T0.2 (backup provider and restore drill), T0.4 (DNS,
+  `BETTER_AUTH_URL`, sending domain), T0.5 (privacy text and legal review).
+- T0.6 (brand config) before any second agency, not before GL Autos.
