@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { MapPin, PhoneIcon } from "lucide-react";
+import { Clock, MapPin, PhoneIcon } from "lucide-react";
 import { HEADER_CONTENT } from "@/data/header";
 import { track } from "@/lib/meta-pixel";
 import { useScrollAnimation } from "../hooks/useScrollAnimation";
@@ -11,12 +11,12 @@ export default function Footer() {
   const { ref, isVisible } = useScrollAnimation({ threshold: 0.1 });
   const instagramUrl =
     process.env.NEXT_PUBLIC_INSTAGRAM_URL ??
-    "https://www.instagram.com/autos.usados.santafe/";
+    "https://www.instagram.com/gl.autos.sf/";
   const mapsUrl =
     process.env.NEXT_PUBLIC_MAPS_URL ??
-    "https://www.google.com/maps/search/?api=1&query=Estanislao%20Zeballos%203556%2C%20Santa%20Fe";
-  const phoneDisplay = "+54 9 342 528 1841";
-  const phoneHref = "tel:+5493425281841";
+    "https://www.google.com/maps/search/?api=1&query=General%20L%C3%B3pez%203543%2C%20Santa%20Fe";
+  const phoneDisplay = "+54 9 342 577 7646";
+  const phoneHref = "tel:+5493425777646";
 
   return (
     <footer
@@ -44,7 +44,7 @@ export default function Footer() {
             GL Autos
           </p>
           <p className="text-muted-foreground text-sm leading-relaxed tracking-tight uppercase">
-            Autos usados <span className="normal-case">y</span> 0km en Santa Fe
+            Concesionario multimarcas de usados seleccionados y 0km
           </p>
         </div>
 
@@ -107,7 +107,7 @@ export default function Footer() {
                 className="hover:text-foreground flex min-w-0 items-center gap-2 break-words transition-colors"
               >
                 <MapPin size={16} className="shrink-0" />
-                Estanislao Zeballos 3556, Santa Fe
+                General López 3543, Santa Fe
               </a>
             </li>
             <li>
@@ -119,6 +119,14 @@ export default function Footer() {
                 <PhoneIcon size={16} />
                 {phoneDisplay}
               </a>
+            </li>
+            <li className="flex items-start gap-2">
+              <Clock size={16} className="mt-0.5 shrink-0" />
+              <span>
+                Lun a Vie 8:30&ndash;12:30 y 16&ndash;20 hs
+                <br />
+                S&aacute;b 9&ndash;12:30 hs
+              </span>
             </li>
           </ul>
         </address>

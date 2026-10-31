@@ -4,7 +4,12 @@ import Link from "next/link";
 import { track } from "@/lib/meta-pixel";
 
 export function WhatsAppFloatButton() {
-  const phone = process.env.NEXT_PUBLIC_WHATSAPP_PHONE ?? "+5493425281841";
+  // wa.me wants digits only: the env var carries a leading "+", so passing it
+  // through produced https://wa.me/+5493425777646 here while /ventas already
+  // normalised its own copy. Same rule in both places.
+  const phone = (
+    process.env.NEXT_PUBLIC_WHATSAPP_PHONE ?? "+5493425777646"
+  ).replace(/\D/g, "");
   const message = encodeURIComponent(
     "Hola! Vi tu página y quiero consultar por un auto 🚗",
   );

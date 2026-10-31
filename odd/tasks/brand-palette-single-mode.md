@@ -47,7 +47,10 @@ car-grid, contact, login/2fa. S3, S5 | route: inline | done | commit `961be3b`
 T4 — Regenerate `public/favicon.ico` and `public/apple-touch-icon.png` from the new
 mark. S1 | route: inline | done | commit `5c1ccf6`
 T5 — Transparent logo variants: the black field and the collapse deformation.
-S1, S7 | route: inline | done | commit `(T5)`
+S1, S7 | route: inline | done | commit `b00d35b`
+T6 — Replace "FyF Automotores" copy with GL Autos. S1 | done | commit `1f6210f`
+T7 — Real business data: address, phone, hours, Instagram, positioning, and the
+GL Autos name in titles/SEO. S1 | done | commit `(T7)`
 
 Checks: `tsc --noEmit` clean, `pnpm test` 21 files / 119 tests passed,
 `pnpm build` exit 0. Compiled CSS carries `--primary:#fe0000`,
@@ -186,3 +189,49 @@ stylesheet; both PNGs are served (1889b / 645b, `image/png`) and the landing HTM
 references the wordmark through `next/image` with a 1x/2x srcset; `tsc` clean,
 119/119 tests, `pnpm build` exit 0. Geometry is computed, and the two rail states
 were rasterised and inspected, not checked in a browser.
+
+L20 (user request, verbatim): "cambia todo lo que diga FyF Automotores por GL Autos".
+
+L21 (discovery): the wordmark text was written as
+`F<span className="normal-case">y</span>F Automotores` in four places, which is why
+a grep for "fyf" never found it.
+
+L22 (discovery — botched rename): the repo also carries `@Car Agency Appautomotores`,
+`tiktok.com/@Car Agency Appautomotores` and `facebook.com/people/Car Agency App/...`.
+Confirmed with `od` that the bytes really contain the space: an automated rename
+replaced the token `fyf` with "Car Agency App" and mangled three values into
+strings that are not valid URLs. `SITE_CONFIG.name` and every page title carried
+the same replacement, so the site name was "Car Agency App" in the tab, og and
+title.
+
+L23 (user decision, verbatim): "Sí, "Car Agency App" → "GL Autos" en títulos y
+SEO", excluding testimonials. `Reviews.tsx` keeps its two quotes verbatim: a
+customer review is not editable copy.
+
+L24 (real business data, dictated by the user): Instagram
+`https://www.instagram.com/gl.autos.sf/`, WhatsApp `5493425777646`, address
+`General López 3543`, hours Monday to Friday 08:30-12:30 and 16:00-20:00, Saturday
+09:00-12:30, positioning "Concesionario multimarcas de usados seleccionados y 0km",
+province Santa Fe.
+
+L25 (bug found by that data): `WhatsAppFloatButton` interpolated the env value
+directly, producing `wa.me/+5493425777646`, while `/ventas` already normalised with
+`replace(/\D/g, "")`. Both now strip non-digits.
+
+L26 (blocking, needs consent): the live `/contacto` reads `linkTreeLink` rows, and
+the DB still holds the previous phone and the `autos.usados.santafe` Instagram, so
+the page now shows the new Instagram in the footer and the old one in the link list.
+`pnpm db:seed` is NOT the fix: `resetDatabase()` wipes visit, log, car, seller,
+model, brand, linkTreeLink, settings, session, account, verification and user. It
+needs a targeted UPDATE of three rows.
+
+L27 (still unknown, not invented): the X/Twitter handle, the TikTok and Facebook
+URLs, the email (`info@caragency.com` in the seed is a botched domain), and whether
+the `maps.app.goo.gl` short link in the `ubicacion` row points at the new address.
+
+Checks: `tsc` clean, 119/119 tests, `pnpm build` exit 0. Rendered HTML verified:
+`"telephone":"+5493425777646"`, `"streetAddress":"General López 3543"`, the three
+`openingHoursSpecification` entries, the footer address/hours/phone/Instagram, the
+new site name in `<title>` and `og:site_name`, `wa.me/5493425777646` with no `+`, and
+zero occurrences of `5281841` on the home page. The local `.env` placeholders were
+filled with the real phone and Instagram (that file is untracked).

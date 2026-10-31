@@ -8,9 +8,9 @@ import { NavbarServer } from "../(landing)/components/NavbarServer";
 import Footer from "../(landing)/components/Footer";
 
 export const metadata: Metadata = {
-  title: "Contacto en Santa Fe: escribinos | Car Agency App",
+  title: "Contacto en Santa Fe: escribinos | GL Autos",
   description:
-    "Contactá a Car Agency App en Estanislao Zeballos 3556, Santa Fe: WhatsApp, teléfono e Instagram. Atención personalizada para comprar o vender tu auto.",
+    "Contactá a GL Autos en General López 3543, Santa Fe: WhatsApp, teléfono e Instagram. Atención personalizada para comprar o vender tu auto.",
   alternates: {
     canonical: "/contacto",
   },

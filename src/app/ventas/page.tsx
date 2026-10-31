@@ -5,16 +5,16 @@ import Footer from "../(landing)/components/Footer";
 import { WhatsAppButton } from "@/components/ui/whatsapp-button";
 
 export const metadata: Metadata = {
-  title: "Vendé tu auto en 48 horas en Santa Fe | Car Agency App",
+  title: "Vendé tu auto en 48 horas en Santa Fe | GL Autos",
   description:
-    "Vendé tu auto en Santa Fe con Car Agency App: tasación inmediata, transferencia segura en 48 horas hábiles y pago rápido. ¡Envianos tus datos por WhatsApp!",
+    "Vendé tu auto en Santa Fe con GL Autos: tasación inmediata, transferencia segura en 48 horas hábiles y pago rápido. ¡Envianos tus datos por WhatsApp!",
   alternates: {
     canonical: "/ventas",
   },
 };
 
 export default function SellPage() {
-  const phoneRaw = process.env.NEXT_PUBLIC_WHATSAPP_PHONE ?? "+5493425281841";
+  const phoneRaw = process.env.NEXT_PUBLIC_WHATSAPP_PHONE ?? "+5493425777646";
   const phone = phoneRaw.replace(/\D/g, "");
 
   const messageTemplate = [

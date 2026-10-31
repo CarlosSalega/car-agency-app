@@ -12,7 +12,7 @@ export const HEADER_CONTENT = {
     height: 19,
   },
   brand: {
-    text: "Car Agency App",
+    text: "GL Autos",
     className: "font-bold text-foreground uppercase hidden md:block",
   },
   api: {

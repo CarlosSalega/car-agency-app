@@ -13,16 +13,16 @@ import ServicesSection from "./components/ServicesSection";
 import { WhatsAppFloatButton } from "./components/ui/WhatsAppFloatButton";
 
 export const metadata: Metadata = {
-  title: "Autos usados y 0km en Santa Fe | Car Agency App",
+  title: "Autos usados y 0km en Santa Fe | GL Autos",
   description:
-    "Comprá o vendé tu auto en Santa Fe con Car Agency App: atención personalizada, financiación a medida y unidades usadas y 0km seleccionadas. ¡Visitános hoy!",
+    "Comprá o vendé tu auto en Santa Fe con GL Autos: atención personalizada, financiación a medida y unidades usadas y 0km seleccionadas. ¡Visitános hoy!",
   alternates: {
     canonical: "/",
   },
   openGraph: {
-    title: "Autos usados y 0km en Santa Fe | Car Agency App",
+    title: "Autos usados y 0km en Santa Fe | GL Autos",
     description:
-      "Comprá o vendé tu auto en Santa Fe con Car Agency App: atención personalizada, financiación a medida y unidades usadas y 0km seleccionadas. ¡Visitános hoy!",
+      "Comprá o vendé tu auto en Santa Fe con GL Autos: atención personalizada, financiación a medida y unidades usadas y 0km seleccionadas. ¡Visitános hoy!",
     url: "/",
     siteName: SITE_CONFIG.name,
     images: [
@@ -38,9 +38,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Autos usados y 0km en Santa Fe | Car Agency App",
+    title: "Autos usados y 0km en Santa Fe | GL Autos",
     description:
-      "Comprá o vendé tu auto en Santa Fe con Car Agency App: atención personalizada, financiación a medida y unidades usadas y 0km seleccionadas. ¡Visitános hoy!",
+      "Comprá o vendé tu auto en Santa Fe con GL Autos: atención personalizada, financiación a medida y unidades usadas y 0km seleccionadas. ¡Visitános hoy!",
     images: [`${SITE_CONFIG.url}${SITE_CONFIG.previewPath}`],
     creator: SITE_CONFIG.twitterHandle,
   },
@@ -51,14 +51,35 @@ const landingJsonLd = {
   "@type": "AutoDealer",
   name: SITE_CONFIG.name,
   url: SITE_CONFIG.url,
-  telephone: "+5493425281841",
+  telephone: "+5493425777646",
+  description: "Concesionario multimarcas de usados seleccionados y 0km",
   address: {
     "@type": "PostalAddress",
-    streetAddress: "Estanislao Zeballos 3556",
+    streetAddress: "General López 3543",
     addressLocality: "Santa Fe",
     addressRegion: "Santa Fe",
     addressCountry: "AR",
   },
+  openingHoursSpecification: [
+    {
+      "@type": "OpeningHoursSpecification",
+      dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+      opens: "08:30",
+      closes: "12:30",
+    },
+    {
+      "@type": "OpeningHoursSpecification",
+      dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+      opens: "16:00",
+      closes: "20:00",
+    },
+    {
+      "@type": "OpeningHoursSpecification",
+      dayOfWeek: "Saturday",
+      opens: "09:00",
+      closes: "12:30",
+    },
+  ],
   aggregateRating: {
     "@type": "AggregateRating",
     ratingValue: 4.9,
