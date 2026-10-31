@@ -41,7 +41,7 @@ export default function Footer() {
             />
           </Link>
           <p className="text-muted-foreground text-sm leading-relaxed tracking-tight uppercase">
-            F<span className="normal-case">y</span>F Automotores
+            GL Autos
           </p>
           <p className="text-muted-foreground text-sm leading-relaxed tracking-tight uppercase">
             Autos usados <span className="normal-case">y</span> 0km en Santa Fe
@@ -129,10 +129,7 @@ export default function Footer() {
           Acceso
         </Link>
         <p className="text-muted-foreground flex flex-col items-center">
-          <span>
-            &copy; {new Date().getFullYear()} F
-            <span className="normal-case">y</span>F Automotores.
-          </span>
+          <span>&copy; {new Date().getFullYear()} GL Autos.</span>
           <span>Derechos reservados.</span>
         </p>
       </div>

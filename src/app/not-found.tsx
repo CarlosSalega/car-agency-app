@@ -144,7 +144,7 @@ export default function NotFound() {
             mounted ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"
           }`}
         >
-          F<span className="normal-case">y</span>F Automotores
+          GL Autos
         </span>
 
         <h1
