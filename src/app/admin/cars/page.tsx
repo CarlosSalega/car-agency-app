@@ -1,4 +1,4 @@
-import { Plus } from "lucide-react";
+import { Plus, Upload } from "lucide-react";
 import Link from "next/link";
 
 import { CarsTable } from "@/components/cars";
@@ -25,7 +25,7 @@ export default async function AdminCarsPage({
   return (
     <div className="bg-background min-h-screen">
       <div className="container mx-auto px-4 py-6">
-        <div className="mb-6 flex flex-row-reverse items-center">
+        <div className="mb-6 flex flex-row-reverse items-center gap-2">
           <Button
             render={
               <Link href="/admin/cars/new">
@@ -34,6 +34,15 @@ export default async function AdminCarsPage({
               </Link>
             }
             className="bg-foreground text-background hover:bg-foreground/80"
+          />
+          <Button
+            variant="outline"
+            render={
+              <Link href="/admin/cars/import">
+                <Upload className="mr-2 size-4" />
+                Importar Inventario
+              </Link>
+            }
           />
         </div>
 
