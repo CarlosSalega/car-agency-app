@@ -153,3 +153,24 @@ its presence in a client chunk, not by the HTML.
 
 L21 (deleted, not kept): an `eslint-disable no-control-regex` that no rule required.
 A stale suppression hides the next real finding from the same rule.
+
+L22 (T1.6, delegated then verified): the dashboard was handed to a worker with narrow
+edit surfaces; the data layer (`metrics.ts`) stayed mine and untouched. It delivered 10
+files and 3 render tests. The brief quoted a stale baseline (32/212) because the metrics
+tests had landed in between; the real baseline was 33/228 and the worker caught the
+discrepancy instead of silently matching my number.
+
+L23 (two harness corrections of mine, again): asserting `<svg` to prove a chart rendered
+is wrong in a page full of lucide icons — the empty state showed 18 icon SVGs and zero
+charts. The distinguishing signal is recharts' own markup: 0 nodes on the empty page, 1
+with data. And a bare `7` is not an assertable total; the conversion rate (50% from one
+WON and one LOST) plus the queue names prove the wiring instead.
+
+L24 (product decision taken, stated): the waiting queue shows the visitor's name. "Who is
+waiting" is the name first and the car second. That needed `name` in the select and a
+`DashboardLead` type that extends `MetricsLead`, so the aggregation still knows nothing
+about people.
+
+L25 (Phase 1 complete): T1.1 through T1.6 are done. Inquiries are captured from the car
+page, stored with car, seller, consent and first-touch attribution, announced by email,
+managed with statuses and an audit trail, and measured on the panel landing page.

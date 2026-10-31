@@ -158,7 +158,15 @@ Not now: online payments or deposits, a full CRM/ERP, multi-tenant.
 - T1.1 -> T1.4 (the lead layer) — done. `041601a`, `a96809c`, `65b0868`, `327d3d0`;
   the car page records inquiries, notifies by email, and the panel lists them with
   statuses and an audit row per change. Detail in `odd/tasks/car-leads.md`.
-- Next in code, no input needed: T1.5 (attribution) and T1.6 (the numbers on /admin).
+- T1.5 (attribution) and T1.6 (the numbers on /admin) — done. `7dd92ed`, `f9bbde3`,
+  `9fe5718`. First-touch campaign capture in four columns, and a dashboard on `/admin`
+  with counters, a 12-week series, channel/status bars, a ranked car table and the
+  unanswered queue. Detail in `odd/tasks/car-leads.md`. Phase 1 is complete.
+- Dependencies are now pinned exactly, enforced by
+  `src/__tests__/dependencies.test.ts` (`45a8e37`).
+- Next, and the only thing left before handing over: Phase 0 items that need the owner
+  (T0.2 backups, T0.4 domain and sending domain, T0.5 privacy), then T0.6 brand config
+  before a second agency.
 - Next that needs the owner: T0.2 (backup provider and restore drill), T0.4 (DNS,
   `BETTER_AUTH_URL`, sending domain), T0.5 (privacy text and legal review).
 - T0.6 (brand config) before any second agency, not before GL Autos.
