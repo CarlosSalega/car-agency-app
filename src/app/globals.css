@@ -15,13 +15,19 @@
   animation: attention-glow 2.6s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
+/*
+ * The glow is the brand red at a distance, not a box-shadow of the element.
+ * It used to be a bronze `oklch(73% 0.068 55)`, a leftover from the previous
+ * orange accent; keeping it would have made the WhatsApp CTA glow a different
+ * colour than the palette it sits on.
+ */
 @keyframes attention-glow {
   0%,
   100% {
-    box-shadow: 0 0 0 0 oklch(73% 0.068 55 / 0);
+    box-shadow: 0 0 0 0 rgb(254 0 0 / 0);
   }
   50% {
-    box-shadow: 0 0 0 6px oklch(73% 0.068 55 / 0.35);
+    box-shadow: 0 0 0 6px rgb(254 0 0 / 0.35);
   }
 }
 
@@ -40,63 +46,99 @@
   }
 }
 
-@custom-variant dark (&:is(.dark *));
-
 /*
- * Community theme (light).
+ * GL AUTOS palette, single mode.
  *
- * Project-specific tokens are marked "carried over" and were **not** replaced by
- * the theme. They back the `success`, `info` and `warning` Button variants,
- * which do not exist upstream, and the toast types in `sonner.tsx`. Dropping
- * them with the rest of the palette would leave `bg-success` and friends
- * resolving to nothing, so those three variants would silently lose their
- * colour.
+ * There is one mode and only one: no `.dark` block, no `@custom-variant dark`,
+ * no `dark:` utilities. `color-scheme: dark` is declared here so native widgets
+ * (scrollbars, date pickers, autofill, form controls) follow the surface
+ * instead of rendering a white sheet inside a near-black page.
+ *
+ * The brand red comes from `public/logo.png` (`#FE0000`, 212 px, the "GL").
+ * It is used as a fill, never as a text colour on white: red on white is
+ * 4.03:1 and red on `#121212` is 4.65:1, so red text is legal on the page but
+ * white text on red (4.03:1) is not. That is why `--primary-foreground` is
+ * black (5.21:1) rather than white.
+ *
+ * The neutral ramp is not new: `car-card.tsx` and `car-grid.tsx` already ship
+ * these exact values as arbitrary hex (`#121212`, `#141414`, `#1c1c1c`,
+ * `#242424`, `#2a2a2a`, `#333333`, `#f5f5f5`, `#c4c7c8`, `#a3a3a3`). This block
+ * gives that ramp names so the rest of the app can stop hardcoding it.
+ *
+ * Measured contrast on `--background` (`#121212`):
+ *   foreground        #f5f5f5  17.18:1
+ *   subtle-foreground #c4c7c8  11.02:1
+ *   muted-foreground  #a3a3a3   7.43:1
+ *   primary           #fe0000   4.65:1
+ *   ring              #fe0000   4.65:1
+ *
+ * Known gap: `--border` (1.31:1) and `--input` (~1.72:1) sit under the 3:1 that
+ * WCAG 1.4.11 asks of control boundaries. That is the ramp the newest
+ * components already ship, and reaching 3:1 needs roughly `#5a5a5a`, which
+ * erases the restrained look. The accessible affordance is the focus ring,
+ * which does pass (4.65:1).
  */
 :root {
-  /* Tailwind's `neutral-100`. Chroma 0 against the previous 0.0034 at hue 248:
-     the old value carried a cool tint that read as "white with a blue cast".
-     Card stays pure white, so the separation is now a soft 97% against 100%
-     rather than 98.4% against 100%. */
-  --background: oklch(97% 0 0);
-  --foreground: oklch(0.2077 0.0398 265.7549);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.2077 0.0398 265.7549);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.2077 0.0398 265.7549);
-  --primary: oklch(62.3% 0.214 259.815);
-  --primary-foreground: oklch(1 0 0);
-  --secondary: oklch(0.9288 0.0126 255.5078);
-  --secondary-foreground: oklch(0.2795 0.0368 260.031);
-  --muted: oklch(0.9683 0.0069 247.8956);
-  --muted-foreground: oklch(0.5544 0.0407 257.4166);
-  --accent: oklch(93.2% 0.032 255.585);
-  --accent-foreground: oklch(42.4% 0.199 265.638);
-  --destructive: oklch(0.6368 0.2078 25.3313);
-  --destructive-foreground: oklch(1 0 0);
-  --border: oklch(0.9288 0.0126 255.5078);
-  --input: oklch(0.9288 0.0126 255.5078);
-  --ring: oklch(62.3% 0.214 259.815);
-  --chart-1: oklch(62.3% 0.214 259.815);
-  --chart-2: oklch(48.8% 0.243 264.376);
-  --chart-3: oklch(0.6559 0.2118 354.3084);
-  --chart-4: oklch(0.8606 0.1731 91.9357);
-  --chart-5: oklch(0.7971 0.1339 211.5302);
-  --sidebar: oklch(1 0 0);
-  --sidebar-foreground: oklch(0.2077 0.0398 265.7549);
-  --sidebar-primary: oklch(62.3% 0.214 259.815);
-  --sidebar-primary-foreground: oklch(1 0 0);
-  --sidebar-accent: oklch(93.2% 0.032 255.585);
-  --sidebar-accent-foreground: oklch(42.4% 0.199 265.638);
-  --sidebar-border: oklch(0.9288 0.0126 255.5078);
-  --sidebar-ring: oklch(62.3% 0.214 259.815);
+  color-scheme: dark;
 
-  /* Carried over from the previous project palette. */
-  --success: oklch(79.2% 0.209 151.711);
-  --success-foreground: oklch(0% 0 0);
-  --info: oklch(70.7% 0.165 254.624);
-  --info-foreground: oklch(0% 0 0);
-  --warning: oklch(82.8% 0.189 84.429);
-  --warning-foreground: oklch(0% 0 0);
+  --background: #121212;
+  --foreground: #f5f5f5;
+
+  --card: #141414;
+  --card-foreground: #f5f5f5;
+  --popover: #1c1c1c;
+  --popover-foreground: #f5f5f5;
+
+  /* Brand red, verbatim from the logo. Paired with black, not white. */
+  --primary: #fe0000;
+  --primary-foreground: #000000;
+
+  --secondary: #1c1c1c;
+  --secondary-foreground: #f5f5f5;
+
+  --muted: #1c1c1c;
+  --muted-foreground: #a3a3a3;
+
+  --accent: #242424;
+  --accent-foreground: #f5f5f5;
+
+  /* Lighter and less saturated than --primary on purpose: with a red brand,
+     a same-red destructive state would be indistinguishable from the main
+     action. Lightness carries the distinction (6.19:1 against the page). */
+  --destructive: #ff5c5c;
+  --destructive-foreground: #000000;
+
+  --border: #2a2a2a;
+  --input: #3d3d3d;
+  --ring: #fe0000;
+
+  --chart-1: #fe0000;
+  --chart-2: #ff8a4c;
+  --chart-3: #f5f5f5;
+  --chart-4: #4ade80;
+  --chart-5: #60a5fa;
+
+  /* The admin rail reads as elevated: one step above --background, the same
+     relationship `sidebar` had with `background` in the previous light theme. */
+  --sidebar: #1c1c1c;
+  --sidebar-foreground: #f5f5f5;
+  --sidebar-primary: #fe0000;
+  --sidebar-primary-foreground: #000000;
+  --sidebar-accent: #242424;
+  --sidebar-accent-foreground: #f5f5f5;
+  --sidebar-border: #2a2a2a;
+  --sidebar-ring: #fe0000;
+
+  /* Project tokens with no theme counterpart. `subtle-foreground` is the
+     middle step of the three-step text ramp the car card introduced. */
+  --subtle-foreground: #c4c7c8;
+
+  --success: #4ade80;
+  --success-foreground: #000000;
+  --info: #60a5fa;
+  --info-foreground: #000000;
+  --warning: #fcd34d;
+  --warning-foreground: #000000;
 
   --font-sans: Afacad, ui-sans-serif, sans-serif, system-ui;
   --font-serif: Adamina, ui-serif, serif;
@@ -106,105 +148,23 @@
   --shadow-y: 0.2rem;
   --shadow-blur: 0.5rem;
   --shadow-spread: 0;
-  --shadow-opacity: 0.05;
-  --shadow-color: #0f172a;
-  --shadow-2xs: 0 0.2rem 0.5rem 0 hsl(222.2222 47.3684% 11.1765% / 0.03);
-  --shadow-xs: 0 0.2rem 0.5rem 0 hsl(222.2222 47.3684% 11.1765% / 0.03);
+  --shadow-opacity: 0.4;
+  --shadow-color: #000000;
+  --shadow-2xs: 0 0.2rem 0.5rem 0 hsl(0 0% 0% / 0.2);
+  --shadow-xs: 0 0.2rem 0.5rem 0 hsl(0 0% 0% / 0.2);
   --shadow-sm:
-    0 0.2rem 0.5rem 0 hsl(222.2222 47.3684% 11.1765% / 0.05),
-    0 1px 2px -1px hsl(222.2222 47.3684% 11.1765% / 0.05);
+    0 0.2rem 0.5rem 0 hsl(0 0% 0% / 0.4), 0 1px 2px -1px hsl(0 0% 0% / 0.4);
   --shadow:
-    0 0.2rem 0.5rem 0 hsl(222.2222 47.3684% 11.1765% / 0.05),
-    0 1px 2px -1px hsl(222.2222 47.3684% 11.1765% / 0.05);
+    0 0.2rem 0.5rem 0 hsl(0 0% 0% / 0.4), 0 1px 2px -1px hsl(0 0% 0% / 0.4);
   --shadow-md:
-    0 0.2rem 0.5rem 0 hsl(222.2222 47.3684% 11.1765% / 0.05),
-    0 2px 4px -1px hsl(222.2222 47.3684% 11.1765% / 0.05);
+    0 0.2rem 0.5rem 0 hsl(0 0% 0% / 0.4), 0 2px 4px -1px hsl(0 0% 0% / 0.4);
   --shadow-lg:
-    0 0.2rem 0.5rem 0 hsl(222.2222 47.3684% 11.1765% / 0.05),
-    0 4px 6px -1px hsl(222.2222 47.3684% 11.1765% / 0.05);
+    0 0.2rem 0.5rem 0 hsl(0 0% 0% / 0.4), 0 4px 6px -1px hsl(0 0% 0% / 0.4);
   --shadow-xl:
-    0 0.2rem 0.5rem 0 hsl(222.2222 47.3684% 11.1765% / 0.05),
-    0 8px 10px -1px hsl(222.2222 47.3684% 11.1765% / 0.05);
-  --shadow-2xl: 0 0.2rem 0.5rem 0 hsl(222.2222 47.3684% 11.1765% / 0.13);
+    0 0.2rem 0.5rem 0 hsl(0 0% 0% / 0.4), 0 8px 10px -1px hsl(0 0% 0% / 0.4);
+  --shadow-2xl: 0 0.2rem 0.5rem 0 hsl(0 0% 0% / 0.75);
   --tracking-normal: -0.025em;
   --spacing: 0.25rem;
-}
-
-/*
- * The theme's dark palette. It is currently **inert**: the project has no
- * `next-themes` and nothing writes a `dark` class onto `<html>`, so these values
- * never apply. They are kept because they are part of the theme, and wiring a
- * toggle is a separate feature decision.
- *
- * The carried-over custom tokens are repeated here so the `success`, `info` and
- * `warning` Button variants keep their colour if dark mode is ever enabled.
- */
-.dark {
-  --background: oklch(0.2077 0.0398 265.7549);
-  --foreground: oklch(0.9842 0.0034 247.8575);
-  --card: oklch(0.2795 0.0368 260.031);
-  --card-foreground: oklch(0.9842 0.0034 247.8575);
-  --popover: oklch(0.2795 0.0368 260.031);
-  --popover-foreground: oklch(0.9842 0.0034 247.8575);
-  --primary: oklch(62.3% 0.214 259.815);
-  --primary-foreground: oklch(1 0 0);
-  --secondary: oklch(0.3717 0.0392 257.287);
-  --secondary-foreground: oklch(0.9842 0.0034 247.8575);
-  --muted: oklch(0.2795 0.0368 260.031);
-  --muted-foreground: oklch(0.7107 0.0351 256.7878);
-  --accent: oklch(42.4% 0.199 265.638);
-  --accent-foreground: oklch(0.9842 0.0034 247.8575);
-  --destructive: oklch(0.7106 0.1661 22.2162);
-  --destructive-foreground: oklch(1 0 0);
-  --border: oklch(0.3717 0.0392 257.287);
-  --input: oklch(0.3717 0.0392 257.287);
-  --ring: oklch(62.3% 0.214 259.815);
-  --chart-1: oklch(62.3% 0.214 259.815);
-  --chart-2: oklch(80.9% 0.105 251.813);
-  --chart-3: oklch(0.7192 0.169 13.428);
-  --chart-4: oklch(0.9052 0.1657 98.1108);
-  --chart-5: oklch(0.8651 0.1153 207.0778);
-  --sidebar: oklch(0.2795 0.0368 260.031);
-  --sidebar-foreground: oklch(0.9842 0.0034 247.8575);
-  --sidebar-primary: oklch(62.3% 0.214 259.815);
-  --sidebar-primary-foreground: oklch(1 0 0);
-  --sidebar-accent: oklch(42.4% 0.199 265.638);
-  --sidebar-accent-foreground: oklch(0.9842 0.0034 247.8575);
-  --sidebar-border: oklch(0.3717 0.0392 257.287);
-  --sidebar-ring: oklch(62.3% 0.214 259.815);
-
-  /* Carried over, unchanged: the base colours sit at high lightness, so they
-     stay legible on a dark surface with their dark foreground. */
-  --success: oklch(79.2% 0.209 151.711);
-  --success-foreground: oklch(0% 0 0);
-  --info: oklch(70.7% 0.165 254.624);
-  --info-foreground: oklch(0% 0 0);
-  --warning: oklch(82.8% 0.189 84.429);
-  --warning-foreground: oklch(0% 0 0);
-
-  --font-sans: Afacad, ui-sans-serif, sans-serif, system-ui;
-  --font-serif: Adamina, ui-serif, serif;
-  --font-mono: Fira Code, ui-monospace, monospace;
-  --radius: 0.5rem;
-  --shadow-x: 0;
-  --shadow-y: 0.3rem;
-  --shadow-blur: 0.7rem;
-  --shadow-spread: 0;
-  --shadow-opacity: 0.3;
-  --shadow-color: #000000;
-  --shadow-2xs: 0 0.3rem 0.7rem 0 hsl(0 0% 0% / 0.15);
-  --shadow-xs: 0 0.3rem 0.7rem 0 hsl(0 0% 0% / 0.15);
-  --shadow-sm:
-    0 0.3rem 0.7rem 0 hsl(0 0% 0% / 0.3), 0 1px 2px -1px hsl(0 0% 0% / 0.3);
-  --shadow:
-    0 0.3rem 0.7rem 0 hsl(0 0% 0% / 0.3), 0 1px 2px -1px hsl(0 0% 0% / 0.3);
-  --shadow-md:
-    0 0.3rem 0.7rem 0 hsl(0 0% 0% / 0.3), 0 2px 4px -1px hsl(0 0% 0% / 0.3);
-  --shadow-lg:
-    0 0.3rem 0.7rem 0 hsl(0 0% 0% / 0.3), 0 4px 6px -1px hsl(0 0% 0% / 0.3);
-  --shadow-xl:
-    0 0.3rem 0.7rem 0 hsl(0 0% 0% / 0.3), 0 8px 10px -1px hsl(0 0% 0% / 0.3);
-  --shadow-2xl: 0 0.3rem 0.7rem 0 hsl(0 0% 0% / 0.75);
 }
 
 @theme inline {
@@ -242,6 +202,7 @@
   --color-sidebar-ring: var(--sidebar-ring);
 
   /* Carried over: these have no theme counterpart. */
+  --color-subtle-foreground: var(--subtle-foreground);
   --color-success: var(--success);
   --color-success-foreground: var(--success-foreground);
   --color-info: var(--info);

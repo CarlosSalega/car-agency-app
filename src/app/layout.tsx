@@ -1,5 +1,6 @@
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import type { Viewport } from "next";
 import { Afacad, Adamina, Fira_Code } from "next/font/google";
 import Script from "next/script";
 
@@ -43,6 +44,16 @@ export const metadata = {
     index: true,
     follow: true,
   },
+};
+
+/**
+ * The app has a single dark mode, so the browser is told at the document level.
+ * Without this, native widgets (scrollbars, date pickers, autofill, select
+ * popups) render with a light chrome inside a near-black page.
+ */
+export const viewport: Viewport = {
+  colorScheme: "dark",
+  themeColor: "#121212",
 };
 
 export default function RootLayout({
