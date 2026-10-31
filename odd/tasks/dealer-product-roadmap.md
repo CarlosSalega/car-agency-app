@@ -113,16 +113,24 @@ already exists and must not be duplicated.
 
 ## Phase 2 — Inventory visibility
 
-T2.1 — `Vehicle` + `Offer` JSON-LD on `/autos/[slug]`. **M**
-Price, currency, availability, mileage, year, fuel, transmission, seller, images. Today
-the car pages emit zero structured data, which is exactly what keeps inventory out of
-Google's vehicle surfaces.
+T2.1 — `Vehicle` + `Offer` JSON-LD on `/autos/[slug]`. **M — DONE** (`43e8809`)
+Price, currency, availability, mileage, year, fuel, transmission, seller, images. The
+car pages emitted zero structured data, which is what kept inventory out of Google's
+vehicle surfaces. `buildCarJsonLd` in `src/lib/cars/json-ld.ts`, 16 tests, verified on a
+live page. The licence plate is never published and a test enforces it.
 
-T2.2 — Per-car metadata. **S**
-Unique title/description, canonical, and OG image taken from the car's first photo.
+T2.2 — Per-car metadata. **S — ALREADY DONE before this phase started**
+Unique title/description, canonical, and OG image taken from the car's first photo all
+already existed in `generateMetadata`. The roadmap was written before reading that file;
+recorded here so nobody re-implements it.
 
-T2.3 — Sitemap hygiene. **S**
-Include car URLs with `lastModified`; drop or `noindex` sold/inactive cars.
+T2.3 — Sitemap hygiene. **S — DONE** (`457411b`)
+Car URLs and the sold/inactive filter already existed. What was wrong: every car carried
+the same `new Date()` as `lastModified`, so the sitemap claimed the whole inventory
+changed on every build and a crawler learns to ignore the field. It now uses each car's
+`updatedAt` (18 URLs, 18 distinct dates, verified). Sold cars drop out of the sitemap and
+`getPublicCarBySlug` only resolves AVAILABLE/BY_APPOINTMENT, so a sold unit answers 404
+instead of lingering indexed with a stale price.
 
 ## Phase 3 — Where buyers actually look
 
@@ -180,6 +188,8 @@ Not now: online payments or deposits, a full CRM/ERP, multi-tenant.
   unanswered queue. Detail in `odd/tasks/car-leads.md`. Phase 1 is complete.
 - Dependencies are now pinned exactly, enforced by
   `src/__tests__/dependencies.test.ts` (`45a8e37`).
+- Phase 2 (inventory visibility) — T2.1 and T2.3 done, T2.2 was already implemented
+  before the phase started. Next: T3.1 (inventory CSV export for MercadoLibre).
 - Next, and the only thing left before handing over: Phase 0 items that need the owner
   (T0.2 backups, T0.4 domain and sending domain, T0.5 privacy), then T0.6 brand config
   before a second agency.
