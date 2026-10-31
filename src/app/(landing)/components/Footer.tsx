@@ -14,7 +14,7 @@ export default function Footer() {
     "https://www.instagram.com/gl.autos.sf/";
   const mapsUrl =
     process.env.NEXT_PUBLIC_MAPS_URL ??
-    "https://www.google.com/maps/search/?api=1&query=General%20L%C3%B3pez%203543%2C%20Santa%20Fe";
+    "https://www.google.com/maps/place/GL+Autos/@-31.6552097,-60.7221098,17z/data=!3m1!4b1!4m6!3m5!1s0x95b5a98297abae09:0xbc2d98ddab36bb27!8m2!3d-31.6552097!4d-60.7221098!16s%2Fg%2F11ww7df7k8";
   const phoneDisplay = "+54 9 342 577 7646";
   const phoneHref = "tel:+5493425777646";
 

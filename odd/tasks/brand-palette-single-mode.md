@@ -243,3 +243,49 @@ rendered `/contacto`: the new telephone appears 3x and `5281841` 0x, `gl.autos.s
 3x and `autos.usados.santafe` 0x, the new WhatsApp number 2x, the new address 3x and
 the opening hours 1x. `email` (`info@caragency.com`) and `ubicacion` (the
 `maps.app.goo.gl` short link) were left untouched because no real value was given.
+
+L29 (user request, verbatim): "modifica la basura heredada, tambien aca tienes perfil
+y la ubicacion:" followed by the Google Maps place URL for GL Autos.
+
+L30 (removed, not guessed): no real value existed for the X handle, TikTok, Facebook
+or the email, so none was invented. `SITE_CONFIG.twitterHandle` and its
+`twitter.creator` (in `metadata.ts` and in the landing page) are gone; the
+`facebook`, `tiktok` and `email` entries are gone from `DEFAULT_LINKTREE_LINKS` and
+the seed. The DB's `email` row is deactivated rather than deleted, so restoring a
+real address is one `update`. Leaving a `mailto:` at a domain the rename invented
+is worse than having no email link.
+
+L31 (real data from the place link): `ubicacion` (seed, defaults and DB), the footer
+maps fallback, and the JSON-LD `hasMap` all point at the GL Autos place. The JSON-LD
+also gains `geo` with the coordinates the link carries (-31.6552097, -60.7221098),
+which is what local search uses. Tracking params (`?entry=ttu&g_ep=…`) were stripped;
+the `data=` payload identifies the place and stays.
+
+L32 (two more pieces of junk found by sweeping): `src/data/hero.ts` carried the
+placeholder number `5491234567890` and an `icon: "/whatsapp.png"` for a file that no
+longer exists (it was replaced by `whatsapp.svg`). Both corrected, but note the
+correction is prophylactic: `HERO_CONTENT.contact` and `HERO_FEATURES` have no
+importer — only `HERO_CONTENT.search` is consumed, by `search-component.tsx` — and the
+hero's real buttons are hardcoded in `Hero.tsx`. So that fake number was never
+rendered; it was a landmine, not a live defect. `cloudinary-config.ts` tagged uploads
+with the renamed token "Car Agency App".
+
+L33 (guard against recurrence): the existing
+`prisma/seed/__tests__/data-integrity.test.ts` documents that this bug class already
+happened once, but it only guarded the seed. The two mangled values that actually
+shipped lived outside it (`DEFAULT_LINKTREE_LINKS` and `SITE_CONFIG.twitterHandle`),
+and the defaults are only rendered when the table is empty, so nothing showed them.
+`src/data/__tests__/data-integrity.test.ts` now enforces: no raw space in an href,
+every href resolvable (`new URL` throws on the paste accident), unique ids with
+required fields, and no stray whitespace in the site name.
+
+L34 (intentionally left): `prisma/seed/users.ts` and `seedSellers` keep
+`@caragency.com`. They are local/demo fixtures, not public copy, and changing the
+seeded admin email changes the admin login — that needs the real address from the
+user. `Reviews.tsx` keeps its two quotes.
+
+L35 (applied, with consent): DB rows `ubicacion` (new place URL) and `email`
+(`isActive: false`). Verified on rendered HTML: `hasMap`, `geo`, the footer place
+link, `/whatsapp.svg` served, no `twitter:site`/`twitter:creator`, and on `/contacto`
+no `caragency.com`, no `facebook.com/people`, no tiktok junk and no `maps.app.goo.gl`.
+`tsc` clean, 22 files / 123 tests passing, `pnpm build` exit 0.

@@ -10,7 +10,6 @@ export const SITE_CONFIG = {
   url: SITE_URL,
   previewPath: "/preview.webp",
   locale: "es_AR",
-  twitterHandle: "@Car Agency Appautomotores",
   imageConfig: {
     preview: {
       large: {
@@ -50,6 +49,5 @@ export const siteMetadata: Metadata = {
     title: SITE_CONFIG.name,
     description: SITE_CONFIG.description,
     images: [`${SITE_CONFIG.url}${SITE_CONFIG.previewPath}`],
-    creator: SITE_CONFIG.twitterHandle,
   },
 };

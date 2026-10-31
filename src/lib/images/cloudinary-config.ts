@@ -20,7 +20,7 @@ export const CLOUDINARY_UPLOAD_OPTIONS = {
   overwrite: false,
   invalidate: true,
 
-  tags: ["Car Agency App", "vehicle"],
+  tags: ["GL Autos", "vehicle"],
 };
 
 export const CLOUDINARY_RESPONSIVE_TRANSFORMS =

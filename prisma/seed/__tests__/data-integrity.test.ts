@@ -14,8 +14,8 @@ import { seedUsers } from "../users";
  * resolve. Nothing caught it, because a seed is data and data does not fail to
  * compile.
  *
- * The three values are now `facundo@caragency.com`,
- * `mailto:info@caragency.com` and `tel:+5493425281841`.
+ * The seed no longer carries a link-tree email at all: the domain it pointed at
+ * was invented by the same rename, so it was removed instead of guessed.
  */
 const allEmails = [
   ...seedUsers.map((user) => ({ source: "seedUsers", email: user.email })),

@@ -42,7 +42,6 @@ export const metadata: Metadata = {
     description:
       "Comprá o vendé tu auto en Santa Fe con GL Autos: atención personalizada, financiación a medida y unidades usadas y 0km seleccionadas. ¡Visitános hoy!",
     images: [`${SITE_CONFIG.url}${SITE_CONFIG.previewPath}`],
-    creator: SITE_CONFIG.twitterHandle,
   },
 };
 
@@ -59,6 +58,13 @@ const landingJsonLd = {
     addressLocality: "Santa Fe",
     addressRegion: "Santa Fe",
     addressCountry: "AR",
+  },
+  hasMap:
+    "https://www.google.com/maps/place/GL+Autos/@-31.6552097,-60.7221098,17z/data=!3m1!4b1!4m6!3m5!1s0x95b5a98297abae09:0xbc2d98ddab36bb27!8m2!3d-31.6552097!4d-60.7221098!16s%2Fg%2F11ww7df7k8",
+  geo: {
+    "@type": "GeoCoordinates",
+    latitude: -31.6552097,
+    longitude: -60.7221098,
   },
   openingHoursSpecification: [
     {
