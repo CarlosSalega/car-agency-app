@@ -112,3 +112,99 @@ export function verifyEmailTemplate({
     ].join("\n"),
   };
 }
+
+/**
+ * Internal notification: a visitor asked about a car.
+ *
+ * This is the one template whose body is mostly visitor-supplied text, so every
+ * interpolated value goes through `escapeHtml`. A lead name of `<script>` must
+ * arrive in the inbox as text, not as markup, and the same string is also used in
+ * the plain-text part where it needs no escaping at all.
+ *
+ * The subject carries the car title, never the visitor's name, and CR/LF are
+ * stripped: a newline in a subject is a header-injection primitive in mail
+ * clients that pass it to the outbound agent verbatim.
+ */
+export type LeadNotificationInput = {
+  name: string;
+  phone: string;
+  email?: string | null;
+  message?: string | null;
+  carTitle?: string | null;
+  carUrl?: string | null;
+  adminUrl: string;
+  receivedAt: Date;
+};
+
+function singleLine(value: string): string {
+  return value.replace(/[\r\n]+/g, " ").trim();
+}
+
+export function leadNotificationEmail({
+  name,
+  phone,
+  email,
+  message,
+  carTitle,
+  carUrl,
+  adminUrl,
+  receivedAt,
+}: LeadNotificationInput): EmailMessage {
+  const digits = phone.replace(/\D/g, "");
+  const greeting = encodeURIComponent(
+    `Hola ${name}! Te escribimos por tu consulta${carTitle ? ` sobre el ${carTitle}` : ""}.`,
+  );
+  const whatsappUrl = digits
+    ? `https://wa.me/${digits}?text=${greeting}`
+    : null;
+  const subject = singleLine(
+    carTitle ? `Nueva consulta: ${carTitle}` : "Nueva consulta desde la web",
+  );
+
+  const when = receivedAt.toLocaleString("es-AR", {
+    timeZone: "America/Argentina/Buenos_Aires",
+    dateStyle: "short",
+    timeStyle: "short",
+  });
+
+  const row = (label: string, value: string) =>
+    `<p style="margin:0 0 12px;font-size:15px;line-height:1.6;color:#3f3f46;"><strong style="color:#18181b;">${escapeHtml(label)}:</strong> ${escapeHtml(value)}</p>`;
+
+  const html = `<!doctype html>
+<html lang="es">
+  <body style="margin:0;padding:0;background:#f4f4f5;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
+    <div style="max-width:480px;margin:0 auto;padding:32px 16px;">
+      <div style="background:#ffffff;border-radius:12px;padding:32px;">
+        <p style="margin:0 0 24px;font-size:13px;letter-spacing:0.08em;text-transform:uppercase;color:#71717a;">Nueva consulta</p>
+        <h1 style="margin:0 0 24px;font-size:20px;line-height:1.3;color:#18181b;">${escapeHtml(carTitle ?? "Consulta general")}</h1>
+        ${row("Nombre", name)}
+        ${row("Teléfono", phone)}
+        ${email ? row("Email", email) : ""}
+        ${message ? row("Mensaje", message) : ""}
+        ${row("Recibida", when)}
+        ${carUrl ? `<p style="margin:0 0 12px;font-size:15px;line-height:1.6;"><a href="${escapeHtml(carUrl)}" style="color:#18181b;">Ver el auto publicado</a></p>` : ""}
+        ${whatsappUrl ? `<a href="${escapeHtml(whatsappUrl)}" style="display:inline-block;margin:12px 0 0;background:#18181b;color:#ffffff;text-decoration:none;font-size:15px;font-weight:600;padding:12px 24px;border-radius:8px;">Responder por WhatsApp</a>` : ""}
+        <p style="margin:24px 0 0;font-size:13px;line-height:1.6;color:#71717a;"><a href="${escapeHtml(adminUrl)}" style="color:#71717a;">Gestionar en el panel</a></p>
+      </div>
+    </div>
+  </body>
+</html>`;
+
+  const text = [
+    "Nueva consulta",
+    "",
+    `Auto: ${carTitle ?? "Consulta general"}`,
+    `Nombre: ${name}`,
+    `Teléfono: ${phone}`,
+    ...(email ? [`Email: ${email}`] : []),
+    ...(message ? [`Mensaje: ${message}`] : []),
+    `Recibida: ${when}`,
+    ...(carUrl ? ["", carUrl] : []),
+    ...(whatsappUrl ? ["", `Responder por WhatsApp: ${whatsappUrl}`] : []),
+    "",
+    `Gestionar en el panel: ${adminUrl}`,
+    "",
+  ].join("\n");
+
+  return { subject, html, text };
+}

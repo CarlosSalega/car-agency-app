@@ -1,3 +1,5 @@
+import type { LeadStatus } from "@generated/prisma/enums";
+
 import { Badge } from "@/components/ui/badge";
 
 type CarStatusKey =
@@ -7,10 +9,12 @@ type CarStatusKey =
   | "SOLD"
   | "INACTIVE";
 
-export interface CarBadgeInfo {
+export interface StatusBadgeInfo {
   label: string;
   className: string;
 }
+
+export type CarBadgeInfo = StatusBadgeInfo;
 
 export const carStatusMap: Record<CarStatusKey, CarBadgeInfo> = {
   AVAILABLE: {
@@ -69,6 +73,77 @@ const userRoleMap: Record<UserRole, { label: string; className: string }> = {
     className: "bg-accent text-foreground",
   },
 };
+
+/**
+ * Lead statuses, in the order staff walk them: an inquiry arrives `NEW` and
+ * ends `WON` or `LOST`.
+ *
+ * Typed with the generated enum instead of a local union so a status added to
+ * Prisma fails to compile until it gets a label here, rather than shipping the
+ * raw enum value into the panel.
+ */
+export const leadStatusMap: Record<LeadStatus, StatusBadgeInfo> = {
+  NEW: {
+    label: "Nueva",
+    className: "bg-info text-info-foreground",
+  },
+  CONTACTED: {
+    label: "Contactada",
+    className: "bg-warning text-warning-foreground",
+  },
+  NEGOTIATING: {
+    label: "En negociación",
+    className: "bg-primary text-primary-foreground",
+  },
+  WON: {
+    label: "Ganada",
+    className: "bg-success text-success-foreground",
+  },
+  LOST: {
+    label: "Perdida",
+    className: "bg-muted text-muted-foreground",
+  },
+};
+
+/**
+ * Neutral token colours for a status the map does not know yet, e.g. a row
+ * written after the enum grew and before this build shipped.
+ */
+const LEAD_STATUS_FALLBACK_CLASS = "bg-muted text-muted-foreground";
+
+export function getLeadBadge(status: string): StatusBadgeInfo {
+  return (
+    leadStatusMap[status as LeadStatus] ?? {
+      label: status,
+      className: LEAD_STATUS_FALLBACK_CLASS,
+    }
+  );
+}
+
+interface LeadStatusBadgeProps {
+  status: string;
+}
+
+export function LeadStatusBadge({ status }: LeadStatusBadgeProps) {
+  const statusInfo = leadStatusMap[status as LeadStatus];
+
+  return (
+    <Badge className={statusInfo?.className ?? LEAD_STATUS_FALLBACK_CLASS}>
+      {statusInfo?.label ?? status}
+    </Badge>
+  );
+}
+
+/**
+ * Options for the status filter and the status dialog, derived from the map so
+ * the label a badge shows and the label a select offers cannot drift apart.
+ */
+export const LEAD_STATUS_OPTIONS: ReadonlyArray<{
+  value: LeadStatus;
+  label: string;
+}> = (["NEW", "CONTACTED", "NEGOTIATING", "WON", "LOST"] as LeadStatus[]).map(
+  (value) => ({ value, label: leadStatusMap[value].label }),
+);
 
 interface UserRoleBadgeProps {
   role: string;

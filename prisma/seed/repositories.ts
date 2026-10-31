@@ -6,6 +6,7 @@ import { modelsByBrand } from "@/data/modelsByBrand";
 import type { SeedCar, SeedLinkTreeLink, SeedSeller, SeedUser } from "./types";
 
 export async function resetDatabase(prisma: PrismaClient): Promise<void> {
+  await prisma.lead.deleteMany();
   await prisma.visit.deleteMany();
   await prisma.log.deleteMany();
   await prisma.car.deleteMany();

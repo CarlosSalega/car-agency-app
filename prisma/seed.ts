@@ -18,6 +18,12 @@ import {
   validateImageManifest,
 } from "./seed/image-manifest";
 import { seedCars } from "./seed/cars";
+import {
+  DESTRUCTIVE_TABLES,
+  SEED_ENV_OVERRIDE,
+  decideSeedAllowed,
+  seedRefusalMessage,
+} from "./seed/guard";
 import { seedLinkTreeLinks } from "./seed/link-tree";
 import { seedSellers } from "./seed/sellers";
 import { seedUsers } from "./seed/users";
@@ -210,6 +216,25 @@ async function main(): Promise<void> {
     console.error("❌ Error durante el seeding:", error);
     throw error;
   }
+}
+
+/**
+ * The guard runs here, at module scope, so it fails before `main()` connects to
+ * the database. `resetDatabase()` is the first thing `main()` does once
+ * Cloudinary checks pass, and nothing re-creates a table it emptied if the run
+ * dies half way.
+ */
+const seedGuard = decideSeedAllowed(process.env);
+
+if (!seedGuard.allowed) {
+  console.error(seedRefusalMessage(seedGuard.reason));
+  process.exit(1);
+}
+
+if (seedGuard.overridden) {
+  console.warn(
+    `⚠️  ${SEED_ENV_OVERRIDE} is set: this run will empty ${DESTRUCTIVE_TABLES.join(", ")}.`,
+  );
 }
 
 main()
