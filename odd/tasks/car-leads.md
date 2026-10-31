@@ -99,3 +99,28 @@ and killed it before the database check ran; a PID in a variable is the fix. And
 `prettier --write ... .env.example` fails with no parser, which in an `&&` chain makes
 `tsc` never run while the following `echo $?` reports prettier's code. Both produced
 false readings that had to be re-checked.
+
+L13 (T1.4, delegated): the panel section was handed to a worker with narrow allowed
+edit surfaces; I kept the commit and the verification. It delivered 10 files and 9
+tests (179 -> 188). What I checked instead of trusting the report: the diff touches
+nothing outside the surfaces, `status-badges.tsx` only renames the interface with an
+alias so no existing badge body changed, no hardcoded colour or `dark:` utility in the
+new files, and prettier was not run by the worker (the pre-commit hook caught one file,
+which means the hook is doing its job).
+
+L14 (T1.4 verified live, which the worker could not do because it was forbidden from
+touching the database): admin sign-in 200, `/admin/leads` 200 with the nav entry and an
+empty state, a visitor POST creating a row, the panel listing it, `PATCH` returning
+`CONTACTED` with the note trimmed from `"  se llamó  "` to `"se llamó"`, invalid status
+400, unknown id 404, no session 401, and exactly one `Log` row (`UPDATE`/`Lead`) in the
+database. Test rows and their log rows were deleted; 0 leads remain.
+
+L15 (deferred by the worker, and correctly so): car/seller/date filters and a separate
+detail route were not built. The roadmap line named them, the delegated deliverable
+scoped the status filter plus a dialog. They stay as optional refinements; the list is
+already filterable by URL.
+
+L16 (review load, needs a delivery decision): the branch is at ~2879 authored lines
+across 9 commits, far past a single reviewable slice. The natural split is three PRs:
+T0.1+T0.3 hygiene, the lead layer (model, endpoint, form, notification), and the panel
+section. Chained rather than one big merge.

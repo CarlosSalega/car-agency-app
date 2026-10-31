@@ -155,7 +155,10 @@ Not now: online payments or deposits, a full CRM/ERP, multi-tenant.
   unchanged across them.
 - T0.3 (aggregateRating) — done, `bd4c3f7`. Verified absent from the rendered
   JSON-LD while the rest of the AutoDealer block survives.
-- Next in code, no input needed: T1.1 -> T1.4 (the lead layer).
+- T1.1 -> T1.4 (the lead layer) — done. `041601a`, `a96809c`, `65b0868`, `327d3d0`;
+  the car page records inquiries, notifies by email, and the panel lists them with
+  statuses and an audit row per change. Detail in `odd/tasks/car-leads.md`.
+- Next in code, no input needed: T1.5 (attribution) and T1.6 (the numbers on /admin).
 - Next that needs the owner: T0.2 (backup provider and restore drill), T0.4 (DNS,
   `BETTER_AUTH_URL`, sending domain), T0.5 (privacy text and legal review).
 - T0.6 (brand config) before any second agency, not before GL Autos.
