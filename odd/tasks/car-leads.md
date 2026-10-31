@@ -74,3 +74,28 @@ L8 (verification mistake worth keeping): the first end-to-end run asserted again
 no form. `next start` serves compiled output; a route that exists in source does not
 exist until `next build` runs. Not a code defect, but it is exactly the kind of false
 negative that gets read as one.
+
+L9 (T1.3): the notification is a plain internal template built directly rather than
+through `layout()`, because its body is mostly visitor-supplied text and needs
+`escapeHtml` per field. The subject carries the car title only, with CR/LF stripped:
+a visitor's name in a subject line is a header-injection primitive. The brand line
+comes from `SITE_CONFIG.name` instead of adding another literal, since
+`templates.ts` still has its own `BRAND = "Car Agency"` (T0.6 debt).
+
+L10 (mail safety): `sendEmail` is documented never to throw, and `notifyNewLead` adds
+a catch anyway, because the row is already written and losing a notification must not
+turn a saved lead into a 500. Verified live with no recipient configured: POST answers
+201, the row is intact with car, seller, consent, message and source, and the server
+log records `guardada sin aviso: no_recipient`.
+
+L11 (deliberately not done): no live email was sent. `RESEND_API_KEY` is set but the
+sender is `onboarding@resend.dev`, which only delivers to the account owner, so a real
+send would have hit a real inbox for a test. The template and the failure paths are
+covered by 11 unit tests instead, and the operator-facing variable is documented in
+`.env.example` as `LEAD_NOTIFICATION_EMAIL`.
+
+L12 (tooling, twice): a `pkill -f "next start -p ..."` also matched the parent shell
+and killed it before the database check ran; a PID in a variable is the fix. And
+`prettier --write ... .env.example` fails with no parser, which in an `&&` chain makes
+`tsc` never run while the following `echo $?` reports prettier's code. Both produced
+false readings that had to be re-checked.

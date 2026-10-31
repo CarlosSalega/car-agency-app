@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import { prisma } from "@/lib/db";
+import { notifyNewLead } from "@/lib/leads/notify";
 import { clientKeyFrom, createRateLimiter } from "@/lib/rate-limit";
 import { LEAD_HONEYPOT_FIELD, leadSubmitSchema } from "@/lib/validations/lead";
 
@@ -91,11 +92,12 @@ export async function POST(request: NextRequest) {
     // never claims either.
     let carId: string | undefined;
     let sellerId: string | undefined;
+    let carTitleWithBrand: string | undefined;
 
     if (carSlug) {
       const car = await prisma.car.findUnique({
         where: { slug: carSlug },
-        select: { id: true, sellerId: true, deletedAt: true },
+        select: { id: true, title: true, sellerId: true, deletedAt: true },
       });
 
       // A car that was removed between page load and submit is not an error: the
@@ -103,6 +105,7 @@ export async function POST(request: NextRequest) {
       if (car && !car.deletedAt) {
         carId = car.id;
         sellerId = car.sellerId ?? undefined;
+        carTitleWithBrand = car.title;
       }
     }
 
@@ -120,6 +123,24 @@ export async function POST(request: NextRequest) {
       },
       select: { id: true },
     });
+
+    // Best effort, and awaited so a serverless invocation does not end before
+    // the request to the mail provider goes out. `notifyNewLead` never throws,
+    // so a mail failure cannot turn a saved lead into a 500.
+    const notification = await notifyNewLead({
+      name,
+      phone,
+      email,
+      message,
+      carTitle: carTitleWithBrand,
+      carSlug,
+    });
+
+    if (!notification.sent) {
+      console.warn(
+        `[LEAD] Consulta ${lead.id} guardada sin aviso: ${notification.reason}`,
+      );
+    }
 
     return NextResponse.json({ ok: true, id: lead.id }, { status: 201 });
   } catch (error) {
