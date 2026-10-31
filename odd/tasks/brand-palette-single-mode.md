@@ -44,6 +44,8 @@ T2 — Landing surface: navbar, hero, sections, reviews, footer, 404, ventas.
 S1, S6, S7 | route: inline | done | commit `c187b52`
 T3 — Shared and admin surface: status badges, stats, tables, search, car-card,
 car-grid, contact, login/2fa. S3, S5 | route: inline | done | commit `961be3b`
+T4 — Regenerate `public/favicon.ico` and `public/apple-touch-icon.png` from the new
+mark. S1 | route: inline | done | commit `(T4)`
 
 Checks: `tsc --noEmit` clean, `pnpm test` 21 files / 119 tests passed,
 `pnpm build` exit 0. Compiled CSS carries `--primary:#fe0000`,
@@ -121,3 +123,25 @@ miss.
 L8 (out of scope, reported): `pnpm lint` fails with 6 pre-existing errors
 (`no-explicit-any` in form-field, login-form, models-config, user-form-dialog,
 cache-key, cloudinary.provider). Verified identical against `HEAD`; untouched.
+
+L9 (follow-up request, verbatim): "regenera el favicon y apple-touch-icon con la
+nueva marca". The shipped icons were still the previous brand (the FyF Automotores
+Tesla-style mark), not GL Autos.
+
+L10 (method): the icons are derived from `public/logo.png` itself, not re-set in a
+look-alike typeface, so the glyphs are the real brand letterforms. That source is
+43x18 px for the "GL" (the whole PNG is 204x192), which is too coarse to magnify
+cleanly: upscaling it reproduces the pixel staircase as ~3px steps at 180px.
+Blurring after magnification melts the counter of the G, so the smoothing is
+applied at source resolution (Gaussian radius 0.7 px) before interpolating, with a
+smoothstep threshold. 16px uses the G monogram: the full lockup at 12px wide is
+two 5px letters that merge into one red blob.
+
+L11 (pitfall): `Image.save(..., format="ICO", sizes=[...])` resizes the base frame
+for every entry, so per-size compositions were silently discarded and the 16px
+monogram came out as a downscaled 64px lockup. The fix is `append_images`, which
+Pillow matches by exact size.
+
+L12 (limits, reported): the ICO frame is that 43x18 source, so the 180px icon is a
+2.8x magnification. If the original SVG or HD logo exists, regenerating from it is
+a one-command change; this is the ceiling of the current asset.
