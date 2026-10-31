@@ -15,3 +15,23 @@ const DATE_TIME_FORMATTER = new Intl.DateTimeFormat("es-AR", {
 export function formatLeadDateTime(value: Date): string {
   return DATE_TIME_FORMATTER.format(value);
 }
+
+/**
+ * How a lead arrived, in the order a person reads it: source, then medium, then
+ * campaign (`instagram · cpc · hilux-octubre`).
+ *
+ * "Directo" covers both a visitor with no campaign and one whose campaign was
+ * never captured; the dialog shows the referrer and the landing page underneath
+ * when they exist, so the coarse answer is never the only one.
+ */
+export function formatLeadChannel(lead: {
+  utmSource: string | null;
+  utmMedium: string | null;
+  utmCampaign: string | null;
+}): string {
+  const parts = [lead.utmSource, lead.utmMedium, lead.utmCampaign].filter(
+    (part): part is string => Boolean(part),
+  );
+
+  return parts.length > 0 ? parts.join(" · ") : "Directo";
+}

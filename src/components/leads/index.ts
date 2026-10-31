@@ -1,3 +1,4 @@
+export * from "./attribution-capture";
 export * from "./lead-detail-dialog";
 export * from "./lead-format";
 export * from "./lead-form";

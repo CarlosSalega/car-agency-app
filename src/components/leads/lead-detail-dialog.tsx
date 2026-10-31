@@ -2,7 +2,10 @@
 
 import type { LeadWithRelations } from "@/components/leads/lead-types";
 
-import { formatLeadDateTime } from "@/components/leads/lead-format";
+import {
+  formatLeadChannel,
+  formatLeadDateTime,
+} from "@/components/leads/lead-format";
 import { LEAD_STATUS_OPTIONS } from "@/components/status-badges";
 import { Button } from "@/components/ui/button";
 import {
@@ -139,8 +142,18 @@ export function LeadDetailDialog({
               <div>
                 <p className="text-muted-foreground text-xs">Origen</p>
                 <p className="text-foreground break-all">
-                  {lead.source ?? "-"}
+                  {formatLeadChannel(lead)}
                 </p>
+                {lead.referrer ? (
+                  <p className="text-muted-foreground mt-0.5 text-xs break-all">
+                    desde {lead.referrer}
+                  </p>
+                ) : null}
+                {lead.source ? (
+                  <p className="text-muted-foreground mt-0.5 text-xs break-all">
+                    en {lead.source}
+                  </p>
+                ) : null}
               </div>
             </div>
 

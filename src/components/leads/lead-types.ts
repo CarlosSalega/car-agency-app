@@ -17,6 +17,10 @@ export interface LeadWithRelations {
   message: string | null;
   status: LeadStatus;
   source: string | null;
+  utmSource: string | null;
+  utmMedium: string | null;
+  utmCampaign: string | null;
+  referrer: string | null;
   consentAt: Date | null;
   notes: string | null;
   createdAt: Date;

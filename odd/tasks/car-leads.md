@@ -124,3 +124,32 @@ L16 (review load, needs a delivery decision): the branch is at ~2879 authored li
 across 9 commits, far past a single reviewable slice. The natural split is three PRs:
 T0.1+T0.3 hygiene, the lead layer (model, endpoint, form, notification), and the panel
 section. Chained rather than one big merge.
+
+L17 (T1.5, deviation from the plan): the roadmap said "utm/referrer into `source`". It
+became four columns — `utmSource`, `utmMedium`, `utmCampaign`, `referrer` — because
+T1.6 groups leads by channel, and parsing a packed string in every query is the debt
+that compounds. `source` stays as it was: the page on our own site that produced the
+inquiry, from the POST referer.
+
+L18 (why the browser has to send it): UTMs live on the page the visitor browsed, not
+on the URL the form posts to, and the POST's `referer` header is our own car page.
+The external source is `document.referrer`, which only the browser knows.
+
+L19 (where it mounts, and where it cannot): `MetaPixelProvider` was the natural
+neighbour but it is mounted only when `NEXT_PUBLIC_META_PIXEL_ID` is set, so
+attribution would silently stop working on a deployment without a pixel.
+`AttributionCapture` is a null-rendering client component mounted unconditionally in
+the root layout. First touch wins, so a later landing with no campaign cannot erase
+the one that brought the visitor.
+
+L20 (verification, with one harness correction): live POST with attribution stored
+`instagram/cpc/hilux-octubre` plus the referrer, a POST without it stored NULLs and
+still answered 201, and a 130-character utm answered 400. My first attempt to prove
+the panel _shows_ the channel grepped the server-rendered HTML and "passed" for the
+wrong reason: the match was in serialized React props, and the dialog only renders on
+open. Replaced with a kept render test that opens the dialog and asserts the channel
+line, the referrer and the landing page. The capture component's mount is proven by
+its presence in a client chunk, not by the HTML.
+
+L21 (deleted, not kept): an `eslint-disable no-control-regex` that no rule required.
+A stale suppression hides the next real finding from the same rule.
