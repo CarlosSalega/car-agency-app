@@ -52,3 +52,25 @@ L4 (consequence of the guard test): `resetDatabase()` must also empty `lead`, an
 table list in the seed guard has to grow with it. The guard test compares the two, so
 adding the model without touching both fails the suite. That is the test doing its
 job, not an accident.
+
+L5 (T1.1 landed, commit `041601a`): the model, the enum, the zod schema and its 16
+tests are in. `pnpm db:push` reported the database in sync with no data-loss warning.
+The relation was first added to `Brand` by a too-broad replace and `prisma validate`
+caught it with P1012; the lesson is that `cars Car[]` exists in more than one model.
+
+L6 (zod 4): `z.literal(true, { errorMap })` is silently ignored in zod 4.3.6, so the
+consent message fell back to "Invalid input: expected true". `{ message }` is the
+supported form. A test caught it because it asserts the user-facing copy, not just
+`success === false`.
+
+L7 (T1.2 code): the limiter is a fixed window with an injectable clock (10 tests), the
+route gates rate limit -> honeypot -> validation -> database in that order, and the
+form is a client component because the codebase has no server actions. The honeypot
+name moved to `lib/leads/honeypot.ts` so the client can import it without pulling zod
+into the browser bundle.
+
+L8 (verification mistake worth keeping): the first end-to-end run asserted against
+`next start` without rebuilding first, so the new route answered 404 and the page had
+no form. `next start` serves compiled output; a route that exists in source does not
+exist until `next build` runs. Not a code defect, but it is exactly the kind of false
+negative that gets read as one.

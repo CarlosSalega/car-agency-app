@@ -1,4 +1,6 @@
 import { LeadStatus } from "@generated/prisma/enums";
+
+import { LEAD_HONEYPOT_FIELD } from "@/lib/leads/honeypot";
 import { z } from "zod";
 
 /**
@@ -73,8 +75,11 @@ export type LeadSubmitInput = z.infer<typeof leadSubmitSchema>;
  * Honeypot. Rendered off-screen, so a person never fills it and a naive bot
  * always does. Kept out of `leadSubmitSchema` because a filled honeypot must
  * answer as success, not as a validation error that teaches the bot.
+ *
+ * The name itself lives in `lib/leads/honeypot` so the client form can import it
+ * without pulling zod into the browser bundle.
  */
-export const LEAD_HONEYPOT_FIELD = "company";
+export { LEAD_HONEYPOT_FIELD };
 
 export const leadStatusSchema = z.nativeEnum(LeadStatus);
 
