@@ -127,7 +127,10 @@ export async function getPublicCarSlugs() {
             status: { in: ["AVAILABLE", "BY_APPOINTMENT"] },
             deletedAt: null,
           },
-          select: { slug: true },
+          // `updatedAt` feeds the sitemap: one shared `new Date()` for every URL
+          // tells Google "everything changed now" on every build, which is how a
+          // sitemap teaches a crawler to ignore its lastModified.
+          select: { slug: true, updatedAt: true },
         }),
       ),
     [CACHE_TAGS.CARS, "car-slugs"],
