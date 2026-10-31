@@ -39,11 +39,23 @@ S7. The landing navbar must not be filled with `--primary`: the logo carries a
 ## Tasks
 
 T1 — globals.css tokens + single mode + `dark:` sweep + `color-scheme` metadata.
-S2, S3, S4, S5 | route: inline | commit: 1
+S2, S3, S4, S5 | route: inline | done | commit `ba38590`
 T2 — Landing surface: navbar, hero, sections, reviews, footer, 404, ventas.
-S1, S6, S7 | route: inline | commit: 2
+S1, S6, S7 | route: inline | done | commit `c187b52`
 T3 — Shared and admin surface: status badges, stats, tables, search, car-card,
-car-grid, contact, login/2fa. S3, S5 | route: inline | commit: 3
+car-grid, contact, login/2fa. S3, S5 | route: inline | done | commit `961be3b`
+
+Checks: `tsc --noEmit` clean, `pnpm test` 21 files / 119 tests passed,
+`pnpm build` exit 0. Compiled CSS carries `--primary:#fe0000`,
+`--background:#121212`, `--subtle-foreground:#c4c7c8`, `color-scheme:dark`, zero
+`.dark` rules; the prerendered HTML carries `<meta name="color-scheme"
+content="dark">`. Lint: 6 pre-existing `no-explicit-any` errors, unchanged by this
+feature (L8).
+
+Slice note: the three commits land at 284 / 498 / 678 authored lines cumulative.
+The boundary past ~400 was crossed at T2; the remaining slice was still committed
+to close the feature rather than leaving the branch half-migrated, since no single
+commit is visually coherent until all three land.
 
 ## Log
 
