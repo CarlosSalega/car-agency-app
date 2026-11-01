@@ -7,6 +7,7 @@ import {
   LogOut,
   Globe,
   MessageSquare,
+  Star,
 } from "lucide-react";
 
 import { AdminNavItem } from "@/types/navigation";
@@ -41,6 +42,15 @@ export const ADMIN_NAVIGATION: AdminNavItem[] = [
     label: "Consultas",
     href: "/admin/leads",
     icon: MessageSquare,
+    roles: ["ADMIN"],
+    showInHeader: true,
+    showInDropdown: true,
+  },
+  {
+    id: "reviews",
+    label: "Reseñas",
+    href: "/admin/reviews",
+    icon: Star,
     roles: ["ADMIN"],
     showInHeader: true,
     showInDropdown: true,
