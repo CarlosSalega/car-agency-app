@@ -63,7 +63,7 @@ export function LeadsStatusChart({ data }: LeadsStatusChartProps) {
   const hasData = data.some((point) => point.count > 0);
 
   return (
-    <Card>
+    <Card className="py-6">
       <CardHeader>
         <CardTitle>En qué estado están</CardTitle>
         <CardDescription>Todas las consultas recibidas</CardDescription>

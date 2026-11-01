@@ -30,7 +30,7 @@ interface LeadsTopCarsTableProps {
  */
 export function LeadsTopCarsTable({ rows }: LeadsTopCarsTableProps) {
   return (
-    <Card>
+    <Card className="py-6">
       <CardHeader>
         <CardTitle>Autos más consultados</CardTitle>
         <CardDescription>Consultas por vehículo</CardDescription>

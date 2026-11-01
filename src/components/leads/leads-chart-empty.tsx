@@ -13,7 +13,7 @@ interface LeadsChartEmptyProps {
  */
 export function LeadsChartEmpty({ message }: LeadsChartEmptyProps) {
   return (
-    <p className="text-muted-foreground flex h-40 items-center justify-center text-center text-sm">
+    <p className="text-muted-foreground flex h-32 items-center justify-center px-4 text-center text-sm">
       {message}
     </p>
   );

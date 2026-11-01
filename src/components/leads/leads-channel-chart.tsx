@@ -49,7 +49,7 @@ export function LeadsChannelChart({ data }: LeadsChannelChartProps) {
   const hasData = data.some((point) => point.count > 0);
 
   return (
-    <Card>
+    <Card className="py-6">
       <CardHeader>
         <CardTitle>Cómo llegan</CardTitle>
         <CardDescription>Canal de origen de las consultas</CardDescription>
