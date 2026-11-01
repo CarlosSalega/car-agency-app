@@ -172,6 +172,7 @@ export function LeadDetailDialog({
           <div className="space-y-2">
             <Label htmlFor={statusId}>Estado</Label>
             <Select
+              items={LEAD_STATUS_OPTIONS}
               value={status}
               onValueChange={(next) => {
                 if (next !== null) setStatus(next);

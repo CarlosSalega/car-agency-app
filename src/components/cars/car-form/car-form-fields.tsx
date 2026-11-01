@@ -87,6 +87,10 @@ export function CarFormFields({
 
         <FormField label="Marca" error={errors.brandId} errorId="brandId-error">
           <Select
+            items={brands.map((brand) => ({
+              value: brand.id,
+              label: brand.name,
+            }))}
             value={formData.brandId || ""}
             onValueChange={(brandId) => onBrandChange(brandId ?? "")}
           >
@@ -113,6 +117,10 @@ export function CarFormFields({
           errorId="modelId-error"
         >
           <Select
+            items={models.map((model) => ({
+              value: model.id,
+              label: model.name,
+            }))}
             value={formData.modelId || ""}
             onValueChange={(value) =>
               setValue("modelId", value ?? "", {
@@ -377,6 +385,15 @@ export function CarFormFields({
           errorId="sellerId-error"
         >
           <Select
+            items={[
+              { value: "__no_seller__", label: "Sin asignar" },
+              ...sellers
+                .filter((seller) => seller.isActive)
+                .map((seller) => ({
+                  value: seller.id,
+                  label: `${seller.firstName} ${seller.lastName}`,
+                })),
+            ]}
             value={formData.sellerId || ""}
             onValueChange={(value) => {
               const NO_SELLER = "__no_seller__";

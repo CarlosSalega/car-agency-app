@@ -10,6 +10,18 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { toast } from "sonner";
 
+/**
+ * Labels for the two selects whose values are not the labels themselves.
+ * Base UI's `items` prop is what makes the trigger render the label instead of
+ * the stored value.
+ */
+const ROLE_ITEMS = {
+  [Role.ADMIN]: "Administrador",
+  [Role.COLLABORATOR]: "Colaborador",
+} as const;
+
+const ACTIVE_ITEMS = { active: "Activo", inactive: "Inactivo" } as const;
+
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -248,6 +260,7 @@ export function UserFormDialog({
           <div className="space-y-2">
             <Label htmlFor="role">Rol</Label>
             <Select
+              items={ROLE_ITEMS}
               value={selectedRole}
               onValueChange={(value) =>
                 setValue("role", value as Role, {
@@ -285,6 +298,7 @@ export function UserFormDialog({
             <div className="space-y-2">
               <Label htmlFor="status">Estado</Label>
               <Select
+                items={ACTIVE_ITEMS}
                 value={isActive ? "active" : "inactive"}
                 onValueChange={(value) =>
                   setValue("isActive", value === "active", {

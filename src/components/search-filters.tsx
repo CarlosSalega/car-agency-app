@@ -5,6 +5,31 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useId, useState, useTransition } from "react";
 import type { ReactNode } from "react";
 
+/** Base UI needs value -> label so the trigger does not print the enum. */
+const TYPE_ITEMS = {
+  all: "Todos",
+  SUV: "SUV",
+  SEDAN: "Sedán",
+  HATCHBACK: "Hatchback",
+  PICKUP: "Pickup",
+  VAN: "Furgón",
+  COUPE: "Coupé",
+} as const;
+
+const FUEL_ITEMS = {
+  all: "Todos",
+  GASOLINE: "Nafta",
+  DIESEL: "Diesel",
+  ELECTRIC: "Eléctrico",
+  HYBRID: "Híbrido",
+} as const;
+
+const TRANSMISSION_ITEMS = {
+  all: "Todas",
+  MANUAL: "Manual",
+  AUTOMATIC: "Automática",
+} as const;
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -173,6 +198,13 @@ export function SearchFilters({
       <div className="space-y-4">
         <FilterField label="Marca" htmlFor={fieldId("brand")}>
           <Select
+            items={[
+              { value: "all", label: "Todas" },
+              ...brands.map((brand) => ({
+                value: brand.id,
+                label: brand.name,
+              })),
+            ]}
             value={selectedBrand}
             onValueChange={(value) => {
               setSelectedBrand(value ?? "");
@@ -195,6 +227,16 @@ export function SearchFilters({
 
         <FilterField label="Modelo" htmlFor={fieldId("model")}>
           <Select
+            items={[
+              { value: "all", label: "Todos" },
+              ...modelsForSelect.map((model) => ({
+                value: model.id,
+                label:
+                  showBrandInModelLabel && "brandName" in model
+                    ? `${model.brandName} - ${model.name}`
+                    : model.name,
+              })),
+            ]}
             value={selectedModel}
             onValueChange={(next) => setSelectedModel(next ?? "")}
           >
@@ -217,6 +259,7 @@ export function SearchFilters({
         <div className="grid grid-cols-2 gap-4">
           <FilterField label="Tipo" htmlFor={fieldId("type")}>
             <Select
+              items={TYPE_ITEMS}
               value={selectedType}
               onValueChange={(next) => setSelectedType(next ?? "")}
             >
@@ -237,6 +280,7 @@ export function SearchFilters({
 
           <FilterField label="Combustible" htmlFor={fieldId("fuel")}>
             <Select
+              items={FUEL_ITEMS}
               value={selectedFuel}
               onValueChange={(next) => setSelectedFuel(next ?? "")}
             >
@@ -255,6 +299,7 @@ export function SearchFilters({
 
           <FilterField label="Transmisión" htmlFor={fieldId("transmission")}>
             <Select
+              items={TRANSMISSION_ITEMS}
               value={selectedTransmission}
               onValueChange={(next) => setSelectedTransmission(next ?? "")}
             >

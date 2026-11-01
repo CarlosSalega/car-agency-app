@@ -58,6 +58,7 @@ export function LeadsStatusFilter({ value }: { value: LeadStatusFilterValue }) {
     <div className="space-y-2">
       <Label htmlFor={selectId}>Estado</Label>
       <Select
+        items={options}
         value={value}
         onValueChange={(next) => {
           if (next !== null) handleChange(next as LeadStatusFilterValue);
