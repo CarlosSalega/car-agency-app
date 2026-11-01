@@ -87,6 +87,10 @@ export default function NavbarClient({ user }: NavbarClientProps) {
             width={logo.width}
             height={logo.height}
             className={logo.className}
+            // Above the fold on every page, and Next reports it as the LCP
+            // element. `preload` is the Next 16 name: `priority` is deprecated
+            // there, and the docs say to use this one.
+            preload
           />
         </Link>
       </div>

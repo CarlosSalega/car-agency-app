@@ -17,7 +17,7 @@ export function AdminLogo() {
         width={logo.width}
         height={logo.height}
         className={logo.className}
-        priority
+        preload
       />
       <Image
         src={mark.src}

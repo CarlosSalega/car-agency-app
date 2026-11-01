@@ -111,7 +111,7 @@ export default function Hero() {
               aria-hidden="true"
               fill
               sizes="100vw"
-              priority={i === 0}
+              preload={i === 0}
               className="object-cover opacity-45"
             />
           </div>
