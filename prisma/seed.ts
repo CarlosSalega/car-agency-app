@@ -18,6 +18,7 @@ import {
   validateImageManifest,
 } from "./seed/image-manifest";
 import { seedCars } from "./seed/cars";
+import { buildSeedLeads } from "./seed/leads";
 import {
   DESTRUCTIVE_TABLES,
   SEED_ENV_OVERRIDE,
@@ -30,6 +31,7 @@ import { seedUsers } from "./seed/users";
 import {
   createBrandsAndModels,
   createCar,
+  createLeads,
   createLinkTreeLinks,
   createSeller,
   createUser,
@@ -105,6 +107,7 @@ async function main(): Promise<void> {
       carsCreated: 0,
       brandsCreated: Object.keys(brandMap).length,
       modelsCreated: Object.keys(modelMap).length,
+      leadsCreated: 0,
       images: {
         matchedFiles: [],
         stagedAssets: imageManifest.stagedAssets,
@@ -190,12 +193,32 @@ async function main(): Promise<void> {
       summary.carsCreated += 1;
     }
 
+    // Demo inquiries, so the panel has something to show. Built from the cars
+    // that exist now, so the ranking and the pipeline point at real inventory.
+    const createdCars = await prisma.car.findMany({
+      select: { id: true, sellerId: true, images: true },
+    });
+    const demoLeads = buildSeedLeads({
+      cars: createdCars.map((car) => ({
+        id: car.id,
+        sellerId: car.sellerId,
+        // A car whose only image is the placeholder has no real photos. The key
+        // is the one this run uploaded, so no guessing from the column.
+        hasImages: !(
+          car.images.length === 1 && car.images[0] === placeholderKey
+        ),
+      })),
+    });
+    await createLeads(prisma, demoLeads);
+    summary.leadsCreated = demoLeads.length;
+
     await prisma.log.create({
       data: {
         action: "SEED_EXECUTED",
         entity: "System",
         metadata: JSON.stringify({
           carsCreated: summary.carsCreated,
+          leadsCreated: summary.leadsCreated,
           brandsCreated: summary.brandsCreated,
           modelsCreated: summary.modelsCreated,
         }),
@@ -209,6 +232,7 @@ async function main(): Promise<void> {
     console.log(`   Marcas:    ${summary.brandsCreated}`);
     console.log(`   Modelos:   ${summary.modelsCreated}`);
     console.log(`   Vehículos: ${summary.carsCreated}/${seedCars.length}`);
+    console.log(`   Consultas demo: ${summary.leadsCreated}`);
     console.log(`   Imágenes:  ${summary.images.matchedFiles.length} matched`);
     printImageSummary(summary.images);
     console.log("=================================");
