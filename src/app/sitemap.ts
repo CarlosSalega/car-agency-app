@@ -32,7 +32,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const slugs = await getPublicCarSlugs();
   const carRoutes: MetadataRoute.Sitemap = slugs.map((s) => ({
     url: `${base}/autos/${s.slug}`,
-    lastModified,
+    lastModified: s.updatedAt,
     changeFrequency: "weekly",
     priority: 0.8,
   }));

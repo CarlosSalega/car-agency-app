@@ -113,24 +113,52 @@ already exists and must not be duplicated.
 
 ## Phase 2 — Inventory visibility
 
-T2.1 — `Vehicle` + `Offer` JSON-LD on `/autos/[slug]`. **M**
-Price, currency, availability, mileage, year, fuel, transmission, seller, images. Today
-the car pages emit zero structured data, which is exactly what keeps inventory out of
-Google's vehicle surfaces.
+T2.1 — `Vehicle` + `Offer` JSON-LD on `/autos/[slug]`. **M — DONE** (`43e8809`)
+Price, currency, availability, mileage, year, fuel, transmission, seller, images. The
+car pages emitted zero structured data, which is what kept inventory out of Google's
+vehicle surfaces. `buildCarJsonLd` in `src/lib/cars/json-ld.ts`, 16 tests, verified on a
+live page. The licence plate is never published and a test enforces it.
 
-T2.2 — Per-car metadata. **S**
-Unique title/description, canonical, and OG image taken from the car's first photo.
+T2.2 — Per-car metadata. **S — ALREADY DONE before this phase started**
+Unique title/description, canonical, and OG image taken from the car's first photo all
+already existed in `generateMetadata`. The roadmap was written before reading that file;
+recorded here so nobody re-implements it.
 
-T2.3 — Sitemap hygiene. **S**
-Include car URLs with `lastModified`; drop or `noindex` sold/inactive cars.
+T2.3 — Sitemap hygiene. **S — DONE** (`457411b`)
+Car URLs and the sold/inactive filter already existed. What was wrong: every car carried
+the same `new Date()` as `lastModified`, so the sitemap claimed the whole inventory
+changed on every build and a crawler learns to ignore the field. It now uses each car's
+`updatedAt` (18 URLs, 18 distinct dates, verified). Sold cars drop out of the sitemap and
+`getPublicCarBySlug` only resolves AVAILABLE/BY_APPOINTMENT, so a sold unit answers 404
+instead of lingering indexed with a stale price.
 
 ## Phase 3 — Where buyers actually look
 
-T3.1 — Inventory CSV export for MercadoLibre. **M**
-Column mapping plus image URLs, generated from the panel.
+T3 was redefined after checking how Mercado Libre actually works. Full detail in
+`odd/tasks/car-inventory-import.md`.
 
-T3.2 — Meta catalog feed. **L**
-Optional, after CSV proves the field mapping.
+T3.1 — Inventory **import** from a spreadsheet. **DONE** (`4e2d014`, `b751a41`, `58487d6`)
+The direction nobody can do for the dealership: 40 existing cars without 40 forms. A
+dry pass reports every bad row before anything is written, the confirm pass re-validates
+the same file instead of trusting the browser, brands and models resolve by name, and
+photos are downloaded and re-uploaded to Cloudinary. 31 tests on the parser, verified
+live including the refused confirm leaving the database untouched.
+
+T3.2 — Export with MercadoLibre's column names. **DONE** (`7d36618`, `59e86ba`)
+A CSV cannot be uploaded to ML: their bulk uploader only accepts a spreadsheet **they
+generate per category**, with titles capped at 60 characters and images as public URLs.
+So this export is for reviewing inventory in a spreadsheet, keeping a copy, and pasting
+into ML's own template. It does not publish anything.
+
+T3.3 — MercadoLibre API integration. **L — needs the client first**
+Publishing for real means the API: `MLA1744` with `MLA1744-MARC` and `MLA1744-MODL`
+required, attributes read from `GET /categories/MLA1744/attributes` (never hardcoded).
+Vehicles have **no free tier**: ML requires a contracted package, from 15 listings at
+~$1.162.500 (Oct 2025, sin IVA, CABA & GBA). Needs the dealer's account, their package
+and app credentials.
+
+T3.4 — Meta catalog feed. **L**
+Optional, after the CSV proves the field mapping.
 
 ## Phase 4 — Living content
 
@@ -194,6 +222,8 @@ must be an administrator, vehicles need a contracted package and photos).
   unanswered queue. Detail in `odd/tasks/car-leads.md`. Phase 1 is complete.
 - Dependencies are now pinned exactly, enforced by
   `src/__tests__/dependencies.test.ts` (`45a8e37`).
+- Phase 2 (inventory visibility) — T2.1 and T2.3 done, T2.2 was already implemented
+  before the phase started. Next: T3.1 (inventory CSV export for MercadoLibre).
 - Next, and the only thing left before handing over: Phase 0 items that need the owner
   (T0.2 backups, T0.4 domain and sending domain, T0.5 privacy), then T0.6 brand config
   before a second agency.

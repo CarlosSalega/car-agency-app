@@ -14,6 +14,7 @@ import Footer from "@/app/(landing)/components/Footer";
 import { NavbarServer } from "@/app/(landing)/components/NavbarServer";
 import { MetaPixelViewContent } from "@/components/ui/meta-pixel-view-content";
 import { LeadForm } from "@/components/leads";
+import { buildCarJsonLd } from "@/lib/cars/json-ld";
 import { WhatsAppButton } from "@/components/ui/whatsapp-button";
 
 export const revalidate = 600;
@@ -147,8 +148,42 @@ export default async function CarDetailPage({
     })
     .catch(() => {});
 
+  // What Google's vehicle surfaces read: price, availability and mileage
+  // attached to the item, not to the business. See `lib/cars/json-ld`.
+  const carJsonLd = buildCarJsonLd(
+    {
+      id: car.id,
+      title: car.title,
+      slug: car.slug,
+      images,
+      year: car.year,
+      kilometers: car.kilometers,
+      type: car.type,
+      fuelType: car.fuelType,
+      transmission: car.transmission,
+      currency: car.currency,
+      price: car.price,
+      status: car.status,
+      color: car.color,
+      version: car.version,
+      description: car.description,
+      brand: { name: car.brand.name },
+      model: { name: car.model.name },
+    },
+    {
+      siteUrl: SITE_CONFIG.url,
+      dealerName: SITE_CONFIG.name,
+      imageUrl: (key) => `${SITE_CONFIG.url}/api/images/${key}`,
+      fallbackImageUrl: `${SITE_CONFIG.url}${FALLBACK_IMAGE}`,
+    },
+  );
+
   return (
     <div className="bg-background min-h-screen">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(carJsonLd) }}
+      />
       <NavbarServer />
 
       <div className="container mx-auto px-4 py-32">

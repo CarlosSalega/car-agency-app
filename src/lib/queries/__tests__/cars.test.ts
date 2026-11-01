@@ -173,7 +173,9 @@ describe("public car queries", () => {
 
     expect(carMocks.findMany).toHaveBeenCalledWith({
       where: publicWhere,
-      select: { slug: true },
+      // `updatedAt` is each car's sitemap `lastModified`. A single shared
+      // timestamp for every URL is what teaches a crawler to ignore the field.
+      select: { slug: true, updatedAt: true },
     });
   });
 

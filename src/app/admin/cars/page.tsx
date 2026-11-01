@@ -1,4 +1,4 @@
-import { Plus } from "lucide-react";
+import { Download, Plus, Upload } from "lucide-react";
 import Link from "next/link";
 
 import { CarsTable } from "@/components/cars";
@@ -25,7 +25,7 @@ export default async function AdminCarsPage({
   return (
     <div className="bg-background min-h-screen">
       <div className="container mx-auto px-4 py-6">
-        <div className="mb-6 flex flex-row-reverse items-center">
+        <div className="mb-6 flex flex-row-reverse items-center gap-2">
           <Button
             render={
               <Link href="/admin/cars/new">
@@ -35,7 +35,35 @@ export default async function AdminCarsPage({
             }
             className="bg-foreground text-background hover:bg-foreground/80"
           />
+          <Button
+            variant="outline"
+            render={
+              <Link href="/admin/cars/import">
+                <Upload className="mr-2 size-4" />
+                Importar Inventario
+              </Link>
+            }
+          />
+          {/* A plain download, not a fetch: it has to work even if the JS chunk
+              fails, and it carries the columns ML's template asks for. It
+              publishes nothing. */}
+          <Button
+            variant="outline"
+            render={
+              <a href="/api/admin/cars/export" download>
+                <Download className="mr-2 size-4" />
+                Exportar para MercadoLibre
+              </a>
+            }
+          />
         </div>
+
+        <p className="text-muted-foreground mb-4 text-xs">
+          El export es una planilla para revisar y respaldar el inventario, y
+          para copiar valores en la plantilla de Mercado Libre: no publica nada.
+          Los títulos se recortan a 60 caracteres, que es el máximo que acepta
+          Mercado Libre.
+        </p>
 
         <CarsTable
           cars={cars}

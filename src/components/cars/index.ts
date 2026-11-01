@@ -7,6 +7,7 @@ export * from "./car-form/car-form-skeleton";
 export * from "./car-form/car-form";
 export * from "./car-grid";
 export * from "./car-image";
+export * from "./car-import";
 export * from "./car-placeholder-svg";
 export * from "./cars-columns";
 export * from "./cars-table";
