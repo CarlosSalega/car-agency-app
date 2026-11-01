@@ -47,7 +47,7 @@ export function LeadsWeeklyChart({ data }: LeadsWeeklyChartProps) {
   const hasData = data.some((point) => point.count > 0);
 
   return (
-    <Card>
+    <Card className="py-6">
       <CardHeader>
         <CardTitle>Consultas por semana</CardTitle>
         <CardDescription>Últimas 12 semanas</CardDescription>

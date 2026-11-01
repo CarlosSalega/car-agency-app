@@ -1,6 +1,6 @@
 import type { LeadSummary } from "@/lib/leads/metrics";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 
 interface LeadsMetricsCardsProps {
   summary: LeadSummary;
@@ -47,21 +47,25 @@ export function LeadsMetricsCards({ summary }: LeadsMetricsCardsProps) {
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
       {cards.map((card) => (
-        <Card key={card.title}>
-          <CardHeader>
-            <CardTitle className="text-muted-foreground text-sm font-medium">
-              {card.title}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-3xl font-bold tabular-nums">{card.value}</p>
-            <p className="text-muted-foreground mt-1 text-xs">{card.hint}</p>
+        <Card key={card.title} className="gap-0 px-6 py-5">
+          <p className="text-muted-foreground text-sm font-medium">
+            {card.title}
+          </p>
+          <p className="mt-3 text-3xl font-bold tabular-nums">{card.value}</p>
+          {/* Two lines reserved on purpose: the rate card carries one line more
+              than the others, and without this the grid stretches the three
+              short cards to match, leaving dead space under them and pushing
+              the numbers out of line. */}
+          <div className="mt-1 min-h-8">
+            <p className="text-muted-foreground text-xs leading-4">
+              {card.hint}
+            </p>
             {card.detail ? (
-              <p className="text-muted-foreground mt-0.5 text-xs">
+              <p className="text-muted-foreground text-xs leading-4">
                 {card.detail}
               </p>
             ) : null}
-          </CardContent>
+          </div>
         </Card>
       ))}
     </div>

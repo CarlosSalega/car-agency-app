@@ -93,17 +93,15 @@ export function LeadsDashboard({ leads, now }: LeadsDashboardProps) {
       </div>
 
       {summary.total === 0 ? (
-        <Card>
-          <CardHeader>
-            <CardTitle>Todavía no llegó ninguna consulta</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-muted-foreground text-sm">
-              Cuando alguien envíe el formulario de un vehículo, acá vas a ver
-              cuántas consultas llegan, por qué auto y cuántas esperan
-              respuesta. Los números de abajo arrancan en cero.
-            </p>
-          </CardContent>
+        <Card className="gap-2 px-6 py-5">
+          <p className="text-base font-semibold">
+            Todavía no llegó ninguna consulta
+          </p>
+          <p className="text-muted-foreground text-sm">
+            Cuando alguien envíe el formulario de un vehículo, acá vas a ver
+            cuántas consultas llegan, por qué auto y cuántas esperan respuesta.
+            Los números de abajo arrancan en cero.
+          </p>
         </Card>
       ) : null}
 

@@ -32,7 +32,7 @@ interface LeadsWaitingQueueProps {
  */
 export function LeadsWaitingQueue({ leads, pending }: LeadsWaitingQueueProps) {
   return (
-    <Card>
+    <Card className="py-6">
       <CardHeader>
         <CardTitle>Consultas sin responder</CardTitle>
         <CardDescription>Las más viejas primero</CardDescription>
