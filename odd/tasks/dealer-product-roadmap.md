@@ -144,7 +144,7 @@ the same file instead of trusting the browser, brands and models resolve by name
 photos are downloaded and re-uploaded to Cloudinary. 31 tests on the parser, verified
 live including the refused confirm leaving the database untouched.
 
-T3.2 — Export with MercadoLibre's column names. **S — optional, and honest about limits**
+T3.2 — Export with MercadoLibre's column names. **DONE** (`7d36618`, `59e86ba`)
 A CSV cannot be uploaded to ML: their bulk uploader only accepts a spreadsheet **they
 generate per category**, with titles capped at 60 characters and images as public URLs.
 So this export is for reviewing inventory in a spreadsheet, keeping a copy, and pasting
