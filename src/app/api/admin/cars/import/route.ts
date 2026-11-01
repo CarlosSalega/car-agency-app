@@ -26,6 +26,11 @@ import { ImageService } from "@/lib/images/image-service";
  *
  * `mode` defaults to `dry-run`. Forgetting the flag gives you a report, never a
  * write.
+ *
+ * Any authenticated user may run it, matching the single-car form: inventory is
+ * a shared asset and a collaborator edits their own cars already. Users,
+ * configuration and inquiries remain ADMIN-only — a different kind of data than
+ * stock.
  */
 
 const MAX_IMAGE_BYTES = 8 * 1024 * 1024;
@@ -193,15 +198,6 @@ export async function POST(request: NextRequest) {
 
   if (!session) {
     return NextResponse.json({ error: "No autorizado" }, { status: 401 });
-  }
-
-  // Bulk creation is ADMIN-only: fifty cars in one request is a hammer, and the
-  // single-car form stays available to collaborators.
-  if (session.user.role !== "ADMIN") {
-    return NextResponse.json(
-      { error: "Solo un administrador puede importar inventario" },
-      { status: 403 },
-    );
   }
 
   let formData: FormData;
