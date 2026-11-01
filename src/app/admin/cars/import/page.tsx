@@ -1,21 +1,18 @@
-import { redirect } from "next/navigation";
-
 import { CarImport } from "@/components/cars";
 import { requireAuthSession } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 
 /**
- * Bulk creation is ADMIN-only, the same way `/admin/users` and
- * `/admin/leads` are: fifty cars in one request is a hammer, and the
- * single-car form stays available to collaborators.
+ * Bulk creation follows the rule the single-car form already had: anyone working
+ * the inventory can add to it. Users, configuration and inquiries stay
+ * admin-only, and those are a different kind of data than stock.
+ *
+ * `requireAuthSession` is still the gate — the layout is not the only thing
+ * standing between the public and this page.
  */
 export default async function AdminCarImportPage() {
-  const session = await requireAuthSession();
-
-  if (session.user.role !== "ADMIN") {
-    redirect("/admin");
-  }
+  await requireAuthSession();
 
   return (
     <div className="bg-background min-h-screen">

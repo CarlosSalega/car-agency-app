@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { revalidateCar, revalidateCars } from "@/lib/cache";
 import { prisma } from "@/lib/db";
 import { ImageService } from "@/lib/images/image-service";
-import { getSession } from "@/lib/auth";
+import { CAR_FORBIDDEN_MESSAGE, canManageCar, getSession } from "@/lib/auth";
 import { carSchema } from "@/lib/validations/car";
 
 export async function GET(
@@ -76,7 +76,7 @@ export async function DELETE(
       return NextResponse.json({ success: true });
     }
 
-    if (car.userId !== session.user.id && session.user.role !== "ADMIN") {
+    if (!canManageCar(car, session.user)) {
       return NextResponse.json(
         { error: "No tienes permiso para eliminar este vehículo" },
         { status: 403 },
@@ -151,12 +151,9 @@ export async function PUT(
       );
     }
 
-    if (
-      existingCar.userId !== session.user.id &&
-      session.user.role !== "ADMIN"
-    ) {
+    if (!canManageCar(existingCar, session.user)) {
       return NextResponse.json(
-        { error: "No tienes permiso para editar este vehículo" },
+        { error: CAR_FORBIDDEN_MESSAGE },
         { status: 403 },
       );
     }

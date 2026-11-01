@@ -65,6 +65,11 @@ export default async function AdminPage() {
               Bienvenido, {session.user.name}. Usá el menú para gestionar los
               vehículos.
             </p>
+            {/* Without this line the panel simply lacks a section, which reads
+                as broken rather than as a permission. */}
+            <p className="text-muted-foreground mx-auto mt-2 max-w-md text-sm">
+              Las consultas y sus gráficos los ve un administrador.
+            </p>
           </div>
         )}
       </div>
