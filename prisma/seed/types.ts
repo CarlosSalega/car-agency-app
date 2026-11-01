@@ -111,5 +111,7 @@ export interface SeedSummary {
   carsCreated: number;
   brandsCreated: number;
   modelsCreated: number;
+  /** Demo inquiries, only ever written to a seeded development database. */
+  leadsCreated: number;
   images: ImageSummary;
 }
