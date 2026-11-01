@@ -134,11 +134,31 @@ instead of lingering indexed with a stale price.
 
 ## Phase 3 — Where buyers actually look
 
-T3.1 — Inventory CSV export for MercadoLibre. **M**
-Column mapping plus image URLs, generated from the panel.
+T3 was redefined after checking how Mercado Libre actually works. Full detail in
+`odd/tasks/car-inventory-import.md`.
 
-T3.2 — Meta catalog feed. **L**
-Optional, after CSV proves the field mapping.
+T3.1 — Inventory **import** from a spreadsheet. **DONE** (`4e2d014`, `b751a41`, `58487d6`)
+The direction nobody can do for the dealership: 40 existing cars without 40 forms. A
+dry pass reports every bad row before anything is written, the confirm pass re-validates
+the same file instead of trusting the browser, brands and models resolve by name, and
+photos are downloaded and re-uploaded to Cloudinary. 31 tests on the parser, verified
+live including the refused confirm leaving the database untouched.
+
+T3.2 — Export with MercadoLibre's column names. **DONE** (`7d36618`, `59e86ba`)
+A CSV cannot be uploaded to ML: their bulk uploader only accepts a spreadsheet **they
+generate per category**, with titles capped at 60 characters and images as public URLs.
+So this export is for reviewing inventory in a spreadsheet, keeping a copy, and pasting
+into ML's own template. It does not publish anything.
+
+T3.3 — MercadoLibre API integration. **L — needs the client first**
+Publishing for real means the API: `MLA1744` with `MLA1744-MARC` and `MLA1744-MODL`
+required, attributes read from `GET /categories/MLA1744/attributes` (never hardcoded).
+Vehicles have **no free tier**: ML requires a contracted package, from 15 listings at
+~$1.162.500 (Oct 2025, sin IVA, CABA & GBA). Needs the dealer's account, their package
+and app credentials.
+
+T3.4 — Meta catalog feed. **L**
+Optional, after the CSV proves the field mapping.
 
 ## Phase 4 — Living content
 
