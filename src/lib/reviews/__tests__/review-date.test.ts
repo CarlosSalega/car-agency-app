@@ -53,6 +53,17 @@ describe("formatRelativeReviewDate", () => {
     );
   });
 
+  it("accepts the ISO string the cached read returns", () => {
+    // `unstable_cache` hands back JSON, so this is the shape production passes.
+    expect(formatRelativeReviewDate("2026-07-01T12:00:00.000Z", NOW)).toBe(
+      "hace 4 meses",
+    );
+  });
+
+  it("falls back to hoy for a date it cannot parse", () => {
+    expect(formatRelativeReviewDate("not-a-date", NOW)).toBe("hoy");
+  });
+
   it("does not invent a future label for a date ahead of now", () => {
     // The write schema rejects future dates; this is the formatter staying total
     // for a row that arrived another way (an import, a manual edit).

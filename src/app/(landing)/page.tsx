@@ -2,6 +2,11 @@ import type { Metadata } from "next";
 
 import { SITE_CONFIG } from "@/data/metadata";
 import { getPublicLatestCars } from "@/lib/queries/cars";
+import {
+  getPublishedReviewSummary,
+  getPublishedReviews,
+} from "@/lib/queries/reviews";
+import { withReviewStructuredData } from "@/lib/reviews";
 
 import FeatureCards from "./components/FeatureCards";
 import Footer from "./components/Footer";
@@ -45,7 +50,12 @@ export const metadata: Metadata = {
   },
 };
 
-const landingJsonLd = {
+/**
+ * Everything but the reviews. The `aggregateRating` and the `review` list are
+ * attached at request time from the published rows, so the markup can never drift
+ * from what the section below it renders.
+ */
+const dealerJsonLd = {
   "@context": "https://schema.org",
   "@type": "AutoDealer",
   name: SITE_CONFIG.name,
@@ -86,14 +96,23 @@ const landingJsonLd = {
       closes: "12:30",
     },
   ],
-  // No `aggregateRating`. Self-published ratings for a LocalBusiness are not
-  // allowed by Google's structured data policy, and the 4.9/249 that used to be
-  // here had no verifiable source behind it. It comes back in T4.1, wired to
-  // real reviews, not typed in by hand.
+  // No `aggregateRating` and no `review` here: both are added by
+  // `withReviewStructuredData` below, from the published rows only. Self-published
+  // ratings for a LocalBusiness are not allowed by Google's structured data
+  // policy, and the 4.9/249 that used to live here had no verifiable source.
 };
 
 export default async function LandingPage() {
-  const cars = await getPublicLatestCars(9);
+  const [cars, reviews, reviewSummary] = await Promise.all([
+    getPublicLatestCars(9),
+    getPublishedReviews(),
+    getPublishedReviewSummary(),
+  ]);
+
+  const landingJsonLd = withReviewStructuredData(dealerJsonLd, {
+    summary: reviewSummary,
+    reviews,
+  });
 
   return (
     <div className="bg-background text-foreground selection:bg-brand selection:text-brand-foreground antialiased">

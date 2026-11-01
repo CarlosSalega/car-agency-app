@@ -35,15 +35,21 @@ function plural(count: number, singular: string, pluralForm: string): string {
 }
 
 /**
- * @param reviewedAt When the customer wrote the review.
+ * @param reviewedAt When the customer wrote the review. A `Date` from a direct
+ *   query, or the ISO string the cached read returns — both arrive here, so both
+ *   are accepted instead of each caller coercing on its own.
  * @param now The reference instant. Passed in by the caller so the formatter is
  *   pure and the test never reads the clock.
  */
 export function formatRelativeReviewDate(
-  reviewedAt: Date,
+  reviewedAt: Date | string,
   now: Date = new Date(),
 ): string {
-  const days = wholeDaysBetween(reviewedAt, now);
+  const date = reviewedAt instanceof Date ? reviewedAt : new Date(reviewedAt);
+
+  if (Number.isNaN(date.getTime())) return "hoy";
+
+  const days = wholeDaysBetween(date, now);
 
   // A future date is a data error, not a label. The write schema rejects it; if a
   // row arrives another way, "hoy" is the only phrasing that is not a lie.

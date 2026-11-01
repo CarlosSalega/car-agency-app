@@ -1,201 +1,38 @@
-"use client";
+import { getPublishedReviews } from "@/lib/queries/reviews";
 
-import { useScrollAnimation } from "../hooks/useScrollAnimation";
-import { GoogleLogo } from "../components/ui/GoogleLogo";
 import { SectionHeading } from "./ui/SectionHeading";
+import { GoogleLogo } from "./ui/GoogleLogo";
+import { ReviewCard } from "./reviews/review-card";
+import {
+  GOOGLE_OVERALL_RATING,
+  GOOGLE_REVIEW_URL,
+  GOOGLE_TOTAL_REVIEWS,
+} from "./reviews/review-google";
+import { Stars } from "./reviews/review-stars";
+import { ReviewsCta } from "./reviews/reviews-cta";
 
-const GOOGLE_REVIEW_URL =
-  "https://www.google.com/search?sca_esv=e2250487dc351849&sxsrf=ANbL-n5j53RmXm8D3TYAM--iQi1foYbr3A:1774276136216&si=AL3DRZEsmMGCryMMFSHJ3StBhOdZ2-6yYkXd_doETEE1OR-qOZghCMLCXBcllZ10uaMWmxAo8z_OP6aYRx5Pb1TKl_jRj9rlvXwtC1OrtlCfCYmGSErdkkquQtz_lBU87n6ZF8dIItPXnzVJZtQ88FDQ9q6w-s0XRw%3D%3D&q=Autos+usados+Santa+Fe+Opiniones&sa=X&ved=2ahUKEwi9ndTWnbaTAxWQp5UCHbasH28Q0bkNegQIJxAH&biw=1358&bih=682&dpr=1";
+/**
+ * The testimonials section, read from the database.
+ *
+ * Two decisions live here:
+ *
+ * 1. **Only published rows, and nothing at all when there are none.** An empty
+ *    grid under "Más de 1000 sueños cumplidos" is worse than no section: the
+ *    heading promises proof the page then fails to deliver. Returning `null` is
+ *    the honest state for a dealership that has not loaded its reviews yet.
+ * 2. **The badge keeps Google's numbers and stays a plain link.** 4.9/249 is
+ *    Google's aggregate, not ours; the `aggregateRating` Google reads comes from
+ *    the published rows in the landing JSON-LD. Making this badge structured data
+ *    is exactly what got it removed before.
+ */
+export default async function Reviews() {
+  const reviews = await getPublishedReviews();
 
-const REVIEWS = [
-  {
-    name: "Juli Ballester Diaz",
-    date: "hace 3 meses",
-    rating: 5,
-    text: `Excelente experiencia con Car Agency App! 💯\nFacu nos atendió de diez, fuimos con la idea de comprar un usado y nos terminamos llevando un 0km! 🥳\nLos chicos siempre dispuestos a asesorarnos y a buscar las mejores opciones.\nRápido y sencillo a la hora de pagar y retirar. 💪🏼👏🏻😎\nGracias facussss!`,
-    avatar: "JB",
-    photo: "/reviews/juli-ballester.webp",
-    photoWidth: 60,
-    photoHeight: 80,
-  },
-  {
-    name: "Norma Soñez",
-    date: "hace 4 meses",
-    rating: 5,
-    text: "Gracias Facundo por la amabilidad y atención a los detalles que hizo fuese una hermosa experiencia. Gracias al equipo de la concesionaria por el respeto y la sonrisas ,No es común por eso quiero destacarlos! Gracias,y hasta el próximo auto que nos vuelva a reunir!",
-    avatar: "NS",
-    photo: "/reviews/norma-sonez.webp",
-    photoWidth: 60,
-    photoHeight: 80,
-  },
-  {
-    name: "Dario Ledesma",
-    date: "hace 4 meses",
-    rating: 5,
-    text: `Excelente atención desde el primer momento! Buen asesoramiento y acompañamiento.\nHoy disfruto de mi 0km! Muchas gracias`,
-    avatar: "DL",
-    photo: "/reviews/dario-ledesma.webp",
-    photoWidth: 89,
-    photoHeight: 80,
-  },
-  {
-    name: "Diego Pucheta",
-    date: "hace 3 semanas",
-    rating: 5,
-    text: "Excelente la atención, el asesoramiento de Lionel que me dio mucha confianza en todo, y los detalles 🎁.. un montón 👏 👏 👏 volvería a comprar",
-    avatar: "DP",
-    photo: "/reviews/diego-pucheta.webp",
-    photoWidth: 45,
-    photoHeight: 80,
-  },
-  {
-    name: "Marisa Moreno",
-    date: "hace 1 mes",
-    rating: 5,
-    text: "Excelente atención desde el día 1, muy predispuestos los chicos para asesorarnos y aconsejarnos. Muy agradecidos por su agilidad para la entrega de nuestro 0km !!!!",
-    avatar: "MM",
-    photo: "/reviews/marisa-moreno.webp",
-    photoWidth: 60,
-    photoHeight: 80,
-  },
-  {
-    name: "Elena Cristaldi",
-    date: "hace 3 meses",
-    rating: 5,
-    text: "Excelente los chicos de Car Agency App. No solo en la atención, si no en el asesoramiento, la rapidez y facilitar la papelería y la entrega!! Un millón de gracias… muy recomendable…",
-    avatar: "EC",
-    photo: "/reviews/elena-cristaldi.webp",
-    photoWidth: 60,
-    photoHeight: 80,
-  },
-];
-
-const OVERALL_RATING = 4.9;
-const TOTAL_REVIEWS = 249;
-
-function PartialStar({ fill }: { fill: number }) {
-  return (
-    <span className="relative inline-block leading-none" aria-hidden="true">
-      <span className="text-subtle-foreground">★</span>
-      <span
-        className="text-warning absolute inset-0 overflow-hidden"
-        style={{ width: `${fill * 100}%` }}
-      >
-        ★
-      </span>
-    </span>
-  );
-}
-
-function Stars({
-  rating,
-  size = "sm",
-  lastStarFill = 1,
-}: {
-  rating: number;
-  size?: "sm" | "lg";
-  lastStarFill?: number;
-}) {
-  const sz = size === "lg" ? "text-2xl" : "text-sm";
-
-  return (
-    <div
-      role="img"
-      className={`flex gap-0.5 ${sz}`}
-      aria-label={`Calificación: ${rating} de 5`}
-    >
-      {[1, 2, 3, 4, 5].map((s) => {
-        if (s < rating) {
-          return (
-            <span key={s} className="text-warning">
-              ★
-            </span>
-          );
-        }
-        if (s === rating && lastStarFill < 1) {
-          return <PartialStar key={s} fill={lastStarFill} />;
-        }
-        return (
-          <span key={s} className="text-subtle-foreground">
-            ★
-          </span>
-        );
-      })}
-    </div>
-  );
-}
-
-function Avatar({ initials }: { initials: string }) {
-  // Monochrome on purpose. The previous six-colour rotation (blue, emerald,
-  // violet, rose, amber, cyan) fought the brand: six hues that appear nowhere
-  // else in the palette, on a card that is otherwise neutral.
-  return (
-    <div className="bg-accent text-foreground flex size-10 items-center justify-center rounded-full text-sm font-bold">
-      {initials}
-    </div>
-  );
-}
-
-type Review = (typeof REVIEWS)[number];
-
-function ReviewCard({ review, index }: { review: Review; index: number }) {
-  const { ref, isVisible } = useScrollAnimation<HTMLDivElement>({
-    rootMargin: "0px 0px -80px 0px",
-  });
-
-  return (
-    <article
-      ref={ref}
-      className={`border-border bg-card hover:border-foreground/25 rounded-lg border p-6 shadow-sm transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] hover:shadow-md ${
-        isVisible
-          ? "translate-y-0 opacity-100"
-          : index % 2 === 0
-            ? "-translate-x-15 translate-y-10 opacity-0"
-            : "translate-x-15 translate-y-10 opacity-0"
-      }`}
-      style={{
-        transitionDelay: isVisible ? `${index * 90}ms` : "0ms",
-      }}
-    >
-      <header className="mb-4 flex items-center gap-3">
-        <Avatar initials={review.avatar} />
-
-        <div className="flex-1">
-          <p className="text-foreground text-sm font-bold">{review.name}</p>
-          <p className="text-muted-foreground text-xs">{review.date}</p>
-        </div>
-
-        {review.photo && (
-          <img
-            src={review.photo}
-            alt={review.name}
-            width={review.photoWidth}
-            height={review.photoHeight}
-            className="h-20 rounded-md object-cover"
-            loading="lazy"
-          />
-        )}
-      </header>
-
-      <Stars rating={review.rating} />
-
-      <p className="text-subtle-foreground mt-3 text-sm leading-relaxed">
-        {review.text}
-      </p>
-    </article>
-  );
-}
-
-export default function Reviews() {
-  const { ref: ctaRef, isVisible: ctaVisible } =
-    useScrollAnimation<HTMLDivElement>({
-      rootMargin: "0px 0px -100px 0px",
-    });
+  if (reviews.length === 0) return null;
 
   return (
     <section className="bg-background relative w-full overflow-hidden py-20">
       <div className="mx-auto max-w-6xl px-4 md:px-10">
-        {/* HEADER */}
         <SectionHeading
           eyebrow="Lo que dicen nuestros clientes"
           titleStart="Más de"
@@ -206,53 +43,32 @@ export default function Reviews() {
             href={GOOGLE_REVIEW_URL}
             target="_blank"
             rel="noopener noreferrer"
-            aria-label={`Calificación ${OVERALL_RATING} de 5 en Google con ${TOTAL_REVIEWS} reseñas`}
+            aria-label={`Calificación ${GOOGLE_OVERALL_RATING} de 5 en Google con ${GOOGLE_TOTAL_REVIEWS} reseñas`}
             className="border-border bg-card mt-2 inline-flex max-w-full items-center gap-2 rounded-full border py-2 pr-4 pl-3 shadow-sm transition-all hover:scale-[1.03] hover:shadow-md sm:gap-2.5 sm:pr-5"
           >
             <GoogleLogo className="size-5 shrink-0" />
             <span className="text-foreground text-xl font-black">
-              {OVERALL_RATING}
+              {GOOGLE_OVERALL_RATING}
             </span>
-            <Stars rating={5} size="sm" lastStarFill={0.9} />
+            <Stars
+              rating={5}
+              size="sm"
+              lastStarFill={0.9}
+              ariaLabel={`Calificación ${GOOGLE_OVERALL_RATING} de 5 en Google`}
+            />
             <span className="text-muted-foreground truncate text-xs sm:text-sm">
-              {TOTAL_REVIEWS} reseñas
+              {GOOGLE_TOTAL_REVIEWS} reseñas
             </span>
           </a>
         </SectionHeading>
 
-        {/* GRID */}
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {REVIEWS.map((review, i) => (
-            <ReviewCard key={review.name} review={review} index={i} />
+          {reviews.map((review, index) => (
+            <ReviewCard key={review.id} review={review} index={index} />
           ))}
         </div>
 
-        {/* CTA */}
-        <div
-          ref={ctaRef}
-          className={`mt-12 flex flex-col items-center gap-3 transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] ${
-            ctaVisible
-              ? "translate-y-0 opacity-100"
-              : "translate-y-10 opacity-0"
-          }`}
-        >
-          <p className="text-muted-foreground text-center text-base">
-            ¿Ya compraste o vendiste con nosotros? <br /> Contanos tu
-            experiencia
-          </p>
-
-          <a
-            href={GOOGLE_REVIEW_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="bg-primary text-primary-foreground hover:bg-primary/90 flex h-14 w-full max-w-sm items-center justify-center gap-2.5 rounded-lg px-6 font-bold tracking-widest whitespace-nowrap uppercase transition-all hover:scale-105 active:scale-95"
-          >
-            <GoogleLogo className="size-4" />
-            <span className="text-xs md:text-base">
-              Dejá tu reseña en Google
-            </span>
-          </a>
-        </div>
+        <ReviewsCta />
       </div>
     </section>
   );

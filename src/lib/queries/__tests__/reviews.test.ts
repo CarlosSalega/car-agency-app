@@ -71,8 +71,15 @@ describe("getPublishedReviews", () => {
     );
   });
 
-  it("returns the rows and nothing else", async () => {
-    await expect(getPublishedReviews()).resolves.toEqual(rows);
+  it("returns the rows with a JSON-safe date", async () => {
+    // `unstable_cache` serializes to JSON, so a `Date` that crosses it comes back
+    // as a string. A test that mocked the cache as identity hid exactly this and
+    // the landing 500'd on the first real request, so the conversion is asserted
+    // here instead of being implicit.
+    await expect(getPublishedReviews()).resolves.toEqual([
+      { ...rows[0], reviewedAt: "2026-08-01T12:00:00.000Z" },
+      { ...rows[1], reviewedAt: "2026-07-01T12:00:00.000Z" },
+    ]);
   });
 });
 

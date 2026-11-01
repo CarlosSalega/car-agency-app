@@ -162,9 +162,13 @@ Optional, after the CSV proves the field mapping.
 
 ## Phase 4 — Living content
 
-T4.1 — Reviews in the database. **L**
-Moderated reviews or a Google Business source, replacing the two hardcoded quotes that
-still say the previous brand. Feeds T0.3.
+T4.1 — Reviews in the database. **Done.**
+Staff-curated, not publicly submitted: the owner copies what Google already has into
+`/admin/reviews` and publishes it. Public submission with a moderation queue was
+considered and rejected for the MVP — it needs consent, anti-spam and a rate limiter
+that survives serverless, which is a feature of its own. A Google Business API source
+stays out: it needs credentials and billing for a dealership that has neither yet.
+Feeds T0.3.
 
 T4.2 — Financing calculator. **S**
 Optional lead magnet with the legal disclaimer; `Currency` already exists.
@@ -224,6 +228,13 @@ must be an administrator, vehicles need a contracted package and photos).
   `src/__tests__/dependencies.test.ts` (`45a8e37`).
 - Phase 2 (inventory visibility) — T2.1 and T2.3 done, T2.2 was already implemented
   before the phase started. Next: T3.1 (inventory CSV export for MercadoLibre).
+- T4.1 (reviews in the database) — **done**. A `Review` model, `/admin/reviews`
+  (ADMIN-only, create/edit/publish/delete, every write audited in `Log`), the landing
+  section reading the published rows, and an `aggregateRating` plus `review[]` in the
+  landing JSON-LD derived from them. The hand-typed 4.9/249 stays a visual Google
+  badge with no structured data. Detail in `odd/tasks/reviews-in-database.md`. The
+  six real testimonials live in `prisma/seed/reviews.ts`; `pnpm db:seed:reviews`
+  inserts them idempotently into a database that already holds real inventory.
 - Next, and the only thing left before handing over: Phase 0 items that need the owner
   (T0.2 backups, T0.4 domain and sending domain, T0.5 privacy), then T0.6 brand config
   before a second agency.

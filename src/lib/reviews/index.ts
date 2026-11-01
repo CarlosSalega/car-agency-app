@@ -6,4 +6,5 @@
  * The reads live in `@/lib/queries/reviews`, the same split as `lib/cars` and
  * `lib/queries/cars`.
  */
+export * from "./landing-json-ld";
 export * from "./review-date";

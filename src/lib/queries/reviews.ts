@@ -13,13 +13,22 @@ import { prismaSafe } from "@/lib/prisma-safe";
  * component, so no future surface can forget it.
  */
 
-/** The fields a card renders. No `isPublished`, no timestamps: not needed. */
+/**
+ * The fields a card renders. No `isPublished` outside the `where`, and no
+ * `createdAt`/`updatedAt`: not needed.
+ *
+ * `reviewedAt` is an **ISO string**, not a `Date`, and that is not sloppiness.
+ * `unstable_cache` serializes its result to JSON, so a `Date` declared in the type
+ * comes back as a string at runtime — this shipped a 500 the first time because
+ * the JSON-LD called `.toISOString()` on it. The boundary is typed for what it
+ * actually returns, and the formatter accepts both shapes.
+ */
 export interface PublicReview {
   id: string;
   authorName: string;
   rating: number;
   text: string;
-  reviewedAt: Date;
+  reviewedAt: string;
   photoPath: string | null;
   sortOrder: number;
 }
@@ -48,14 +57,21 @@ const PUBLIC_REVIEW_FIELDS = {
  * `revalidateReviews()`.
  */
 export const getPublishedReviews = unstable_cache(
-  async (): Promise<PublicReview[]> =>
-    prismaSafe(() =>
+  async (): Promise<PublicReview[]> => {
+    const rows = await prismaSafe(() =>
       prisma.review.findMany({
         where: { isPublished: true },
         orderBy: [{ sortOrder: "asc" }, { reviewedAt: "desc" }],
         select: PUBLIC_REVIEW_FIELDS,
       }),
-    ),
+    );
+
+    // Serialized here, on purpose: whatever crosses the cache is plain JSON.
+    return rows.map((row) => ({
+      ...row,
+      reviewedAt: row.reviewedAt.toISOString(),
+    }));
+  },
   [CACHE_TAGS.REVIEWS, "published-reviews"],
   {
     tags: [CACHE_TAGS.REVIEWS],

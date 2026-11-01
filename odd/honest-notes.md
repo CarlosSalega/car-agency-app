@@ -86,10 +86,6 @@ código, no ejecutándolo. Lo marcado **_[sin verificar]_** no se miró en esta 
   animación) y `:37` (`<h2>` fijo). No se puede reutilizar donde hace falta un `h1`
   (jerarquía SEO de una página que no sea la landing) ni desde un server component.
   **Severidad: baja.** _(lectura)_
-- **Type lie del ref en `Reviews.tsx`.** `:152` declara
-  `useScrollAnimation<HTMLDivElement>` y `:158` lo enchufa a un `<article>`. TS no se
-  queja por la bivarianza de las props `ref` de React. No rompe hoy; rompe el día que el
-  hook use la API propia de `HTMLDivElement`. **Severidad: baja.** _(lectura)_
 - **`text-secondary` se usa como color de TEXTO y hoy `--secondary` es gris claro.**
   `src/app/globals.css:68` = `oklch(0.9288 0.0126 255.5078)`. Se consume como texto en
   `SectionHeading.tsx:21`, `LatestCarsSlider.tsx:135`, `Hero.tsx:169`,
@@ -118,6 +114,21 @@ código, no ejecutándolo. Lo marcado **_[sin verificar]_** no se miró en esta 
   ¿es el lugar natural de la configuración del CMS/CRM/ERP, o es código muerto con base
   de datos? No decidido. _(lectura)_
 
+### Caché (descubierto el 2026-11-01, no corregido fuera de reseñas)
+
+- **`unstable_cache` serializa a JSON, así que todo tipo que promete `Date` miente.**
+  Las queries cacheadas devuelven los timestamps como **string**. Lo destapó `/` con
+  un 500 (`a.reviewedAt.toISOString is not a function`) en la primera corrida real de
+  T4.1, después de que los tests unitarios pasaran: esos tests mockean
+  `unstable_cache` como identidad y por lo tanto **borran el límite que rompía**.
+  Ya está resuelto en `src/lib/queries/reviews.ts` (el tipo dice `string` y la
+  conversión es explícita en el borde). **Riesgo latente en el resto**:
+  `src/lib/queries/cars.ts` (`getPublicCarsList`, `getPublicCarBySlug`,
+  `getPublicLatestCars`) declara `createdAt: Date` y hoy devuelve string. Nadie llama
+  métodos de `Date` sobre esos campos todavía, así que no rompe — pero el primer
+  componente que lo haga revienta en producción y no en los tests. **Severidad:
+  media (mina, no bomba).** _(lectura + ejecución)_
+
 ### Lint y tipos
 
 Ver la sección **Medición** más abajo. Resumen: **6 errores, 22 warnings**, y `pnpm lint`
@@ -139,6 +150,15 @@ todavía falla, así que **no puede ser gate**.
   `.env.example`, ya existe.
 
 ## Resuelto (una línea cada uno, para no reabrirlos)
+
+- **Las reseñas ya no viven en el componente** (T4.1, 2026-11-01) → `model Review`,
+  `/admin/reviews` solo ADMIN con auditoría en `Log`, la portada lee de la base y el
+  `aggregateRating` del JSON-LD se deriva de las filas publicadas. Los seis textos
+  reales están en `prisma/seed/reviews.ts`. Ya no hay "hace 3 meses" escrito a mano:
+  se deriva de `reviewedAt`. Implementación en `odd/tasks/reviews-in-database.md`.
+- **Type lie del ref en `Reviews.tsx`** → el `ReviewCard` extraído usa
+  `useScrollAnimation<HTMLElement>`, que es lo que el `<article>` realmente es. Se
+  arregló al reescribir el componente en vez de copiar el genérico viejo.
 
 - **Fuga de `hashedPassword` por payload RSC** (era H-2) → `select` explícito y test que
   lo pincha: `src/lib/queries/__tests__/cars.test.ts:235`. `grep "user: true" src/` = 0.

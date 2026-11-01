@@ -55,15 +55,15 @@ input, 200 on success with the `Log` row written).
 
 ## Tasks
 
-| ID  | Task                                                                    | Specs      | Route  | Commit |
-| --- | ----------------------------------------------------------------------- | ---------- | ------ | ------ |
-| T1  | `model Review`, SQL preview, `db push`, seed the six real testimonials  | S1, S3     | inline | C1     |
-| T2  | Data layer: published query, aggregate summary, Spanish date formatter  | S2, S4, S8 | inline | C1     |
-| T3  | zod schemas and the admin route handlers, with `Log` audit + revalidate | S5, S7, S8 | inline | C2     |
-| T4  | `/admin/reviews` page, table, form dialog, sidebar entry                | S5         | inline | C2     |
-| T5  | Public section: server wrapper reading the DB, client `ReviewCard`      | S4, S3     | inline | C3     |
-| T6  | Landing JSON-LD `aggregateRating` + `review` array                      | S6, S8     | inline | C3     |
-| T7  | Docs (`honest-notes.md`, roadmap) and the full gate                     | —          | inline | C3     |
+| ID  | Task                                                                    | Specs      | Route  | Commit    |
+| --- | ----------------------------------------------------------------------- | ---------- | ------ | --------- |
+| T1  | `model Review`, SQL preview, `db push`, seed the six real testimonials  | S1, S3     | inline | `13f6d66` |
+| T2  | Data layer: published query, aggregate summary, Spanish date formatter  | S2, S4, S8 | inline | `13f6d66` |
+| T3  | zod schemas and the admin route handlers, with `Log` audit + revalidate | S5, S7, S8 | inline | `bcb093d` |
+| T4  | `/admin/reviews` page, table, form dialog, sidebar entry                | S5         | inline | `bcb093d` |
+| T5  | Public section: server wrapper reading the DB, client `ReviewCard`      | S4, S3     | inline | C3        |
+| T6  | Landing JSON-LD `aggregateRating` + `review` array                      | S6, S8     | inline | C3        |
+| T7  | Docs (`honest-notes.md`, roadmap) and the full gate                     | —          | inline | C3        |
 
 ## Log
 
@@ -86,3 +86,26 @@ input, 200 on success with the `Log` row written).
 - **L5 (conexión, 2026-11-01):** el primer `prisma migrate status` falló con `P1001`; el
   DNS de `pooled.db.prisma.io` devuelve varias IPs y una estaba muerta. Reintento OK. No
   es un problema de la app.
+
+- **L6 (bug encontrado por la verificación funcional, no por los tests):** el
+  primer `next start` devolvió 500 en `/` con
+  `a.reviewedAt.toISOString is not a function`. Causa: **`unstable_cache` serializa
+  su resultado a JSON**, así que un `Date` declarado en el tipo vuelve como string.
+  Los tests unitarios no podían verlo porque mockean `unstable_cache` como
+  identidad, es decir, borran justo el límite que rompía. Arreglo: `PublicReview.reviewedAt`
+  es `string` (ISO), la query serializa explícitamente en el borde, y el formatter y
+  el JSON-LD aceptan las dos formas. El test de la query ahora **afirma** la
+  conversión, así que el mock ya no puede ocultarla otra vez.
+- **L7 (dos guardas existentes atraparon defectos reales en este trabajo):**
+  `src/components/__tests__/select-items.test.ts` exigió el prop `items` en el
+  Select de calificación (sin él el trigger mostraba `5` en vez de `5 estrellas`), y
+  `src/__tests__/public-assets.test.ts` marcó el placeholder `/reviews/cliente.webp`
+  del dialog como asset inexistente. Ninguna de las dos se debilitó: se arregló el
+  código.
+- **L8 (verificación funcional, `next build` + `next start` sobre la base real):**
+  `/` dinámica (ƒ), 6 tarjetas, `aggregateRating {ratingValue: 5, reviewCount: 6}`,
+  `Car Agency App` = 0 apariciones, badge 4.9/249 intacto. Con las 6 despublicadas
+  por la API: sección ausente, sin `aggregateRating`, sin `review[]`. Republicadas:
+  6 de nuevo. `Log` con 13 filas `UPDATE`/`Review`. `/admin/reviews` 200 con sesión
+  de ADMIN y 307 a `/admin/login` sin sesión. **0 errores en el log del server.**
+- **L9 (gate):** `tsc` 0 · **52 archivos / 396 tests** (eran 45/352) · `pnpm build` 0.
