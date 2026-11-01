@@ -349,3 +349,38 @@ model MeliAccount {
   linkedAt     DateTime @default(now())
   updatedAt    DateTime @updatedAt
 }
+
+/// A customer testimonial shown on the landing.
+///
+/// Kept in the database instead of the component because the quotes were
+/// hardcoded: publishing a new one required a deploy, and a rename could leave
+/// the old brand name frozen inside a customer's words forever.
+///
+/// `isPublished` defaults to **false** on purpose. A row that appears is a
+/// deliberate act; staff load what Google already has, then publish it, and the
+/// public query never sees a half-finished entry.
+model Review {
+  id         String  @id @default(uuid())
+  /// The name printed on the card, exactly as the customer signs it.
+  authorName String
+  /// 1..5 whole stars. Validated in the application layer, not with a check
+  /// constraint, because `db push` has to stay repeatable.
+  rating     Int
+  /// Verbatim, including the emoji and the line breaks.
+  text       String
+  /// When the customer wrote it. The "hace 3 meses" label is derived from this
+  /// at render time: a stored phrase would be wrong a month later.
+  reviewedAt DateTime
+  /// Repository path such as `/reviews/norma-sonez.webp`, or null for a review
+  /// whose author has no photo. Never an external URL: the public assets sweep
+  /// in `src/__tests__/public-assets.test.ts` only covers what we serve.
+  photoPath  String?
+  /// Manual display order. Reviews with the same value fall back to newest
+  /// first, so an untouched row still lands in a sane place.
+  sortOrder  Int     @default(0)
+  isPublished Boolean @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([isPublished, sortOrder])
+}

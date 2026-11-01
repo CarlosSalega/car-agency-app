@@ -17,6 +17,7 @@
     "test:watch": "vitest",
     "db:push": "prisma db push",
     "db:seed": "tsx prisma/seed.ts",
+    "db:seed:reviews": "tsx prisma/seed-reviews.ts",
     "db:studio": "prisma studio",
     "remove-comments": "node src/scripts/remove-comments.mjs && pnpm format"
   },

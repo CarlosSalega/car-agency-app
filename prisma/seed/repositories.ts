@@ -3,9 +3,16 @@ import type { PrismaClient } from "@generated/prisma/client";
 import { hashPassword } from "better-auth/crypto";
 import { brands } from "@/data/brands";
 import { modelsByBrand } from "@/data/modelsByBrand";
-import type { SeedCar, SeedLinkTreeLink, SeedSeller, SeedUser } from "./types";
+import type {
+  SeedCar,
+  SeedLinkTreeLink,
+  SeedReview,
+  SeedSeller,
+  SeedUser,
+} from "./types";
 
 export async function resetDatabase(prisma: PrismaClient): Promise<void> {
+  await prisma.review.deleteMany();
   await prisma.lead.deleteMany();
   await prisma.visit.deleteMany();
   await prisma.log.deleteMany();
@@ -157,6 +164,13 @@ export async function createCar(
  * Demo inquiries. `createMany` because there are a few hundred and none of them
  * needs a round trip of its own.
  */
+export async function createReviews(
+  prisma: PrismaClient,
+  reviews: SeedReview[],
+) {
+  return prisma.review.createMany({ data: reviews });
+}
+
 export async function createLeads(
   prisma: PrismaClient,
   leads: {

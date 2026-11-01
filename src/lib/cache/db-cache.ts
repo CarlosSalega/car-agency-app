@@ -12,5 +12,6 @@ export const CACHE_TAGS = {
   BRANDS: "brands",
   MODELS: "models",
   SELLERS: "sellers",
+  REVIEWS: "reviews",
   IMAGES: "images",
 } as const;

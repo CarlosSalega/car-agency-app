@@ -14,8 +14,14 @@ import { describe, expect, it } from "vitest";
  *
  * Only paths with a media/file extension are considered, so route strings like
  * `/autos` or `/api/cars` are out of scope by construction.
+ *
+ * `prisma/seed` is swept too, and that is not scope creep: a testimonial's photo
+ * arrives as a database column now, so a typo in `seed/reviews.ts` ships as a
+ * blank avatar exactly the way the navbar one did, while nothing in `src/` ever
+ * mentions the path. `prisma/generated` is a build output and stays out.
  */
 const SRC = path.resolve(__dirname, "..");
+const SEED = path.resolve(__dirname, "../../prisma/seed");
 const PUBLIC = path.resolve(__dirname, "../../public");
 
 const ASSET_EXTENSION = /\.(png|jpe?g|svg|webp|avif|gif|ico)$/i;
@@ -48,7 +54,9 @@ interface Reference {
 function collectReferences(): Reference[] {
   const references: Reference[] = [];
 
-  for (const file of collectSourceFiles(SRC)) {
+  const sources = [...collectSourceFiles(SRC), ...collectSourceFiles(SEED)];
+
+  for (const file of sources) {
     const lines = fs.readFileSync(file, "utf8").split("\n");
     lines.forEach((line, index) => {
       for (const match of line.matchAll(ASSET_REFERENCE)) {

@@ -40,3 +40,12 @@ export function revalidateModels() {
 export function revalidateSellers() {
   revalidateTag(CACHE_TAGS.SELLERS, IMMEDIATE);
 }
+
+/**
+ * Reviews are read by the landing and by the `aggregateRating` in its JSON-LD, so
+ * publishing one changes both a card and a number Google reads. Both reads share
+ * the tag, so a single call is enough.
+ */
+export function revalidateReviews() {
+  revalidateTag(CACHE_TAGS.REVIEWS, IMMEDIATE);
+}

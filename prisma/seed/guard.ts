@@ -17,6 +17,7 @@ export const SEED_ENV_OVERRIDE = "SEED_ALLOW_DESTRUCTIVE";
  * cannot drift away from what actually happens.
  */
 export const DESTRUCTIVE_TABLES = [
+  "review",
   "lead",
   "visit",
   "log",
