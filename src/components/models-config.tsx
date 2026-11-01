@@ -223,6 +223,10 @@ export function ModelsConfig({
               <div className="space-y-2">
                 <Label htmlFor="brandId">Marca</Label>
                 <Select
+                  items={brands.map((brand) => ({
+                    value: brand.id,
+                    label: brand.name,
+                  }))}
                   value={selectedBrandId}
                   onValueChange={(value) =>
                     setValue("brandId", value ?? "", {

@@ -36,7 +36,11 @@ export function EnumSelect<T extends string>({
     // Base UI's select can be cleared, so the change handler receives
     // `null`. `EnumSelect` has no notion of an empty selection, so `null` is
     // normalized away here rather than widening the component's own contract.
+    // Base UI paints the raw `value` in the trigger unless it is told how to
+    // label the items. Passing the same options the popup renders keeps the
+    // trigger in Spanish instead of showing the enum.
     <Select
+      items={options}
       value={value}
       onValueChange={(next) => {
         if (next !== null) onValueChange(next);

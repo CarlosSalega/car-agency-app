@@ -393,6 +393,7 @@ export function LinkTreeLinksConfig({
                 <div className="space-y-2">
                   <Label>Icono</Label>
                   <Select
+                    items={{ none: "Sin icono", ...LINKTREE_ICON_LABELS }}
                     value={selectedIconKey ?? "none"}
                     onValueChange={(v) =>
                       setValue("iconKey", v ?? undefined, {
@@ -424,6 +425,12 @@ export function LinkTreeLinksConfig({
                 <div className="space-y-2">
                   <Label htmlFor="sortOrder">Orden</Label>
                   <Select
+                    // Value and label are the same number today, but the rule is
+                    // uniform: every root declares its labels.
+                    items={[1, 2, 3, 4, 5].map((n) => ({
+                      value: String(n),
+                      label: String(n),
+                    }))}
                     value={String(selectedSortOrder ?? 1)}
                     onValueChange={(v) =>
                       setValue("sortOrder", Number(v), {
@@ -449,6 +456,7 @@ export function LinkTreeLinksConfig({
                 <div className="space-y-2">
                   <Label>Estado</Label>
                   <Select
+                    items={{ true: "Activo", false: "Inactivo" }}
                     value={selectedIsActive}
                     onValueChange={(v) =>
                       setValue("isActive", v as "true" | "false", {
