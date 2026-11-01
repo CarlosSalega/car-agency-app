@@ -1,6 +1,9 @@
 import { redirect } from "next/navigation";
 
+import Link from "next/link";
+
 import { ConfigTabs } from "@/components/config-tabs";
+import { Button } from "@/components/ui/button";
 import { prisma } from "@/lib/db";
 import { requireAuthSession } from "@/lib/auth";
 
@@ -51,6 +54,20 @@ export default async function ConfigPage({
   return (
     <div className="bg-background min-h-screen">
       <div className="container mx-auto px-4 py-6">
+        {/* The ML integration lives on its own page: it is a server-rendered
+            status card, not editable state, so it does not belong inside the
+            client tabs. */}
+        <div className="mb-6 flex items-center justify-between gap-4">
+          <p className="text-muted-foreground text-sm">
+            Datos de la agencia, catálogo y enlaces públicos.
+          </p>
+          <Button
+            variant="outline"
+            render={<Link href="/admin/config/mercadolibre" />}
+          >
+            Mercado Libre
+          </Button>
+        </div>
         <ConfigTabs
           initialBrands={brands}
           initialSellers={sellers}

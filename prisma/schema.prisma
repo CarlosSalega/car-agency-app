@@ -324,3 +324,28 @@ model Lead {
   @@index([sellerId])
   @@index([utmSource])
 }
+
+/// The linked Mercado Libre seller account.
+///
+/// Credentials live here and not in the generic `Settings` key/value table on
+/// purpose: that table has a listing API, and an access token must never be able
+/// to leak through a screen that renders "all settings".
+///
+/// Tokens are sealed with AES-256-GCM before they reach this table, so a database
+/// dump alone is not enough to publish on the dealership's behalf.
+model MeliAccount {
+  id           String   @id @default(uuid())
+  /// ML's own user id, unique so re-linking an account replaces the old row.
+  meliUserId   String   @unique
+  nickname     String
+  siteId       String?
+  /// Sealed, never plaintext.
+  accessToken  String
+  /// Sealed, and single-use: Mercado Libre returns a new one on every refresh.
+  refreshToken String
+  expiresAt    DateTime
+  scope        String?
+  linkedById   String?
+  linkedAt     DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
