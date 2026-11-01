@@ -164,6 +164,20 @@ Productization, before agency #2: `T0.6, T0.7, T3.1, T5.1, T5.2, T5.3`.
 
 Not now: online payments or deposits, a full CRM/ERP, multi-tenant.
 
+## Mercado Libre integration
+
+Split from the T3 work and documented in `odd/tasks/meli-integration.md`, which carries
+the verified facts (6-hour access token, single-use refresh token, the authorizing user
+must be an administrator, vehicles need a contracted package and photos).
+
+- **A — account linking: done.** OAuth with `state` and PKCE, sealed tokens in their own
+  table, `disconnect` guarded by an Origin check.
+- **B — token lifecycle: done.** Single-flight refresh, ahead of expiry, with a clear
+  re-link path on `invalid_grant`.
+- **C, D, E — package check, publishing, syncing: documented and not built.** They need
+  the dealership's ML account, a contracted package and a registered app; writing them
+  before that would be writing blind.
+
 ## Progress
 
 - T0.1 (seed guard) — done, `860a9cc`. Decision in `prisma/seed/guard.ts`, 17 unit
