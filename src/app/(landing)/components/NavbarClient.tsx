@@ -114,7 +114,7 @@ export default function NavbarClient({ user }: NavbarClientProps) {
                 {isActive ? (
                   <span
                     aria-hidden="true"
-                    className="bg-primary absolute -bottom-1 left-0 h-0.5 w-full rounded-full"
+                    className="bg-brand absolute -bottom-1 left-0 h-0.5 w-full rounded-full"
                   />
                 ) : null}
               </Link>
@@ -147,7 +147,7 @@ export default function NavbarClient({ user }: NavbarClientProps) {
               <button
                 type="button"
                 aria-label={menuOpen ? "Cerrar menú" : "Abrir menú"}
-                className="hover:text-primary focus-visible:ring-ring text-foreground inline-flex size-11 items-center justify-center rounded-md transition-colors focus-visible:ring-2 focus-visible:outline-none lg:hidden"
+                className="hover:text-brand focus-visible:ring-ring text-foreground inline-flex size-11 items-center justify-center rounded-md transition-colors focus-visible:ring-2 focus-visible:outline-none lg:hidden"
               >
                 {menuOpen ? (
                   <XRoundedIcon className="size-7" />
@@ -173,14 +173,14 @@ export default function NavbarClient({ user }: NavbarClientProps) {
                       aria-current={isActive ? "page" : undefined}
                       className={`flex w-full items-center rounded-sm px-4 py-2 text-sm font-medium tracking-tight uppercase outline-none ${
                         isActive
-                          ? "text-primary data-highlighted:text-primary data-highlighted:bg-transparent"
+                          ? "text-brand data-highlighted:text-brand data-highlighted:bg-transparent"
                           : "data-highlighted:bg-primary data-highlighted:text-primary-foreground text-muted-foreground"
                       }`}
                     >
                       <span
                         className={
                           isActive
-                            ? "border-primary -mb-1 border-b-2 pb-0.5"
+                            ? "border-brand -mb-1 border-b-2 pb-0.5"
                             : undefined
                         }
                       >
@@ -198,14 +198,14 @@ export default function NavbarClient({ user }: NavbarClientProps) {
                   aria-current={ctaActive ? "page" : undefined}
                   className={
                     ctaActive
-                      ? "text-primary data-highlighted:text-primary flex w-full items-center rounded-sm px-4 py-2 text-sm font-medium tracking-tight uppercase outline-none data-highlighted:bg-transparent"
+                      ? "text-brand data-highlighted:text-brand flex w-full items-center rounded-sm px-4 py-2 text-sm font-medium tracking-tight uppercase outline-none data-highlighted:bg-transparent"
                       : "bg-primary text-primary-foreground data-highlighted:bg-primary/90 data-highlighted:text-primary-foreground flex w-full items-center justify-start rounded-md border-0 px-4 py-2.5 text-sm font-medium tracking-tight uppercase shadow-none transition-colors outline-none"
                   }
                 >
                   <span
                     className={
                       ctaActive
-                        ? "border-primary -mb-1 border-b-2 pb-0.5"
+                        ? "border-brand -mb-1 border-b-2 pb-0.5"
                         : undefined
                     }
                   >

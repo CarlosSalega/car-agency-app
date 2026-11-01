@@ -98,7 +98,7 @@ export function CarDetailSpecs({ car }: CarDetailSpecsProps) {
                 <Badge
                   key={method}
                   variant="outline"
-                  className="border-primary text-primary"
+                  className="border-brand text-brand"
                 >
                   {getPaymentMethodLabel(method)}
                 </Badge>

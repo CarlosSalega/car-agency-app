@@ -89,7 +89,7 @@ export function LeadsWeeklyChart({ data }: LeadsWeeklyChartProps) {
                 <Bar
                   dataKey="count"
                   name="Consultas"
-                  fill="var(--primary)"
+                  fill="var(--chart-1)"
                   radius={[4, 4, 0, 0]}
                   maxBarSize={40}
                 />

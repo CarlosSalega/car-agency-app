@@ -49,7 +49,7 @@ interface LeadsStatusChartProps {
 const STATUS_FILL: Record<LeadStatus, string> = {
   NEW: "var(--info)",
   CONTACTED: "var(--warning)",
-  NEGOTIATING: "var(--primary)",
+  NEGOTIATING: "var(--brand)",
   WON: "var(--success)",
   LOST: "var(--muted-foreground)",
 };

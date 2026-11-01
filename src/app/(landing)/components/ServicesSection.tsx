@@ -14,10 +14,10 @@ export default function ServicesSection() {
           accentClassName="text-muted-foreground"
         >
           <div className="flex flex-wrap items-center justify-center gap-2">
-            <Badge variant="outline" className="border-primary text-primary">
+            <Badge variant="outline" className="border-brand text-brand">
               Autos usados
             </Badge>
-            <Badge variant="outline" className="border-primary text-primary">
+            <Badge variant="outline" className="border-brand text-brand">
               0km
             </Badge>
           </div>

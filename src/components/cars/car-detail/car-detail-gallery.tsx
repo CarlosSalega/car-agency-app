@@ -373,7 +373,7 @@ export function CarDetailGallery({ images, title }: CarDetailGalleryProps) {
                 onClick={() => setCurrentIndex(index)}
                 className={`relative aspect-4/3 overflow-hidden rounded-lg ring-1 transition ${
                   index === currentIndex
-                    ? "ring-primary"
+                    ? "ring-brand"
                     : "ring-muted hover:ring-muted-foreground/40"
                 }`}
               >
@@ -424,7 +424,7 @@ export function CarDetailGallery({ images, title }: CarDetailGalleryProps) {
                     }}
                     className={`relative aspect-4/3 w-full shrink-0 overflow-hidden ring-2 transition ${
                       index === currentIndex
-                        ? "ring-primary"
+                        ? "ring-brand"
                         : "opacity-50 ring-transparent hover:opacity-90"
                     }`}
                   >

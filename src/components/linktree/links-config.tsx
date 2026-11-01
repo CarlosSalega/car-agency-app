@@ -264,7 +264,7 @@ export function LinkTreeLinksConfig({
             // URL instead. `block` plus an explicit `max-width` truncates
             // regardless of how the table is laid out, and `TableCell` inherits
             // `whitespace-nowrap`, so `truncate` supplies the ellipsis.
-            className="text-primary block max-w-[300px] truncate underline underline-offset-4 sm:max-w-[340px]"
+            className="text-brand block max-w-[300px] truncate underline underline-offset-4 sm:max-w-[340px]"
           >
             {row.href}
           </a>

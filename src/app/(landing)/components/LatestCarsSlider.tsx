@@ -132,7 +132,7 @@ export function LatestCarsSlider({ cars }: LatestCarsSliderProps) {
             Recién llegados
           </span>
           <h2 className="text-foreground text-4xl leading-none font-black tracking-tighter uppercase italic md:text-5xl">
-            Últimos <span className="text-primary">Ingresos</span>
+            Últimos <span className="text-brand">Ingresos</span>
           </h2>
         </div>
 

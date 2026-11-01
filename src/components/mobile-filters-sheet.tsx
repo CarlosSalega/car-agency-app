@@ -59,7 +59,7 @@ export function MobileFiltersSheet({ brands }: { brands: BrandForFilters[] }) {
             render={
               <Button
                 variant="default"
-                className="bg-secondary text-primary hover:bg-secondary/90 relative rounded-full p-3 shadow-lg"
+                className="bg-secondary text-brand hover:bg-secondary/90 relative rounded-full p-3 shadow-lg"
                 aria-label={`Abrir filtros${activeFilters ? `, ${activeFilters} aplicados` : ""}`}
               >
                 <FilterIcon className="size-5" />

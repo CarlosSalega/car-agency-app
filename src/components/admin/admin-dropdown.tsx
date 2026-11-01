@@ -105,7 +105,7 @@ export function AdminDropdown({ user }: AdminDropdownProps) {
                       "data-highlighted:bg-primary data-highlighted:text-primary-foreground",
 
                     active &&
-                      "data-highlighted:text-primary data-highlighted:bg-transparent",
+                      "data-highlighted:text-brand data-highlighted:bg-transparent",
                   )}
                 >
                   {Icon && (
@@ -113,9 +113,9 @@ export function AdminDropdown({ user }: AdminDropdownProps) {
                       className={cn(
                         "mr-2 size-4 shrink-0",
 
-                        active ? "text-primary" : "text-current",
+                        active ? "text-brand" : "text-current",
 
-                        active && "data-highlighted:text-primary",
+                        active && "data-highlighted:text-brand",
                       )}
                     />
                   )}
@@ -125,7 +125,7 @@ export function AdminDropdown({ user }: AdminDropdownProps) {
                       "inline-block",
 
                       active &&
-                        "text-primary border-primary -mb-1 border-b-2 pb-0.5",
+                        "text-brand border-brand -mb-1 border-b-2 pb-0.5",
 
                       active && "data-[highlighted]:no-border",
                     )}

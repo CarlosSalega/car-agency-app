@@ -152,7 +152,7 @@ export default function NotFound() {
             mounted ? "translate-y-0 opacity-100" : "translate-y-6 opacity-0"
           }`}
         >
-          4<span className="text-primary">0</span>4
+          4<span className="text-brand">0</span>4
         </h1>
 
         <p

@@ -143,7 +143,7 @@ export function CarForm({ car, mode }: CarFormProps) {
     >
       <Card className="mx-auto max-w-2xl px-2 py-6 md:px-4">
         <CardHeader className="px-2">
-          <CardTitle className="text-primary flex items-center gap-2 underline">
+          <CardTitle className="text-brand flex items-center gap-2 underline">
             {mode === "create" ? (
               <Plus className="size-5" />
             ) : (

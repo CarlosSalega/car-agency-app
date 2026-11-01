@@ -54,11 +54,17 @@
  * (scrollbars, date pickers, autofill, form controls) follow the surface
  * instead of rendering a white sheet inside a near-black page.
  *
- * The brand red comes from `public/logo.png` (`#FE0000`, 212 px, the "GL").
- * It is used as a fill, never as a text colour on white: red on white is
- * 4.03:1 and red on `#121212` is 4.65:1, so red text is legal on the page but
- * white text on red (4.03:1) is not. That is why `--primary-foreground` is
- * black (5.21:1) rather than white.
+ * Two colours, two jobs, and keeping them apart is the point:
+ *
+ *   --primary  the action colour: buttons, the highlighted option, a focused
+ *              row. Near-white on a dark page, because red on a button reads
+ *              as "this deletes something".
+ *   --brand    the identity colour, from `public/logo.png` (`#FE0000`, 212 px,
+ *              the "GL"): the wordmark, active indicators, a status in play.
+ *              Never used as a filled surface that carries an action label.
+ *
+ * Red keeps its conventional meaning, so `--destructive` stays a lighter,
+ * distinctly different red `#ff5c5c` rather than the brand's own.
  *
  * The neutral ramp is not new: `car-card.tsx` and `car-grid.tsx` already ship
  * these exact values as arbitrary hex (`#121212`, `#141414`, `#1c1c1c`,
@@ -69,8 +75,11 @@
  *   foreground        #f5f5f5  17.18:1
  *   subtle-foreground #c4c7c8  11.02:1
  *   muted-foreground  #a3a3a3   7.43:1
- *   primary           #fe0000   4.65:1
+ *   brand             #fe0000   4.65:1
  *   ring              #fe0000   4.65:1
+ *   primary (surface) #f5f5f5  17.18:1
+ * and `--primary-foreground` (#121212) on `--primary` is 17.18:1, while
+ * `--brand-foreground` (#000000) on `--brand` is 5.21:1.
  *
  * Known gap: `--border` (1.31:1) and `--input` (~1.72:1) sit under the 3:1 that
  * WCAG 1.4.11 asks of control boundaries. That is the ramp the newest
@@ -89,9 +98,17 @@
   --popover: #1c1c1c;
   --popover-foreground: #f5f5f5;
 
-  /* Brand red, verbatim from the logo. Paired with black, not white. */
-  --primary: #fe0000;
-  --primary-foreground: #000000;
+  /* The action colour: what a click does. Near-white on the dark page is the
+     strongest affordance available, and it stops every button from looking
+     like a delete. 17.18:1 against its foreground. */
+  --primary: #f5f5f5;
+  --primary-foreground: #121212;
+
+  /* The identity colour: the logo's red, used for the wordmark, the active
+     indicator, a status that is in play, and never as a filled action. Black
+     on red is 5.21:1; red as text on the page is 4.65:1. */
+  --brand: #fe0000;
+  --brand-foreground: #000000;
 
   --secondary: #1c1c1c;
   --secondary-foreground: #f5f5f5;
@@ -110,9 +127,11 @@
 
   --border: #2a2a2a;
   --input: #3d3d3d;
+  /* Focus follows the brand, not the action: a red ring is identity. */
   --ring: #fe0000;
 
-  --chart-1: #fe0000;
+  /* Neutral: a count series reads as data, not as an alarm. */
+  --chart-1: #a3a3a3;
   --chart-2: #ff8a4c;
   --chart-3: #f5f5f5;
   --chart-4: #4ade80;
@@ -176,6 +195,8 @@
   --color-popover-foreground: var(--popover-foreground);
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
+  --color-brand: var(--brand);
+  --color-brand-foreground: var(--brand-foreground);
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
   --color-muted: var(--muted);

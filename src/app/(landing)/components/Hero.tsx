@@ -145,7 +145,7 @@ export default function Hero() {
             aria-label={`Cambiar a imagen ${i + 1}`}
             aria-current={i === activeDot}
             className={`h-0.75 rounded-full transition-all duration-500 ${
-              i === activeDot ? "bg-primary w-8" : "w-3 bg-white/30"
+              i === activeDot ? "bg-brand w-8" : "w-3 bg-white/30"
             }`}
           />
         ))}
@@ -166,7 +166,7 @@ export default function Hero() {
           }`}
         >
           Tu próximo <br /> auto{" "}
-          <span className="text-primary">te espera acá</span>
+          <span className="text-brand">te espera acá</span>
         </h1>
 
         <p

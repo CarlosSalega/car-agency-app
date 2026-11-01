@@ -70,7 +70,7 @@ export function CarCard({ car }: CarCardProps) {
               </span>
             </div>
 
-            <span className="border-input bg-background/80 text-foreground group-hover:border-primary-foreground group-hover:bg-primary group-hover:text-primary-foreground flex shrink-0 items-center gap-1.5 rounded-lg border px-3 py-1.5 font-mono text-xs font-medium whitespace-nowrap backdrop-blur-md transition-colors">
+            <span className="border-input bg-background/80 text-foreground group-hover:border-brand-foreground group-hover:bg-primary group-hover:text-primary-foreground flex shrink-0 items-center gap-1.5 rounded-lg border px-3 py-1.5 font-mono text-xs font-medium whitespace-nowrap backdrop-blur-md transition-colors">
               Ver
               <ArrowRight className="size-3.5" aria-hidden="true" />
             </span>

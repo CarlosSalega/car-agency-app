@@ -96,7 +96,7 @@ export default async function LandingPage() {
   const cars = await getPublicLatestCars(9);
 
   return (
-    <div className="bg-background text-foreground selection:bg-primary selection:text-primary-foreground antialiased">
+    <div className="bg-background text-foreground selection:bg-brand selection:text-brand-foreground antialiased">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -112,7 +112,7 @@ export default async function LandingPage() {
         <div aria-hidden="true" className="bg-background">
           <div className="mx-auto flex max-w-6xl items-center gap-5 px-4 md:px-10">
             <div className="bg-border h-0.5 flex-1" />
-            <div className="bg-primary h-1.5 w-24 rounded-full" />
+            <div className="bg-brand h-1.5 w-24 rounded-full" />
             <div className="bg-border h-0.5 flex-1" />
           </div>
         </div>

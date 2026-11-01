@@ -18,7 +18,7 @@ export function SectionHeading({
   titleStart,
   titleAccent,
   titleEnd,
-  accentClassName = "text-primary",
+  accentClassName = "text-brand",
   children,
 }: SectionHeadingProps) {
   const { ref, isVisible } = useScrollAnimation<HTMLDivElement>();
