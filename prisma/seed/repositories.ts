@@ -152,3 +152,30 @@ export async function createCar(
     },
   });
 }
+
+/**
+ * Demo inquiries. `createMany` because there are a few hundred and none of them
+ * needs a round trip of its own.
+ */
+export async function createLeads(
+  prisma: PrismaClient,
+  leads: {
+    name: string;
+    phone: string;
+    email: string | null;
+    message: string | null;
+    status: string;
+    source: string | null;
+    utmSource: string | null;
+    utmMedium: string | null;
+    utmCampaign: string | null;
+    referrer: string | null;
+    consentAt: Date | null;
+    notes: string | null;
+    carId: string | null;
+    sellerId: string | null;
+    createdAt: Date;
+  }[],
+) {
+  return prisma.lead.createMany({ data: leads as never });
+}
