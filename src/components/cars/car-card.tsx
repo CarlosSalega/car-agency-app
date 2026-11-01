@@ -29,7 +29,10 @@ export function CarCard({ car }: CarCardProps) {
 
   return (
     <Link href={`/autos/${slug}`} className="group block w-full">
-      <article className="bg-card relative aspect-4/3 overflow-hidden rounded-xl">
+      {/* A hairline makes the edge deliberate: without it the card is a light
+        photo against a #121212 page and the rounded corner anti-aliases into a
+        grey smudge, which reads as a dirty border rather than a card edge. */}
+      <article className="bg-card border-border relative aspect-4/3 overflow-hidden rounded-xl border">
         {/* IMAGE */}
         <CarImage
           imageKey={imageKey}
