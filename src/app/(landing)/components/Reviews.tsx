@@ -1,29 +1,25 @@
 import { getPublishedReviews } from "@/lib/queries/reviews";
 
-import { SectionHeading } from "./ui/SectionHeading";
-import { GoogleLogo } from "./ui/GoogleLogo";
-import { ReviewCard } from "./reviews/review-card";
 import {
   GOOGLE_OVERALL_RATING,
-  GOOGLE_REVIEW_URL,
   GOOGLE_TOTAL_REVIEWS,
 } from "./reviews/review-google";
-import { Stars } from "./reviews/review-stars";
-import { ReviewsCta } from "./reviews/reviews-cta";
+import { ReviewsQuote } from "./reviews/reviews-quote";
 
 /**
  * The testimonials section, read from the database.
  *
- * Two decisions live here:
+ * Two decisions survive from the previous version because they were right:
  *
- * 1. **Only published rows, and nothing at all when there are none.** An empty
- *    grid under "Más de 1000 sueños cumplidos" is worse than no section: the
- *    heading promises proof the page then fails to deliver. Returning `null` is
- *    the honest state for a dealership that has not loaded its reviews yet.
- * 2. **The badge keeps Google's numbers and stays a plain link.** 4.9/249 is
- *    Google's aggregate, not ours; the `aggregateRating` Google reads comes from
- *    the published rows in the landing JSON-LD. Making this badge structured data
- *    is exactly what got it removed before.
+ * 1. **Only published rows, and nothing at all when there are none.** A heading
+ *    that promises proof and then renders an empty box is worse than no section.
+ * 2. **The Google numbers are Google's and stay plain text.** 4.9/249 is not our
+ *    aggregate; the `aggregateRating` Google reads comes from the published rows
+ *    in the landing JSON-LD. Turning this badge into structured data is exactly
+ *    what got it removed before.
+ *
+ * What changed is the shape: one large quote instead of six cards, and the names
+ * on the side as a list you can click.
  */
 export default async function Reviews() {
   const reviews = await getPublishedReviews();
@@ -31,44 +27,26 @@ export default async function Reviews() {
   if (reviews.length === 0) return null;
 
   return (
-    <section className="bg-background relative w-full overflow-hidden py-20">
-      <div className="mx-auto max-w-6xl px-4 md:px-10">
-        <SectionHeading
-          eyebrow="Lo que dicen nuestros clientes"
-          titleStart="Más de"
-          titleAccent="1000 sueños"
-          titleEnd="cumplidos"
-        >
-          <a
-            href={GOOGLE_REVIEW_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label={`Calificación ${GOOGLE_OVERALL_RATING} de 5 en Google con ${GOOGLE_TOTAL_REVIEWS} reseñas`}
-            className="border-border bg-card mt-2 inline-flex max-w-full items-center gap-2 rounded-full border py-2 pr-4 pl-3 shadow-sm transition-all hover:scale-[1.03] hover:shadow-md sm:gap-2.5 sm:pr-5"
-          >
-            <GoogleLogo className="size-5 shrink-0" />
-            <span className="text-foreground text-xl font-black">
-              {GOOGLE_OVERALL_RATING}
-            </span>
-            <Stars
-              rating={5}
-              size="sm"
-              lastStarFill={0.9}
-              ariaLabel={`Calificación ${GOOGLE_OVERALL_RATING} de 5 en Google`}
-            />
-            <span className="text-muted-foreground truncate text-xs sm:text-sm">
-              {GOOGLE_TOTAL_REVIEWS} reseñas
-            </span>
-          </a>
-        </SectionHeading>
-
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {reviews.map((review, index) => (
-            <ReviewCard key={review.id} review={review} index={index} />
-          ))}
+    <section id="resenas" className="border-border border-b py-20">
+      <div className="mx-auto w-full max-w-[1320px] px-7">
+        <div className="mb-8 grid items-end gap-6 md:grid-cols-[1fr_auto]">
+          <div>
+            <p className="text-muted-foreground mb-2 flex items-center gap-3 font-mono text-[11px] tracking-[0.16em] uppercase">
+              <s aria-hidden="true" className="bg-brand block h-px w-7" />
+              Reseñas · {GOOGLE_OVERALL_RATING} en Google
+            </p>
+            <h2 className="text-[clamp(26px,3vw,38px)] leading-[1.05] font-bold tracking-[-0.02em]">
+              Lo que dicen los que ya se fueron con el auto
+            </h2>
+          </div>
+          <p className="text-muted-foreground max-w-[30ch] font-mono text-[11px] leading-relaxed tracking-[0.14em] uppercase md:text-right">
+            {GOOGLE_OVERALL_RATING} / 5 · {GOOGLE_TOTAL_REVIEWS} reseñas
+            <br />
+            Publicadas por el local
+          </p>
         </div>
 
-        <ReviewsCta />
+        <ReviewsQuote reviews={reviews} />
       </div>
     </section>
   );
