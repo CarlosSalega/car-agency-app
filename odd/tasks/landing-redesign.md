@@ -92,3 +92,14 @@ committed on its own, so the owner can review and change direction between secti
 - **L8 (pendiente real):** `/catalogo` funciona (18 unidades, paginado, `?q=`) pero
   conserva el lenguaje visual anterior: cards con radio, navbar viejo, buscador
   redondeado. Necesita su propio artboard antes de tocarse. Es T8.
+
+- **L9 (header mobile, pedido del owner):** "en mobile debemos de tener logo - espacio - boton de
+  busqueda con icono de lupa, el boton de whatsapp y barra de busqueda completa no van, recuerda que
+  la resolucion minima debe de ser 320px de ancho". Implementado con `<details>`/`<summary>`: la lupa
+  es un summary focusable que abre y cierra con Enter o Space, sin JavaScript, y el formulario se
+  despliega en una fila debajo del header. WhatsApp queda sólo en desktop (en mobile ya está el
+  botón flotante). Medido con Chrome a 320/360/390/768/1440: en mobile el header tiene **dos** items
+  (logo 93px + lupa 42px), alto 59px, y `scrollWidth === viewport` en 320 — sin scroll horizontal.
+- **L10 (bug evitado):** `autoFocus` en el input del buscador mobile no puede funcionar — vive dentro
+  de un `<details>` cerrado, así que el navegador lo ignora y sólo queda código muerto con riesgo de
+  scroll inesperado. Se quitó.
