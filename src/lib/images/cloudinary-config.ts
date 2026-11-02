@@ -1,3 +1,5 @@
+import { activeSite } from "@/site/active";
+
 export const CLOUDINARY_UPLOAD_OPTIONS = {
   folder: "car-agency-app",
   resource_type: "image" as const,
@@ -20,7 +22,11 @@ export const CLOUDINARY_UPLOAD_OPTIONS = {
   overwrite: false,
   invalidate: true,
 
-  tags: ["GL Autos", "vehicle"],
+  // The dealership name is the tag an operator filters by in the Cloudinary
+  // console, so it is client data. This is the one direction where the product
+  // reads the active site: an integration may use its labels, and must not
+  // branch its behaviour on which client it is.
+  tags: [activeSite.identity.name, "vehicle"],
 };
 
 export const CLOUDINARY_RESPONSIVE_TRANSFORMS =

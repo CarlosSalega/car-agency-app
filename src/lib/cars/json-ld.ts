@@ -61,7 +61,7 @@ export interface JsonLdCar {
 }
 
 export interface CarJsonLdOptions {
-  /** Origin without a trailing slash, e.g. `https://glautos.ar`. */
+  /** Origin without a trailing slash, e.g. `https://example.com`. */
   siteUrl: string;
   dealerName: string;
   /** Builds an absolute URL for a stored image key. */

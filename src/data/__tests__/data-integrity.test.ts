@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import { DEFAULT_LINKTREE_LINKS } from "../contact";
-import { SITE_CONFIG } from "../metadata";
+import { activeSite } from "@/site/active";
 
 /**
  * Guards the data the public site renders, the same way
@@ -58,7 +58,7 @@ describe("public link data integrity", () => {
   });
 
   it("keeps the site name free of stray whitespace", () => {
-    expect(SITE_CONFIG.name).not.toMatch(/\s{2,}|\s$/);
-    expect(SITE_CONFIG.name.length).toBeGreaterThan(0);
+    expect(activeSite.identity.name).not.toMatch(/\s{2,}|\s$/);
+    expect(activeSite.identity.name.length).toBeGreaterThan(0);
   });
 });

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 
-import { SITE_CONFIG } from "@/data/metadata";
+import { activeSite } from "@/site/active";
+import { buildPageMetadata } from "@/site/contract";
 import { getPublicLatestCars } from "@/lib/queries/cars";
 
 import FeatureCards from "./components/FeatureCards";
@@ -12,80 +13,35 @@ import Reviews from "./components/Reviews";
 import ServicesSection from "./components/ServicesSection";
 import { WhatsAppFloatButton } from "./components/ui/WhatsAppFloatButton";
 
-export const metadata: Metadata = {
-  title: "Autos usados y 0km en Santa Fe | GL Autos",
-  description:
-    "Comprá o vendé tu auto en Santa Fe con GL Autos: atención personalizada, financiación a medida y unidades usadas y 0km seleccionadas. ¡Visitános hoy!",
-  alternates: {
-    canonical: "/",
-  },
-  openGraph: {
-    title: "Autos usados y 0km en Santa Fe | GL Autos",
-    description:
-      "Comprá o vendé tu auto en Santa Fe con GL Autos: atención personalizada, financiación a medida y unidades usadas y 0km seleccionadas. ¡Visitános hoy!",
-    url: "/",
-    siteName: SITE_CONFIG.name,
-    images: [
-      {
-        url: `${SITE_CONFIG.url}${SITE_CONFIG.previewPath}`,
-        width: SITE_CONFIG.imageConfig.preview.large.width,
-        height: SITE_CONFIG.imageConfig.preview.large.height,
-        alt: SITE_CONFIG.name,
-      },
-    ],
-    locale: SITE_CONFIG.locale,
-    type: "website",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Autos usados y 0km en Santa Fe | GL Autos",
-    description:
-      "Comprá o vendé tu auto en Santa Fe con GL Autos: atención personalizada, financiación a medida y unidades usadas y 0km seleccionadas. ¡Visitános hoy!",
-    images: [`${SITE_CONFIG.url}${SITE_CONFIG.previewPath}`],
-  },
-};
-
+export const metadata: Metadata = buildPageMetadata(activeSite, "home", "/");
 const landingJsonLd = {
   "@context": "https://schema.org",
   "@type": "AutoDealer",
-  name: SITE_CONFIG.name,
-  url: SITE_CONFIG.url,
-  telephone: "+5493425777646",
-  description: "Concesionario multimarcas de usados seleccionados y 0km",
+  name: activeSite.identity.name,
+  url: activeSite.url,
+  telephone: activeSite.identity.contact.phoneRaw,
+  description: activeSite.identity.dealerDescription,
   address: {
     "@type": "PostalAddress",
-    streetAddress: "General López 3543",
-    addressLocality: "Santa Fe",
-    addressRegion: "Santa Fe",
-    addressCountry: "AR",
+    streetAddress: activeSite.identity.address.street,
+    addressLocality: activeSite.identity.address.locality,
+    addressRegion: activeSite.identity.address.region,
+    addressCountry: activeSite.identity.address.country,
   },
-  hasMap:
-    "https://www.google.com/maps/place/GL+Autos/@-31.6552097,-60.7221098,17z/data=!3m1!4b1!4m6!3m5!1s0x95b5a98297abae09:0xbc2d98ddab36bb27!8m2!3d-31.6552097!4d-60.7221098!16s%2Fg%2F11ww7df7k8",
+  hasMap: activeSite.identity.mapsUrl,
   geo: {
     "@type": "GeoCoordinates",
-    latitude: -31.6552097,
-    longitude: -60.7221098,
+    latitude: activeSite.identity.geo.latitude,
+    longitude: activeSite.identity.geo.longitude,
   },
-  openingHoursSpecification: [
-    {
-      "@type": "OpeningHoursSpecification",
-      dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
-      opens: "08:30",
-      closes: "12:30",
-    },
-    {
-      "@type": "OpeningHoursSpecification",
-      dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
-      opens: "16:00",
-      closes: "20:00",
-    },
-    {
-      "@type": "OpeningHoursSpecification",
-      dayOfWeek: "Saturday",
-      opens: "09:00",
-      closes: "12:30",
-    },
-  ],
+  openingHoursSpecification: activeSite.identity.hours.map((window) => ({
+    "@type": "OpeningHoursSpecification",
+    // One day stays a string, several are an array: both shapes were published
+    // before this refactor and the markup is not the place to change them.
+    dayOfWeek: window.days.length === 1 ? window.days[0] : window.days,
+    opens: window.opens,
+    closes: window.closes,
+  })),
   // No `aggregateRating`. Self-published ratings for a LocalBusiness are not
   // allowed by Google's structured data policy, and the 4.9/249 that used to be
   // here had no verifiable source behind it. It comes back in T4.1, wired to

@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import { Facebook, Instagram, Mail, MapPin, PhoneCall } from "lucide-react";
 
 import { TikTokIcon } from "@/components/ui/tiktok";
+import { activeSite } from "@/site/active";
 import { WhatsAppIcon } from "@/components/ui/whatsapp";
 
 export type LinkTreeCategory = "CONTACT" | "SOCIAL";
@@ -67,7 +68,7 @@ export const DEFAULT_LINKTREE_LINKS: LinkTreeLinkInput[] = [
     id: "telefono",
     category: "CONTACT",
     label: "Llamanos",
-    href: "tel:+5493425777646",
+    href: activeSite.whatsapp.telHref,
     iconKey: "phone",
     sortOrder: 10,
     isActive: true,
@@ -76,7 +77,7 @@ export const DEFAULT_LINKTREE_LINKS: LinkTreeLinkInput[] = [
     id: "whatsapp",
     category: "CONTACT",
     label: "Mensaje de WhatsApp",
-    href: "https://api.whatsapp.com/send?phone=5493425777646&text=%C2%BFBuscas%20vender%20o%20comprar%20tu%20auto%3F",
+    href: activeSite.whatsapp.href,
     iconKey: "whatsapp",
     sortOrder: 20,
     isActive: true,
@@ -85,7 +86,7 @@ export const DEFAULT_LINKTREE_LINKS: LinkTreeLinkInput[] = [
     id: "instagram",
     category: "SOCIAL",
     label: "Seguinos en Instagram",
-    href: "https://www.instagram.com/gl.autos.sf/",
+    href: activeSite.identity.social.instagram ?? "",
     iconKey: "instagram",
     sortOrder: 10,
     isActive: true,
@@ -94,7 +95,7 @@ export const DEFAULT_LINKTREE_LINKS: LinkTreeLinkInput[] = [
     id: "ubicacion",
     category: "SOCIAL",
     label: "Ver nuestra ubicación",
-    href: "https://www.google.com/maps/place/GL+Autos/@-31.6552097,-60.7221098,17z/data=!3m1!4b1!4m6!3m5!1s0x95b5a98297abae09:0xbc2d98ddab36bb27!8m2!3d-31.6552097!4d-60.7221098!16s%2Fg%2F11ww7df7k8",
+    href: activeSite.identity.mapsUrl,
     iconKey: "location",
     sortOrder: 20,
     isActive: true,

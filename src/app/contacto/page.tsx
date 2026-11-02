@@ -1,5 +1,8 @@
 import type { Metadata } from "next";
 
+import { activeSite } from "@/site/active";
+import { buildPageMetadata } from "@/site/contract";
+
 import ContactSection from "@/components/contact-section";
 import { DEFAULT_LINKTREE_LINKS } from "@/data/contact";
 import { prisma } from "@/lib/db";
@@ -7,15 +10,11 @@ import { prisma } from "@/lib/db";
 import { NavbarServer } from "../(landing)/components/NavbarServer";
 import Footer from "../(landing)/components/Footer";
 
-export const metadata: Metadata = {
-  title: "Contacto en Santa Fe: escribinos | GL Autos",
-  description:
-    "Contactá a GL Autos en General López 3543, Santa Fe: WhatsApp, teléfono e Instagram. Atención personalizada para comprar o vender tu auto.",
-  alternates: {
-    canonical: "/contacto",
-  },
-};
-
+export const metadata: Metadata = buildPageMetadata(
+  activeSite,
+  "contact",
+  "/contacto",
+);
 export default async function ContactPage() {
   const links = await prisma.linkTreeLink.findMany({
     where: { isActive: true },

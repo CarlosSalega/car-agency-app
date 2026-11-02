@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
 
-import { SITE_CONFIG } from "@/data/metadata";
+import { activeSite } from "@/site/active";
 
 export default function robots(): MetadataRoute.Robots {
   return {
@@ -11,6 +11,6 @@ export default function robots(): MetadataRoute.Robots {
         disallow: ["/admin/", "/api/"],
       },
     ],
-    sitemap: `${SITE_CONFIG.url}/sitemap.xml`,
+    sitemap: `${activeSite.url}/sitemap.xml`,
   };
 }

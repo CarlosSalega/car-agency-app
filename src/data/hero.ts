@@ -1,4 +1,6 @@
 import { Search } from "lucide-react";
+
+import { activeSite } from "@/site/active";
 export const HERO_FEATURES = [
   {
     id: "garantia",
@@ -38,7 +40,7 @@ export const HERO_CONTENT = {
     id: "whatsapp",
     label: "¿Necesitás asesoramiento?",
     actionText: "Contactanos",
-    href: "https://api.whatsapp.com/send?phone=5493425777646&text=%C2%BFBuscas%20vender%20o%20comprar%20tu%20auto%3F",
+    href: activeSite.whatsapp.href,
     icon: "/whatsapp.svg",
   },
 };

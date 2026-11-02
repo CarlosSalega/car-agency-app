@@ -1,0 +1,19 @@
+/*
+ * GL Autos' brand tokens.
+ *
+ * These two values are the only colours that change per client. They used to be
+ * declared in `globals.css` next to the neutral ramp, which is how a resold
+ * product ends up with the previous dealership's red in a stylesheet nobody
+ * associates with brand.
+ *
+ * `globals.css` maps them into Tailwind (`@theme inline { --color-brand: var(--brand) }`),
+ * so `.bg-brand`, `.text-brand` and `.border-brand` keep working unchanged.
+ */
+
+:root {
+  /* The identity colour: the logo's red, used for the wordmark, the active
+     indicator, a status that is in play, and never as a filled action. Black
+     on red is 5.21:1; red as text on the page is 4.65:1. */
+  --brand: #fe0000;
+  --brand-foreground: #000000;
+}

@@ -8,7 +8,7 @@ import { CarDetailGallery, CarDetailSpecs } from "@/components/cars";
 import { FALLBACK_IMAGE } from "@/lib/constants";
 import { prisma } from "@/lib/db";
 import { getPublicCarBySlug, getPublicCarSlugs } from "@/lib/queries";
-import { SITE_CONFIG } from "@/data/metadata";
+import { activeSite } from "@/site/active";
 
 import Footer from "@/app/(landing)/components/Footer";
 import { NavbarServer } from "@/app/(landing)/components/NavbarServer";
@@ -60,8 +60,8 @@ export async function generateMetadata({
   const firstImageKey = images[0];
 
   const firstImage = firstImageKey
-    ? `${SITE_CONFIG.url}/api/images/${firstImageKey}`
-    : `${SITE_CONFIG.url}${FALLBACK_IMAGE}`;
+    ? `${activeSite.url}/api/images/${firstImageKey}`
+    : `${activeSite.url}${FALLBACK_IMAGE}`;
 
   const title = `${car.title} - ${car.brand.name} ${car.model.name}`;
   const description =
@@ -73,7 +73,7 @@ export async function generateMetadata({
     title,
     description,
     alternates: {
-      canonical: `${SITE_CONFIG.url}/autos/${slug}`,
+      canonical: `${activeSite.url}/autos/${slug}`,
     },
     openGraph: {
       title,
@@ -132,7 +132,7 @@ export default async function CarDetailPage({
       whatsappLink?.href ?? process.env.NEXT_PUBLIC_WHATSAPP_PHONE ?? "",
     );
   }
-  const carUrl = `${SITE_CONFIG.url}/autos/${car.slug}`;
+  const carUrl = `${activeSite.url}/autos/${car.slug}`;
   const whatsappMessage = encodeURIComponent(
     `Hola! Quiero consultar por el ${car.title}${carUrl ? `: ${carUrl}` : ""}`,
   );
@@ -171,10 +171,10 @@ export default async function CarDetailPage({
       model: { name: car.model.name },
     },
     {
-      siteUrl: SITE_CONFIG.url,
-      dealerName: SITE_CONFIG.name,
-      imageUrl: (key) => `${SITE_CONFIG.url}/api/images/${key}`,
-      fallbackImageUrl: `${SITE_CONFIG.url}${FALLBACK_IMAGE}`,
+      siteUrl: activeSite.url,
+      dealerName: activeSite.identity.name,
+      imageUrl: (key) => `${activeSite.url}/api/images/${key}`,
+      fallbackImageUrl: `${activeSite.url}${FALLBACK_IMAGE}`,
     },
   );
 

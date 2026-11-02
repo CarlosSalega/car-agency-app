@@ -3,6 +3,8 @@
 import { useEffect, useReducer } from "react";
 import Link from "next/link";
 
+import { activeSite } from "@/site/active";
+
 const GLITCH_CHARS = "!@#$%&*404";
 const LABEL = "PÁGINA NO ENCONTRADA";
 
@@ -144,7 +146,7 @@ export default function NotFound() {
             mounted ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"
           }`}
         >
-          GL Autos
+          {activeSite.identity.name}
         </span>
 
         <h1

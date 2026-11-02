@@ -47,7 +47,8 @@
 }
 
 /*
- * GL AUTOS palette, single mode.
+ * Brand palette, single mode. The two identity colours are per-client and live
+ * in `src/site/<client>/theme.css`, imported through `src/site/theme.css`.
  *
  * There is one mode and only one: no `.dark` block, no `@custom-variant dark`,
  * no `dark:` utilities. `color-scheme: dark` is declared here so native widgets
@@ -104,11 +105,10 @@
   --primary: #f5f5f5;
   --primary-foreground: #121212;
 
-  /* The identity colour: the logo's red, used for the wordmark, the active
-     indicator, a status that is in play, and never as a filled action. Black
-     on red is 5.21:1; red as text on the page is 4.65:1. */
-  --brand: #fe0000;
-  --brand-foreground: #000000;
+  /* `--brand` and `--brand-foreground` are NOT here: they are the one pair that
+     changes per client. They live in `src/site/<client>/theme.css`, imported by
+     the root layout, and the `@theme inline` block below maps them into Tailwind
+     so `.bg-brand`, `.text-brand` and friends keep working. */
 
   --secondary: #1c1c1c;
   --secondary-foreground: #f5f5f5;

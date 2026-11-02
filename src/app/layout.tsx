@@ -5,11 +5,15 @@ import { Afacad, Adamina, Fira_Code } from "next/font/google";
 import Script from "next/script";
 
 import { Toaster } from "@/components/ui/sonner";
-import { siteMetadata } from "@/data/metadata";
+import { activeSite } from "@/site/active";
+import { buildSiteMetadata } from "@/site/contract";
 import { AttributionCapture } from "@/components/leads";
 import { MetaPixelProvider } from "@/lib/meta-pixel";
 
 import "./globals.css";
+// The client's brand tokens. A stable path on purpose: which client's theme it
+// resolves to is decided inside `src/site/`, so this file never names a client.
+import "@/site/theme.css";
 
 /**
  * Fonts come from the community theme. The previous pair was Geist Sans and
@@ -36,11 +40,7 @@ const fontMono = Fira_Code({
 });
 
 export const metadata = {
-  ...siteMetadata,
-  icons: {
-    icon: "/favicon.ico",
-    apple: "/apple-touch-icon.png",
-  },
+  ...buildSiteMetadata(activeSite),
   robots: {
     index: true,
     follow: true,

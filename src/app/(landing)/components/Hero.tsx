@@ -5,6 +5,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { track } from "@/lib/meta-pixel";
 
+import { activeSite } from "@/site/active";
+
 const BG_IMAGES = [
   "https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&q=80&w=2000",
   "https://images.unsplash.com/photo-1544636331-e26879cd4d9b?auto=format&fit=crop&q=80&w=2000",
@@ -157,7 +159,7 @@ export default function Hero() {
             mounted ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"
           }`}
         >
-          GL Autos
+          {activeSite.identity.name}
         </span>
 
         <h1
