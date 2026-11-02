@@ -29,10 +29,9 @@ export default function Footer() {
         <div className="border-border grid gap-8 border-b pb-8 sm:grid-cols-2 lg:grid-cols-4">
           <div className="lg:col-span-2">
             <p className="flex items-center gap-2.5 text-base font-black tracking-[0.3em] uppercase">
-              <i aria-hidden="true" className="bg-brand block size-2.5" />
               {identity.name}
             </p>
-            <p className="text-muted-foreground mt-3 max-w-[42ch] text-sm leading-relaxed">
+            <p className="text-muted-foreground mt-3 max-w-[42ch] text-xs leading-relaxed">
               {identity.dealerDescription} en {identity.address.locality}. Parte
               de pago, financiación y transferencia en el mismo lugar.
             </p>
@@ -94,8 +93,9 @@ export default function Footer() {
             Acceso
           </Link>
           <p className="m-0 text-right">
-            © {new Date().getFullYear()} {identity.copyrightHolder}. Derechos
-            reservados.
+            © {new Date().getFullYear()} {identity.copyrightHolder}
+            <br />
+            Derechos reservados
           </p>
         </div>
       </div>

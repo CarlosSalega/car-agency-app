@@ -56,19 +56,12 @@ export function Hero({ totalCars }: HeroProps) {
             </span>
           </div>
         </div>
-
-        {/* El rótulo no puede depender del brillo de la foto: va sobre su propio
-            scrim, con blanco puro (21:1 sobre negro), como el caption de abajo. */}
-        <div className="absolute top-5 left-5 z-20 flex items-center gap-2.5 bg-black/55 px-2.5 py-1.5 font-mono text-[11px] tracking-[0.16em] text-white uppercase backdrop-blur-sm">
-          <i aria-hidden="true" className="bg-brand block size-2" />
-          {identity.name}
-        </div>
       </div>
 
       {/* La información */}
       <div className="flex flex-col justify-center px-7 py-12 xl:px-14">
         <p className="text-muted-foreground mb-5 flex items-center gap-3 font-mono text-[11px] tracking-[0.16em] uppercase">
-          <s aria-hidden="true" className="bg-brand block h-px w-7" />
+          <s aria-hidden="true" className="bg-brand block h-px w-7 text-sm" />
           {identity.address.locality} · {identity.address.street}
         </p>
 

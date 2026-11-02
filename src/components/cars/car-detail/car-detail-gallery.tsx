@@ -339,7 +339,7 @@ export function CarDetailGallery({ images, title }: CarDetailGalleryProps) {
           <>
             <Button
               size="icon"
-              className="absolute top-1/2 left-2 -translate-y-1/2 rounded-none opacity-100 transition-opacity duration-200 ease-out focus-visible:opacity-100 md:opacity-0 md:group-hover:opacity-100 md:motion-reduce:transition-none"
+              className="absolute top-1/2 left-2 hidden -translate-y-1/2 rounded-none transition-opacity duration-200 ease-out focus-visible:opacity-100 md:flex md:opacity-0 md:group-hover:opacity-100 md:motion-reduce:transition-none"
               onClick={(clickEvent) => {
                 clickEvent.stopPropagation();
                 prev();
@@ -349,7 +349,7 @@ export function CarDetailGallery({ images, title }: CarDetailGalleryProps) {
             </Button>
             <Button
               size="icon"
-              className="absolute top-1/2 right-2 -translate-y-1/2 rounded-none opacity-100 transition-opacity duration-200 ease-out focus-visible:opacity-100 md:opacity-0 md:group-hover:opacity-100 md:motion-reduce:transition-none"
+              className="absolute top-1/2 right-2 hidden -translate-y-1/2 rounded-none transition-opacity duration-200 ease-out focus-visible:opacity-100 md:flex md:opacity-0 md:group-hover:opacity-100 md:motion-reduce:transition-none"
               onClick={(clickEvent) => {
                 clickEvent.stopPropagation();
                 next();

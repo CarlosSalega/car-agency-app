@@ -202,3 +202,14 @@ committed on its own, so the owner can review and change direction between secti
   `rounded-none` explícito. Auditoría del resto de la vista: `DialogContent` ya tenía `rounded-none!`,
   las miniaturas `rounded-none`, `CarImage` sin radio, y el botón de cierre por defecto del `Dialog`
   está oculto. **Regla**: un portal no hereda los selectores del contenedor de la página.
+
+- **L25 (flechas en mobile + cambios del owner en footer y hero):** "en mobile las flechas de la galeria
+  no deben de aparecer ya que tapan la vista" (captura a 320: las dos flechas blancas sobre el auto).
+  Las flechas de la **imagen principal** pasan a `hidden md:flex`: en mobile se navega con las
+  miniaturas de abajo, que ya están ahí. Las del **lightbox** siguen visibles: en mobile no hay tira de
+  miniaturas (está `hidden sm:flex`) y el swipe no está implementado —los handlers táctiles son de
+  zoom y paneo— así que esconderlas dejaría al visitante sin forma de cambiar de foto.
+  El owner había editado `Footer.tsx` (quitó el cuadrado rojo, bajó la descripción a `text-xs`, partió
+  el copyright en dos líneas) y `Hero.tsx` (quitó el rótulo de marca sobre la foto). Se conservan esos
+  cambios; se corrigió el typo "reservadoss" y se dejó anotado que el `text-sm` agregado a la línea
+  roja del hero no tiene efecto (el elemento no tiene texto y su tamaño lo fijan `h-px w-7`).
