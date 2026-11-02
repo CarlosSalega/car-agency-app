@@ -16,7 +16,7 @@ import {
   getPublicCarsList,
 } from "@/lib/queries/cars";
 import Footer from "../(landing)/components/Footer";
-import { NavbarServer } from "../(landing)/components/NavbarServer";
+import { SiteHeader } from "../(landing)/components/SiteHeader";
 
 export const revalidate = 300;
 
@@ -84,8 +84,10 @@ export default async function CatalogoPage({
 
   return (
     <div className="bg-background min-h-screen">
-      <div className="pt-24">
-        <NavbarServer />
+      {/* El header es el mismo de la home y es `sticky`, no `fixed`: no necesita
+          el `pt-24` que compensaba al navbar anterior. */}
+      <SiteHeader />
+      <div>
         <SearchComponent />
         <div className="grid gap-x-8 gap-y-4 px-4 py-8 md:px-8 lg:grid-cols-[320px_1fr]">
           <div
@@ -93,7 +95,10 @@ export default async function CatalogoPage({
             aria-live="polite"
             className="lg:col-start-2 lg:row-start-1"
           >
-            <Badge variant="outline" className="border-brand text-brand">
+            <Badge
+              variant="outline"
+              className="border-brand text-brand rounded-none"
+            >
               {total === 0
                 ? "No se encontraron vehículos"
                 : total === 1

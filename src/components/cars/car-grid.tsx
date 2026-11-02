@@ -40,9 +40,9 @@ export function CarGrid({
     return (
       <div
         role="status"
-        className="border-border bg-popover flex min-h-[320px] flex-1 flex-col items-center justify-center gap-4 rounded-xl border border-dashed px-6 py-16 text-center sm:py-20"
+        className="border-border bg-popover flex min-h-[320px] flex-1 flex-col items-center justify-center gap-4 rounded-none border border-dashed px-6 py-16 text-center sm:py-20"
       >
-        <div className="border-input bg-accent flex size-12 items-center justify-center rounded-lg border">
+        <div className="border-input bg-accent flex size-12 items-center justify-center rounded-none border">
           <SearchX
             className="text-muted-foreground size-6"
             aria-hidden="true"
@@ -58,7 +58,7 @@ export function CarGrid({
         </div>
         {emptyAction ? (
           <Button
-            className="rounded-lg font-mono text-xs"
+            className="rounded-none font-mono text-xs"
             render={<Link href={emptyAction.href}>{emptyAction.label}</Link>}
           />
         ) : null}

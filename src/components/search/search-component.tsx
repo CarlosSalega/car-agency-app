@@ -16,7 +16,7 @@ export function SearchComponent() {
         method="GET"
         className="mx-auto mt-8 block max-w-sm px-4"
       >
-        <div className="bg-card flex gap-2 rounded-lg p-4 shadow-sm">
+        <div className="bg-card border-border flex gap-2 rounded-none border p-4">
           <div className="relative flex-1">
             <Input
               name="search"

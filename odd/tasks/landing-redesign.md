@@ -153,3 +153,13 @@ committed on its own, so the owner can review and change direction between secti
   (`SiteAssets.hero`), no como contenido de la base; (3) `object-position: 50% 42%` para que el
   recorte deje las caras y el cartel del salón dentro del panel en todos los anchos. El hero deja de
   mostrar la última unidad: el precio se compara en la sección de ingresos, no en la portada.
+
+- **L19 (`/catalogo`, primer paso):** "en /catalogo utiliza el mismo header de la landing y los bordes
+  redondeados cambialos a recto". Hecho: `NavbarServer` → `SiteHeader` (y se fue el `pt-24`, que
+  compensaba al navbar `fixed`), y `rounded-*` → `rounded-none` en card, badge de estado, chip de
+  precio, estado vacío, paginación, buscador del catálogo, filtros de escritorio y hoja de filtros
+  mobile. `Badge` es compartido con el panel, así que ahí el `rounded-none` va por `className` en la
+  página y el componente queda igual para el admin. Sin sombras en las dos cajas que toqué
+  (buscador y filtros): eran `shadow-sm` y `shadow-lg/30`, y el sistema nuevo no usa sombra.
+  **Lo que queda de T8**: el layout del catálogo sigue siendo barra lateral de filtros + grilla;
+  no hay artboard para eso todavía.

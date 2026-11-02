@@ -30,9 +30,9 @@ export function CarCard({ car }: CarCardProps) {
   return (
     <Link href={`/autos/${slug}`} className="group block w-full">
       {/* A hairline makes the edge deliberate: without it the card is a light
-        photo against a #121212 page and the rounded corner anti-aliases into a
-        grey smudge, which reads as a dirty border rather than a card edge. */}
-      <article className="bg-card border-border relative aspect-4/3 overflow-hidden rounded-xl border">
+        photo against a #121212 page and the edge dissolves into the background.
+        The corner is square because the public surface has no radius. */}
+      <article className="bg-card border-border relative aspect-4/3 overflow-hidden rounded-none border">
         {/* IMAGE */}
         <CarImage
           imageKey={imageKey}
@@ -45,7 +45,7 @@ export function CarCard({ car }: CarCardProps) {
 
         {badge ? (
           <span
-            className={`absolute top-3 left-3 z-10 rounded-sm px-2 py-0.5 font-mono text-[10px] font-semibold tracking-[0.08em] uppercase ${badge.className}`}
+            className={`absolute top-3 left-3 z-10 rounded-none px-2 py-0.5 font-mono text-[10px] font-semibold tracking-[0.08em] uppercase ${badge.className}`}
           >
             {badge.label}
           </span>
@@ -73,7 +73,7 @@ export function CarCard({ car }: CarCardProps) {
               </span>
             </div>
 
-            <span className="border-input bg-background/80 text-foreground group-hover:border-brand-foreground group-hover:bg-primary group-hover:text-primary-foreground flex shrink-0 items-center gap-1.5 rounded-lg border px-3 py-1.5 font-mono text-xs font-medium whitespace-nowrap backdrop-blur-md transition-colors">
+            <span className="border-input bg-background/80 text-foreground group-hover:border-brand-foreground group-hover:bg-primary group-hover:text-primary-foreground flex shrink-0 items-center gap-1.5 rounded-none border px-3 py-1.5 font-mono text-xs font-medium whitespace-nowrap backdrop-blur-md transition-colors">
               Ver
               <ArrowRight className="size-3.5" aria-hidden="true" />
             </span>
