@@ -15,18 +15,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "daily",
       priority: 0.9,
     },
-    {
-      url: `${base}/contacto`,
-      lastModified,
-      changeFrequency: "monthly",
-      priority: 0.5,
-    },
-    {
-      url: `${base}/ventas`,
-      lastModified,
-      changeFrequency: "monthly",
-      priority: 0.5,
-    },
   ];
 
   const slugs = await getPublicCarSlugs();

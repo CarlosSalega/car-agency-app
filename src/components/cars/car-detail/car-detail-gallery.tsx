@@ -323,7 +323,7 @@ export function CarDetailGallery({ images, title }: CarDetailGalleryProps) {
     <div className="space-y-4">
       {/* Main image trigger */}
       <div
-        className="relative aspect-4/3 cursor-zoom-in overflow-hidden rounded-none"
+        className="group relative aspect-4/3 cursor-zoom-in overflow-hidden rounded-none"
         onClick={() => setLightboxOpen(true)}
       >
         <CarImage
@@ -339,7 +339,7 @@ export function CarDetailGallery({ images, title }: CarDetailGalleryProps) {
           <>
             <Button
               size="icon"
-              className="absolute top-1/2 left-2 -translate-y-1/2"
+              className="absolute top-1/2 left-2 -translate-y-1/2 opacity-100 transition-opacity duration-200 ease-out focus-visible:opacity-100 md:opacity-0 md:group-hover:opacity-100 md:motion-reduce:transition-none"
               onClick={(clickEvent) => {
                 clickEvent.stopPropagation();
                 prev();
@@ -349,7 +349,7 @@ export function CarDetailGallery({ images, title }: CarDetailGalleryProps) {
             </Button>
             <Button
               size="icon"
-              className="absolute top-1/2 right-2 -translate-y-1/2"
+              className="absolute top-1/2 right-2 -translate-y-1/2 opacity-100 transition-opacity duration-200 ease-out focus-visible:opacity-100 md:opacity-0 md:group-hover:opacity-100 md:motion-reduce:transition-none"
               onClick={(clickEvent) => {
                 clickEvent.stopPropagation();
                 next();

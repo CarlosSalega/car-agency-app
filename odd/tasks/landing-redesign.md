@@ -181,3 +181,15 @@ committed on its own, so the owner can review and change direction between secti
   `Badge` de estado. Los `input`/`button`/`a` del formulario y del botón de WhatsApp son primitivas
   compartidas con el panel, así que se apagan por selector descendiente en el contenedor de la ruta,
   no editando los componentes.
+
+- **L22 (`/ventas` y `/contacto` fuera):** "quedan eliminados en este diseño, borralos". Borradas las dos
+  rutas y todo lo que sólo ellas usaban: `components/contact-section.tsx`, y el navbar viejo completo
+  (`NavbarClient` + `NavbarServer`), porque `public-query-error` pasó a `SiteHeader` y quedaron sin
+  consumidores. Fuera también del sitemap, de la allowlist de `proxy.ts`, del footer (el link
+  "Vendé tu auto") y del paquete de sitio (`SitePageKey` queda en `home | catalog`). **Las URLs viejas
+  ahora responden 404: no agregué redirects porque no se pidieron**, pero conviene decidirlo (Google y
+  los links ya compartidos apuntan ahí).
+- **L23 (flechas de la galería):** "tiene flechas siempre visibles, haz que aparezcan solo cuando se
+  hace hover sobre la imagen principal". El contenedor de la imagen principal es `group` y las flechas
+  llevan `md:opacity-0 md:group-hover:opacity-100`, con `focus-visible:opacity-100` para teclado. En
+  mobile quedan **siempre visibles**: ahí no existe hover y esconderlas las haría inalcanzables.

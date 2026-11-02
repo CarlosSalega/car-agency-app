@@ -3,7 +3,7 @@ import type { NextRequest } from "next/server";
 
 import { NextResponse } from "next/server";
 
-const PUBLIC_PATHS = ["/", "/catalogo", "/autos", "/contacto"] as const;
+const PUBLIC_PATHS = ["/", "/catalogo", "/autos"] as const;
 /** Prefijos públicos: la ficha del auto sigue viviendo en `/autos/[slug]`. */
 const PUBLIC_PREFIXES = ["/autos/"] as const;
 

@@ -3,7 +3,7 @@
 import Link from "next/link";
 
 import Footer from "@/app/(landing)/components/Footer";
-import NavbarClient from "@/app/(landing)/components/NavbarClient";
+import { SiteHeader } from "@/app/(landing)/components/SiteHeader";
 import { Button } from "@/components/ui/button";
 
 type PublicQueryErrorProps = {
@@ -17,7 +17,7 @@ export function PublicQueryError({
 }: PublicQueryErrorProps) {
   return (
     <div className="bg-background min-h-screen">
-      <NavbarClient user={null} />
+      <SiteHeader />
 
       <main className="flex min-h-svh items-center justify-center px-4 pt-24 pb-20 md:px-8">
         <section

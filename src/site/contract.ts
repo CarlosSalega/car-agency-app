@@ -80,7 +80,7 @@ export interface SiteTheme {
 }
 
 /** The pages whose copy is per-client. Dynamic routes build their own titles. */
-export type SitePageKey = "home" | "catalog" | "contact" | "sell";
+export type SitePageKey = "home" | "catalog";
 
 /** Copy for the pages that do not take their text from the database. */
 export interface SiteSeo {

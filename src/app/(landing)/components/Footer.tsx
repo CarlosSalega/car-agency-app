@@ -50,11 +50,6 @@ export default function Footer() {
                   </Link>
                 </li>
               ))}
-              <li>
-                <Link href="/ventas" className="hover:text-foreground">
-                  Vendé tu auto
-                </Link>
-              </li>
             </ul>
           </nav>
 
