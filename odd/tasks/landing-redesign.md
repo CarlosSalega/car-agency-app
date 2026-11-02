@@ -213,3 +213,24 @@ committed on its own, so the owner can review and change direction between secti
   el copyright en dos líneas) y `Hero.tsx` (quitó el rótulo de marca sobre la foto). Se conservan esos
   cambios; se corrigió el typo "reservadoss" y se dejó anotado que el `text-sm` agregado a la línea
   roja del hero no tiene efecto (el elemento no tiene texto y su tamaño lo fijan `h-px w-7`).
+
+- **L26 (copy del hero y del recorrido):** "ahora tenemos una frase que termina 'con el negocio se arma
+  aca' hay que buscar la manera de que las personas vean por qué deben de elegirlos a ellos y que el
+  cliente sienta que está haciendo un negocio". El problema era **de sujeto**: la frase hablaba de lo
+  que hace la agencia. Cambios:
+  - H1: "Vos traés lo que tenés. **Te llevás un buen negocio.**" — se conserva la primera mitad
+    aprobada y el sujeto pasa a ser el cliente con el resultado que se lleva. "Buen negocio" es la
+    expresión rioplatense exacta para salir ganando en una operación, y no es un superlativo
+    incomprobable ("el mejor").
+  - Lede: tres hechos verificables en vez de una promesa — tasación en el día, precio publicado,
+    verificación y transferencia incluidas.
+  - CTA secundario: "Coordinar una visita" → **"Tasar mi usado"**, y ya no es un ancla: abre WhatsApp
+    con el mensaje precargado (`whatsapp.hrefWith`). Arranca la operación; la visita sigue ofrecida en
+    la sección del salón.
+  - Por qué: reordenado para que el negocio vaya primero (tasación → financiación → papeles) y el
+    título pasa a "Por qué te conviene hacerlo acá".
+  - Ingresos: "El precio es de lista: el saldo se arma con parte de pago" → "Publicamos el precio de
+    lista: después se descuenta tu parte de pago".
+  - Formas de pago: "Armamos el negocio" → "Vemos cómo se paga".
+    **Lo que deliberadamente no se usó**: superlativos ("los mejores precios"), números sin fuente
+    ("+1000 clientes") y "precio final" (que el owner ya había señalado como irreal).

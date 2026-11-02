@@ -67,13 +67,13 @@ export function Hero({ totalCars }: HeroProps) {
 
         <h1 className="text-[clamp(34px,3.9vw,62px)] leading-[0.96] font-black tracking-[-0.035em] text-balance">
           Vos traés lo que tenés.{" "}
-          <em className="text-brand not-italic">El negocio se arma acá.</em>
+          <em className="text-brand not-italic">Te llevás un buen negocio.</em>
         </h1>
 
         <p className="text-subtle-foreground mt-6 max-w-[46ch] text-[17px] leading-relaxed">
-          Entregás tu auto, moto o camioneta como parte de pago y financiamos la
-          diferencia con banco o prendario. La verificación y la transferencia
-          las resolvemos nosotros.
+          Tasamos tu auto, moto o camioneta el mismo día y financiamos la
+          diferencia con banco o prendario. El precio de cada unidad está
+          publicado, y la verificación y la transferencia las hacemos nosotros.
         </p>
 
         {/* Los CTA no pueden medir distinto: en mobile toman el ancho completo
@@ -87,11 +87,17 @@ export function Hero({ totalCars }: HeroProps) {
           >
             Ver {totalCars === 1 ? "la unidad" : `las ${totalCars} unidades`}
           </Link>
+          {/* El segundo CTA arranca la operación en vez de proponer una visita:
+              "tasá mi usado" es lo que el cliente quiere resolver. */}
           <a
-            href="#contacto"
+            href={whatsapp.hrefWith(
+              "Hola! Quiero tasar mi vehículo y ver qué me conviene.",
+            )}
+            target="_blank"
+            rel="noopener noreferrer"
             className="border-line-strong hover:bg-accent flex h-11 w-full items-center justify-center border px-5 font-mono text-[11px] tracking-[0.16em] uppercase transition-colors"
           >
-            Coordinar una visita
+            Tasar mi usado
           </a>
         </div>
 

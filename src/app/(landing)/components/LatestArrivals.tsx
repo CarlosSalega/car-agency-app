@@ -55,7 +55,8 @@ export function LatestArrivals({ cars, totalCars }: LatestArrivalsProps) {
           <p className="text-muted-foreground max-w-[32ch] font-mono text-[11px] leading-relaxed tracking-[0.14em] uppercase md:text-right">
             Ordenados por fecha de ingreso.
             <br />
-            El precio es de lista: el saldo se arma con parte de pago.
+            Publicamos el precio de lista: después se descuenta tu parte de
+            pago.
           </p>
         </div>
 

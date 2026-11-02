@@ -47,7 +47,7 @@ export function PaymentRoutes() {
               Formas de pago
             </p>
             <h2 className="text-[clamp(26px,3vw,38px)] leading-[1.05] font-bold tracking-[-0.02em]">
-              Decinos qué tenés y qué querés. Armamos el negocio.
+              Decinos qué tenés y qué querés. Vemos cómo se paga.
             </h2>
           </div>
           <p className="text-muted-foreground max-w-[26ch] font-mono text-[11px] leading-relaxed tracking-[0.14em] uppercase md:text-right">

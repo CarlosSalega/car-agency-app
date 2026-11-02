@@ -12,18 +12,18 @@
 const CLAIMS = [
   {
     n: "01",
-    title: "Verificación y mecánica al día",
-    body: "Verificación del automotor, informe de dominio y revisión mecánica en cada usado. Lo que no pasa se corrige o no entra al salón.",
+    title: "Tasamos tu usado el mismo día",
+    body: "Traés el vehículo, lo revisamos y te decimos cuánto vale como parte de pago ahí mismo. Ese número es el que descuenta del precio de la unidad que te llevás.",
   },
   {
     n: "02",
-    title: "El saldo se financia",
-    body: "Descontamos lo que vale tu vehículo y el resto va a crédito: +Autos con BNA, prendario o una combinación. Los gastos se explican antes de firmar.",
+    title: "El saldo lo financiás",
+    body: "Lo que falta después de tu parte de pago va a crédito: +Autos con BNA, prendario o una combinación. Te mostramos la cuota antes de firmar, no después.",
   },
   {
     n: "03",
-    title: "Tasación el mismo día",
-    body: "Traés el vehículo, lo revisamos y te damos el valor de toma ahí mismo. Si preferís venderlo y no entregarlo, también lo compramos.",
+    title: "Y los papeles los resolvemos nosotros",
+    body: "Verificación del automotor, informe de dominio y revisión mecánica al día. La transferencia la coordinamos nosotros: te vas con el auto y con los papeles.",
   },
 ] as const;
 
@@ -36,7 +36,7 @@ export function WhyUs() {
           Por qué elegirnos
         </p>
         <h2 className="mb-8 text-[clamp(26px,3vw,38px)] leading-[1.05] font-bold tracking-[-0.02em]">
-          Tres cosas que hacemos distinto
+          Por qué te conviene hacerlo acá
         </h2>
 
         <div className="border-border grid border-t md:grid-cols-3">
