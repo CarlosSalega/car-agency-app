@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>GL Autos · Showroom</title>
+    <title>GL Autos · Salón</title>
     <style>
       /*
         02 — VIDRIERA
@@ -41,6 +41,7 @@
       }
       body {
         margin: 0;
+        overflow-x: hidden;
         background: var(--bg);
         color: var(--fg);
         font-family: var(--sans);
@@ -523,6 +524,105 @@
         letter-spacing: 0.14em;
         text-transform: uppercase;
       }
+      /* ---------- buscador del header: siempre visible ---------- */
+      .search {
+        display: flex;
+        align-items: center;
+        margin-left: auto;
+        flex: 1 1 220px;
+        max-width: 340px;
+        min-width: 170px;
+        border: 1px solid var(--line-2);
+        background: var(--ground);
+        border-radius: var(--r);
+      }
+      .search:focus-within {
+        border-color: var(--brand);
+      }
+      .search input {
+        flex: 1;
+        min-width: 0;
+        height: 38px;
+        padding: 0 12px;
+        border: 0;
+        background: transparent;
+        color: var(--fg);
+        font-family: var(--sans);
+        font-size: 14px;
+      }
+      .search input::placeholder {
+        color: var(--mute);
+      }
+      .search input:focus {
+        outline: none;
+      }
+      .search button {
+        height: 38px;
+        padding: 0 13px;
+        border: 0;
+        border-left: 1px solid var(--line-2);
+        background: var(--surface);
+        color: var(--fg);
+        cursor: pointer;
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+      }
+      .search button:hover {
+        background: var(--hover);
+        color: var(--brand);
+      }
+      /* ---------- formas de pago ---------- */
+      .pay {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        border-top: 1px solid var(--line);
+      }
+      .pay article {
+        padding: 22px 24px 22px 0;
+        border-bottom: 1px solid var(--line);
+      }
+      .pay article:nth-child(odd) {
+        border-right: 1px solid var(--line);
+        padding-right: 26px;
+      }
+      .pay article:nth-child(even) {
+        padding-left: 26px;
+      }
+      .pay .k {
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--brand);
+      }
+      .pay h3 {
+        margin: 9px 0 7px;
+        font-size: 17px;
+      }
+      .pay p {
+        margin: 0;
+        color: var(--body);
+        font-size: 14px;
+        line-height: 1.6;
+      }
+      .pay__note {
+        border-top: 1px solid var(--line);
+        padding-top: 14px;
+        margin: 16px 0 0;
+        color: var(--mute);
+        font-size: 12px;
+        line-height: 1.6;
+      }
+      @media (max-width: 1240px) {
+        .top nav {
+          display: none;
+        }
+        .search {
+          max-width: none;
+        }
+      }
       @media (max-width: 1024px) {
         .stage {
           grid-template-columns: 1fr;
@@ -539,8 +639,26 @@
         .top {
           padding: 0 20px;
         }
-        .top nav {
-          display: none;
+        .top {
+          flex-wrap: wrap;
+          height: auto;
+          padding: 9px 20px;
+        }
+        .search {
+          order: 3;
+          flex-basis: 100%;
+          max-width: none;
+          margin-left: 0;
+        }
+        .pay {
+          grid-template-columns: 1fr;
+        }
+        .pay article:nth-child(odd) {
+          border-right: 0;
+          padding-right: 0;
+        }
+        .pay article:nth-child(even) {
+          padding-left: 0;
         }
         .block {
           padding: 48px 20px;
@@ -642,7 +760,10 @@
         </div>
         <div class="pane__foot">
           <h3>Volkswagen Taos Highline</h3>
-          <p>La última que entró al lote. $39.500.000, precio final.</p>
+          <p>
+            La última que entró al salón. $39.500.000, con parte de pago y
+            financiación.
+          </p>
         </div>
       </aside>
 
@@ -652,9 +773,19 @@
           <nav aria-label="Secciones">
             <a href="#ingresos">Ingresos</a>
             <a href="#porque">Por qué</a>
+            <a href="#pago">Pago</a>
             <a href="#resenas">Reseñas</a>
             <a href="#contacto">Contacto</a>
           </nav>
+          <form class="search" role="search" action="/catalogo">
+            <input
+              type="search"
+              name="q"
+              placeholder="Marca, modelo o versión"
+              aria-label="Buscar en el catálogo"
+            />
+            <button type="submit">Buscar</button>
+          </form>
           <a class="btn btn--brand" href="https://wa.me/5493425777646"
             >WhatsApp</a
           >
@@ -662,16 +793,18 @@
 
         <main id="tope">
           <section class="block">
-            <p class="kicker mono"><s></s>Santa Fe · desde 2016</p>
-            <h1>Elegís el auto. <span>Nosotros hacemos el resto.</span></h1>
+            <p class="kicker mono"><s></s>Santa Fe · General López 3543</p>
+            <h1>
+              Vos traés lo que tenés. <span>El negocio se arma acá.</span>
+            </h1>
             <p class="lede">
-              Peritaje antes de publicar, precio final a la vista y los papeles
-              resueltos por nosotros. Usados seleccionados y 0 km en un solo
-              lote, a doce cuadras del centro.
+              Entregás tu auto, moto o camioneta como parte de pago y
+              financiamos la diferencia con banco o prendario. La verificación y
+              la transferencia las resolvemos nosotros.
             </p>
             <div class="actions">
               <a class="btn btn--fill" href="/catalogo">Ver las 18 unidades</a>
-              <a class="btn" href="#contacto">Coordinar visita</a>
+              <a class="btn" href="#contacto">Coordinar una visita</a>
             </div>
 
             <div class="counters">
@@ -695,7 +828,7 @@
                   <span class="row__d">2025 · 0 km · SUV · Automática</span>
                 </span>
                 <span class="row__p"
-                  ><b>$39.500.000</b><span>Ver ficha</span></span
+                  ><b>$39.500.000</b><span>Ver la unidad</span></span
                 >
               </a>
               <a class="row" href="/catalogo">
@@ -709,7 +842,7 @@
                   <span class="row__d">2025 · 0 km · Pickup · 4x4</span>
                 </span>
                 <span class="row__p"
-                  ><b>$62.000.000</b><span>Ver ficha</span></span
+                  ><b>$62.000.000</b><span>Ver la unidad</span></span
                 >
               </a>
               <a class="row" href="/catalogo">
@@ -723,7 +856,7 @@
                   <span class="row__d">2025 · 0 km · SUV · Automática</span>
                 </span>
                 <span class="row__p"
-                  ><b>$39.900.000</b><span>Ver ficha</span></span
+                  ><b>$39.900.000</b><span>Ver la unidad</span></span
                 >
               </a>
               <a class="row" href="/catalogo">
@@ -737,7 +870,7 @@
                   <span class="row__d">2022 · 58.000 km · Pickup · 4x4</span>
                 </span>
                 <span class="row__p"
-                  ><b>$52.000.000</b><span>Ver ficha</span></span
+                  ><b>$52.000.000</b><span>Ver la unidad</span></span
                 >
               </a>
               <a class="row" href="/catalogo">
@@ -751,7 +884,7 @@
                   <span class="row__d">2023 · 24.000 km · SUV · CVT</span>
                 </span>
                 <span class="row__p"
-                  ><b>$36.500.000</b><span>Ver ficha</span></span
+                  ><b>$36.500.000</b><span>Ver la unidad</span></span
                 >
               </a>
               <a class="row" href="/catalogo">
@@ -765,7 +898,7 @@
                   <span class="row__d">2022 · 38.000 km · Sedán · CVT</span>
                 </span>
                 <span class="row__p"
-                  ><b>$21.500.000</b><span>Ver ficha</span></span
+                  ><b>$21.500.000</b><span>Ver la unidad</span></span
                 >
               </a>
             </div>
@@ -782,34 +915,80 @@
               <div class="claim">
                 <span>01</span>
                 <div>
-                  <h3>Peritaje antes de publicar</h3>
+                  <h3>Verificación y mecánica al día</h3>
                   <p>
-                    Revisión mecánica y de chapa en cada usado. Lo que no pasa
-                    se corrige o no se publica.
+                    Verificación del automotor, informe de dominio y revisión
+                    mecánica en cada usado. Lo que no pasa se corrige o no
+                    entra.
                   </p>
                 </div>
               </div>
               <div class="claim">
                 <span>02</span>
                 <div>
-                  <h3>Un solo precio, el final</h3>
+                  <h3>El saldo se financia</h3>
                   <p>
-                    El número que ves incluye todo. Sin gastos que aparecen en
-                    la firma.
+                    Descontamos lo que vale tu vehículo y el resto va a crédito:
+                    +Autos con BNA, prendario o una combinación. Los gastos se
+                    explican antes de firmar.
                   </p>
                 </div>
               </div>
               <div class="claim">
                 <span>03</span>
                 <div>
-                  <h3>Permuta el mismo día</h3>
+                  <h3>Tasación el mismo día</h3>
                   <p>
-                    Tasamos tu usado y cerramos el plan en la misma visita.
-                    También lo compramos directo.
+                    Traés el vehículo, lo revisamos y te damos el valor de toma
+                    ahí mismo. Si preferís venderlo y no entregarlo, también lo
+                    compramos.
                   </p>
                 </div>
               </div>
             </div>
+          </section>
+
+          <section class="block" id="pago">
+            <p class="kicker mono"><s></s>Formas de pago</p>
+            <div class="pay">
+              <article>
+                <span class="k">Parte de pago</span>
+                <h3>Entregás tu vehículo</h3>
+                <p>
+                  Auto, moto, camioneta o utilitario. Lo tasamos y ese valor se
+                  descuenta del precio de la unidad que te llevás.
+                </p>
+              </article>
+              <article>
+                <span class="k">Banco Nación</span>
+                <h3>+Autos con BNA</h3>
+                <p>
+                  Préstamo personal para comprar el auto: hasta $100.000.000, de
+                  12 a 60 cuotas, sin prenda y sin ser cliente del banco. Te
+                  acompañamos con el trámite.
+                </p>
+              </article>
+              <article>
+                <span class="k">Prendario</span>
+                <h3>Crédito con el auto en garantía</h3>
+                <p>
+                  Tasa fija en pesos y hasta 60 meses, sobre el saldo que queda
+                  después de la parte de pago.
+                </p>
+              </article>
+              <article>
+                <span class="k">Llave por llave</span>
+                <h3>Si tu usado cubre el valor</h3>
+                <p>
+                  Entregás y te llevás sin financiación. Coordinamos las dos
+                  transferencias y las verificaciones.
+                </p>
+              </article>
+            </div>
+            <p class="pay__note">
+              Sujeto a evaluación crediticia. Montos, plazos y tasas los define
+              cada banco y te los confirmamos antes de avanzar.
+            </p>
           </section>
 
           <section class="block" id="resenas">
@@ -838,11 +1017,11 @@
           </section>
 
           <section class="block" id="contacto">
-            <p class="kicker mono"><s></s>Showroom</p>
+            <p class="kicker mono"><s></s>El salón</p>
             <h1
               style="font-size: clamp(30px, 3.2vw, 46px); margin-bottom: 30px"
             >
-              Te esperamos con el lote abierto.
+              Te esperamos con el salón abierto.
             </h1>
             <div class="contact">
               <div>

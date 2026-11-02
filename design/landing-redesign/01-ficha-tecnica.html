@@ -8,7 +8,7 @@
       /*
         01 — FICHA TÉCNICA
         Dirección: "page-is-the-object" (tasteskill v2). La página es la ficha que
-        cuelga del parabrisas de cada unidad del lote: grilla estricta, línea de
+        cuelga del parabrisas de cada unidad del salón: grilla estricta, línea de
         1px, datos en mono, el rojo como sello y nunca como relleno grande.
 
         Reglas del brief: radio 0 en toda la superficie pública; borde de 1px
@@ -88,8 +88,10 @@
       .top__in {
         display: flex;
         align-items: center;
-        gap: 32px;
-        height: 62px;
+        gap: 18px;
+        min-height: 62px;
+        flex-wrap: wrap;
+        padding: 9px 0;
       }
       .word {
         display: flex;
@@ -136,6 +138,7 @@
         font-family: var(--mono);
         font-size: 12px;
         letter-spacing: 0.06em;
+        white-space: nowrap;
       }
       .btn {
         display: inline-flex;
@@ -696,9 +699,136 @@
         letter-spacing: 0.12em;
         text-transform: uppercase;
       }
+      /* ---------- buscador del header: siempre visible ---------- */
+      .search {
+        display: flex;
+        align-items: center;
+        margin-left: auto;
+        flex: 1 1 240px;
+        max-width: 380px;
+        min-width: 190px;
+        border: 1px solid var(--line-strong);
+        background: var(--ground);
+        border-radius: var(--r);
+      }
+      .search:focus-within {
+        border-color: var(--brand);
+      }
+      .search input {
+        flex: 1;
+        min-width: 0;
+        height: 38px;
+        padding: 0 12px;
+        border: 0;
+        background: transparent;
+        color: var(--fg);
+        font-family: var(--sans);
+        font-size: 14px;
+        border-radius: var(--r);
+      }
+      .search input::placeholder {
+        color: var(--mute);
+      }
+      .search input:focus {
+        outline: none;
+      }
+      .search button {
+        height: 38px;
+        padding: 0 14px;
+        border: 0;
+        border-left: 1px solid var(--line-strong);
+        background: var(--surface);
+        color: var(--fg);
+        cursor: pointer;
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        border-radius: var(--r);
+      }
+      .search button:hover {
+        background: var(--hover);
+        color: var(--brand);
+      }
+      /* ---------- formas de pago ---------- */
+      .pay {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        border-top: 1px solid var(--line);
+      }
+      .pay article {
+        padding: 26px 22px 26px 0;
+        border-right: 1px solid var(--line);
+        padding-right: 22px;
+      }
+      .pay article:last-child {
+        border-right: 0;
+        padding-right: 0;
+      }
+      .pay .k {
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--brand);
+      }
+      .pay h3 {
+        margin: 10px 0 8px;
+        font-size: 17px;
+        letter-spacing: -0.01em;
+      }
+      .pay p {
+        margin: 0;
+        color: var(--body);
+        font-size: 14px;
+        line-height: 1.6;
+      }
+      .pay__note {
+        border-top: 1px solid var(--line);
+        padding-top: 14px;
+        color: var(--mute);
+        font-size: 12px;
+        line-height: 1.6;
+        margin: 18px 0 0;
+      }
+      @media (max-width: 1180px) {
+        .nav {
+          display: none;
+        }
+        .search {
+          max-width: none;
+        }
+      }
       @media (max-width: 980px) {
         .hero {
           grid-template-columns: 1fr;
+        }
+        .top__in {
+          gap: 10px;
+          padding: 9px 0;
+        }
+        .top__cta {
+          padding-left: 0;
+          border-left: 0;
+          margin-left: auto;
+        }
+        .search {
+          order: 3;
+          flex-basis: 100%;
+          max-width: none;
+          margin-left: 0;
+        }
+        .tel {
+          display: none;
+        }
+        .pay,
+        .pay article {
+          grid-template-columns: 1fr;
+        }
+        .pay article {
+          border-right: 0;
+          border-bottom: 1px solid var(--line);
+          padding-right: 0;
         }
         .hero__l {
           padding: 48px var(--gut);
@@ -803,9 +933,19 @@
         <nav class="nav" aria-label="Secciones">
           <a href="#ingresos">Últimos ingresos</a>
           <a href="#porque">Por qué elegirnos</a>
+          <a href="#pago">Formas de pago</a>
           <a href="#resenas">Reseñas</a>
           <a href="#contacto">Contacto</a>
         </nav>
+        <form class="search" role="search" action="/catalogo">
+          <input
+            type="search"
+            name="q"
+            placeholder="Marca, modelo o versión"
+            aria-label="Buscar en el catálogo"
+          />
+          <button type="submit">Buscar</button>
+        </form>
         <div class="top__cta">
           <a class="tel mono" href="tel:+5493425777646">+54 9 342 577 7646</a>
           <a class="btn btn--brand" href="https://wa.me/5493425777646"
@@ -819,35 +959,35 @@
       <div class="hero">
         <div class="hero__l">
           <p class="eyebrow mono"><s></s>Santa Fe · General López 3543</p>
-          <h1>El lote se renueva <em>todas las semanas</em>.</h1>
+          <h1>Vos traés lo que tenés. <em>El negocio lo armamos acá.</em></h1>
           <p class="lede">
-            Usados seleccionados y 0 km con peritaje hecho antes de publicar. Si
-            una unidad no cierra, no entra al lote: es la única regla que
-            tenemos.
+            Usados y 0 km con la verificación al día. Entregás tu auto, moto o
+            camioneta como parte de pago y financiamos la diferencia: banco,
+            prendario o las dos cosas.
           </p>
 
           <dl class="spec">
             <div class="spec__row">
-              <dt>Unidades en stock</dt>
-              <dd><b>18</b> disponibles hoy</dd>
+              <dt>Autos disponibles</dt>
+              <dd><b>18</b> en el salón</dd>
             </div>
             <div class="spec__row">
               <dt>Entrega</dt>
-              <dd>desde 24 h con papeles</dd>
+              <dd>en 24 a 48 h, con papeles</dd>
             </div>
             <div class="spec__row">
               <dt>Financiación</dt>
-              <dd>hasta 60 cuotas</dd>
+              <dd>hasta 60 cuotas, en pesos</dd>
             </div>
             <div class="spec__row">
-              <dt>Permuta</dt>
-              <dd>tasamos tu usado el mismo día</dd>
+              <dt>Parte de pago</dt>
+              <dd>autos, motos y utilitarios</dd>
             </div>
           </dl>
 
           <div class="hero__actions">
             <a class="btn btn--fill" href="/catalogo">Ver las 18 unidades</a>
-            <a class="btn" href="#contacto">Coordinar visita</a>
+            <a class="btn" href="#contacto">Coordinar una visita</a>
           </div>
         </div>
 
@@ -887,7 +1027,7 @@
       <div class="strip">
         <div class="wrap strip__in">
           <div class="strip__cell mono">
-            <span><span class="dot"></span>Lote activo</span>
+            <span><span class="dot"></span>Stock activo</span>
             <b>18 unidades</b>
           </div>
           <div class="strip__cell mono">
@@ -910,11 +1050,11 @@
           <div class="head">
             <div>
               <p class="eyebrow mono"><s></s>Recién llegados</p>
-              <h2>Últimos ingresos al lote</h2>
+              <h2>Últimos ingresos al salón</h2>
             </div>
             <p>
-              Ordenados por fecha de ingreso.<br />Cada ficha muestra el precio
-              final, sin sorpresas.
+              Ordenados por fecha de ingreso.<br />El precio publicado es el de
+              lista: el saldo se arma con parte de pago y financiación.
             </p>
           </div>
 
@@ -936,7 +1076,7 @@
                 <p class="unit__d">2025 · SUV · Automática</p>
                 <div class="unit__foot">
                   <span class="price">$39.500.000</span>
-                  <span class="go">Ver ficha →</span>
+                  <span class="go">Ver la unidad →</span>
                 </div>
               </div>
             </article>
@@ -953,7 +1093,7 @@
                 <p class="unit__d">2025 · Pickup · 4x4</p>
                 <div class="unit__foot">
                   <span class="price">$62.000.000</span>
-                  <span class="go">Ver ficha →</span>
+                  <span class="go">Ver la unidad →</span>
                 </div>
               </div>
             </article>
@@ -970,7 +1110,7 @@
                 <p class="unit__d">2025 · SUV · Automática</p>
                 <div class="unit__foot">
                   <span class="price">$39.900.000</span>
-                  <span class="go">Ver ficha →</span>
+                  <span class="go">Ver la unidad →</span>
                 </div>
               </div>
             </article>
@@ -987,7 +1127,7 @@
                 <p class="unit__d">2022 · Pickup · 4x4</p>
                 <div class="unit__foot">
                   <span class="price">$52.000.000</span>
-                  <span class="go">Ver ficha →</span>
+                  <span class="go">Ver la unidad →</span>
                 </div>
               </div>
             </article>
@@ -1004,7 +1144,7 @@
                 <p class="unit__d">2022 · Sedán · CVT</p>
                 <div class="unit__foot">
                   <span class="price">$21.500.000</span>
-                  <span class="go">Ver ficha →</span>
+                  <span class="go">Ver la unidad →</span>
                 </div>
               </div>
             </article>
@@ -1021,7 +1161,7 @@
                 <p class="unit__d">2021 · Hatchback · CVT</p>
                 <div class="unit__foot">
                   <span class="price">$20.500.000</span>
-                  <span class="go">Ver ficha →</span>
+                  <span class="go">Ver la unidad →</span>
                 </div>
               </div>
             </article>
@@ -1058,31 +1198,34 @@
             <article>
               <span class="n">01</span>
               <div>
-                <h3>Peritaje antes de publicar</h3>
+                <h3>Verificación policial y mecánica al día</h3>
                 <p>
-                  Cada usado pasa por revisión mecánica y de chapa. Lo que no
-                  pasa, se corrige o no se publica: por eso el lote es chico.
+                  Verificación del automotor, informe de dominio y revisión
+                  mecánica antes de publicar. Lo que no pasa, se corrige o no
+                  entra al salón.
                 </p>
               </div>
             </article>
             <article>
               <span class="n">02</span>
               <div>
-                <h3>El precio que ves es el precio</h3>
+                <h3>El precio es el punto de partida</h3>
                 <p>
-                  Publicamos el valor final de la unidad. Sin “consultar”, sin
-                  gastos que aparecen el día de la firma.
+                  Publicamos el valor de lista y después armamos la diferencia:
+                  lo que vale tu vehículo como parte de pago más lo que se
+                  financia. Los gastos de transferencia se explican antes de
+                  firmar.
                 </p>
               </div>
             </article>
             <article>
               <span class="n">03</span>
               <div>
-                <h3>Permuta y financiación en la misma visita</h3>
+                <h3>Tasación el mismo día</h3>
                 <p>
-                  Tasamos tu usado y armamos el plan en el mismo día. Si
-                  preferís venderlo vos, también lo compramos:
-                  <a class="brand" href="/ventas">ver cómo</a>.
+                  Traés el vehículo, lo revisamos y te damos el valor de toma
+                  ahí mismo. Si preferís venderlo vos y no entregarlo, también
+                  lo compramos: <a class="brand" href="/ventas">ver cómo</a>.
                 </p>
               </div>
             </article>
@@ -1097,6 +1240,62 @@
               </div>
             </article>
           </div>
+        </div>
+      </section>
+
+      <section id="pago">
+        <div class="wrap">
+          <div class="head">
+            <div>
+              <p class="eyebrow mono"><s></s>Formas de pago</p>
+              <h2>Decinos qué tenés y qué querés. Armamos el negocio.</h2>
+            </div>
+            <p>
+              Casi nadie paga el auto entero: se entrega uno y se financia la
+              diferencia.
+            </p>
+          </div>
+
+          <div class="pay">
+            <article>
+              <span class="k">Parte de pago</span>
+              <h3>Entregás tu vehículo</h3>
+              <p>
+                Auto, moto, camioneta o utilitario. Lo tasamos en el salón y ese
+                valor se descuenta del precio.
+              </p>
+            </article>
+            <article>
+              <span class="k">Banco Nación</span>
+              <h3>+Autos con BNA</h3>
+              <p>
+                Préstamo personal para comprar el auto: hasta $100.000.000, de
+                12 a 60 cuotas, sin prenda y sin necesidad de ser cliente. Te
+                acompañamos con el trámite en el salón.
+              </p>
+            </article>
+            <article>
+              <span class="k">Prendario</span>
+              <h3>Crédito con el auto en garantía</h3>
+              <p>
+                Tasa fija en pesos y hasta 60 meses. Se financia el saldo
+                después de la parte de pago, con bancos adheridos.
+              </p>
+            </article>
+            <article>
+              <span class="k">Llave por llave</span>
+              <h3>Si tu usado cubre el valor</h3>
+              <p>
+                Entregás y te llevás, sin financiación. Coordinamos
+                transferencia y verificación de las dos unidades.
+              </p>
+            </article>
+          </div>
+          <p class="pay__note">
+            Las financiaciones están sujetas a evaluación crediticia del banco.
+            Montos, plazos y tasas los define cada entidad; te los confirmamos
+            antes de avanzar.
+          </p>
         </div>
       </section>
 
@@ -1166,8 +1365,8 @@
         <div class="wrap">
           <div class="contact">
             <div class="contact__l">
-              <p class="eyebrow mono"><s></s>Showroom</p>
-              <h2>Pasá a verlas. Están todas en el lote.</h2>
+              <p class="eyebrow mono"><s></s>El salón</p>
+              <h2>Pasá por el salón. Están todas ahí.</h2>
               <address>
                 <b>General López 3543</b><br />Santa Fe, Argentina<br />
                 <a class="mono brand" href="tel:+5493425777646"
@@ -1243,8 +1442,8 @@
                 margin: 14px 0 0;
               "
             >
-              Concesionario multimarcas de usados seleccionados y 0 km en Santa
-              Fe desde 2016.
+              Concesionaria multimarcas de usados y 0 km en Santa Fe. Parte de
+              pago, financiación y transferencia en el mismo lugar.
             </p>
           </div>
           <div>
@@ -1252,6 +1451,7 @@
             <ul>
               <li><a href="/catalogo">Catálogo</a></li>
               <li><a href="#porque">Por qué elegirnos</a></li>
+              <li><a href="#pago">Formas de pago</a></li>
               <li><a href="#resenas">Reseñas</a></li>
               <li><a href="/ventas">Vendé tu auto</a></li>
             </ul>
@@ -1264,7 +1464,7 @@
               <li>
                 <a href="https://instagram.com/gl.autos.sf">@gl.autos.sf</a>
               </li>
-              <li>Lun a Vie 8:30–20:00</li>
+              <li>Lun a Vie 8:30–12:30 y 16–20</li>
             </ul>
           </div>
         </div>

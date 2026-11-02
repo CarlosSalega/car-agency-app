@@ -8,7 +8,7 @@
       /*
         03 — PIZARRA DE STOCK
         Dirección: "contact-sheet" (tasteskill v2). Todo se muestra junto, chico
-        y en orden: la pizarra que el concesionario tiene en la oficina, con las
+        y en orden: la pizarra que la concesionaria tiene en la oficina, con las
         unidades, el año, los kilómetros y el precio a la derecha.
         Es la dirección más comercial y la de menor carga emocional.
 
@@ -172,7 +172,8 @@
       }
       /* ---------- statement ---------- */
       .say {
-        padding: 56px 0 40px;
+        padding-top: 56px;
+        padding-bottom: 40px;
         border-bottom: 1px solid var(--line);
       }
       .say h1 {
@@ -212,8 +213,14 @@
         font-size: 20px;
         letter-spacing: -0.01em;
       }
+      .tscroll {
+        overflow-x: auto;
+        scrollbar-width: thin;
+        scrollbar-color: var(--line-2) transparent;
+      }
       table {
         width: 100%;
+        min-width: 620px;
         border-collapse: collapse;
         border-top: 1px solid var(--line-2);
       }
@@ -468,6 +475,100 @@
         letter-spacing: 0.14em;
         text-transform: uppercase;
       }
+      /* ---------- buscador del header: siempre visible ---------- */
+      .search {
+        display: flex;
+        align-items: center;
+        margin-left: auto;
+        flex: 1 1 220px;
+        max-width: 400px;
+        min-width: 170px;
+        border: 1px solid var(--line-2);
+        background: var(--ground);
+        border-radius: var(--r);
+      }
+      .search:focus-within {
+        border-color: var(--brand);
+      }
+      .search input {
+        flex: 1;
+        min-width: 0;
+        height: 36px;
+        padding: 0 12px;
+        border: 0;
+        background: transparent;
+        color: var(--fg);
+        font-family: var(--sans);
+        font-size: 14px;
+      }
+      .search input::placeholder {
+        color: var(--mute);
+      }
+      .search input:focus {
+        outline: none;
+      }
+      .search button {
+        height: 36px;
+        padding: 0 13px;
+        border: 0;
+        border-left: 1px solid var(--line-2);
+        background: var(--surface, #1c1c1c);
+        color: var(--fg);
+        cursor: pointer;
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+      }
+      .search button:hover {
+        background: var(--hover);
+        color: var(--brand);
+      }
+      /* ---------- franja de formas de pago ---------- */
+      .pay {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        border-bottom: 1px solid var(--line);
+      }
+      .pay article {
+        padding: 26px 24px;
+        border-right: 1px solid var(--line);
+      }
+      .pay article:last-child {
+        border-right: 0;
+      }
+      .pay .k {
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--brand);
+      }
+      .pay h3 {
+        margin: 9px 0 7px;
+        font-size: 16px;
+      }
+      .pay p {
+        margin: 0;
+        color: var(--body);
+        font-size: 13px;
+        line-height: 1.6;
+      }
+      .pay__note {
+        padding: 14px 0 0;
+        color: var(--mute);
+        font-size: 11px;
+        line-height: 1.6;
+        margin: 0 0 34px;
+      }
+      @media (max-width: 1180px) {
+        .top nav {
+          display: none;
+        }
+        .search {
+          max-width: none;
+        }
+      }
       @media (max-width: 1080px) {
         .masthead,
         .band,
@@ -485,8 +586,38 @@
           border-right: 0;
           border-bottom: 1px solid var(--line);
         }
-        .top nav {
-          display: none;
+        .board__head {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 8px;
+        }
+        .board__head p {
+          max-width: 30ch;
+        }
+        .say h1 {
+          max-width: none;
+        }
+        body {
+          overflow-x: hidden;
+        }
+        .top__in {
+          flex-wrap: wrap;
+          height: auto;
+          padding: 9px 0;
+          gap: 10px;
+        }
+        .search {
+          order: 3;
+          flex-basis: 100%;
+          max-width: none;
+          margin-left: 0;
+        }
+        .pay {
+          grid-template-columns: 1fr;
+        }
+        .pay article {
+          border-right: 0;
+          border-bottom: 1px solid var(--line);
         }
         td.n,
         td.st,
@@ -538,10 +669,20 @@
         <a class="word" href="#arriba"><i></i>GL Autos</a>
         <nav aria-label="Secciones">
           <a href="#pizarra">Stock</a>
+          <a href="#pago">Pago</a>
           <a href="#porque">Por qué</a>
           <a href="#resenas">Reseñas</a>
           <a href="#contacto">Contacto</a>
         </nav>
+        <form class="search" role="search" action="/catalogo">
+          <input
+            type="search"
+            name="q"
+            placeholder="Buscá marca, modelo o versión"
+            aria-label="Buscar en el catálogo"
+          />
+          <button type="submit">Buscar</button>
+        </form>
         <a class="btn btn--brand" href="https://wa.me/5493425777646"
           >WhatsApp</a
         >
@@ -564,10 +705,10 @@
       </div>
 
       <div class="wrap say">
-        <h1>Dieciocho autos. <em>Ninguno sin peritaje.</em></h1>
+        <h1>Dieciocho autos. <em>La diferencia la financiamos.</em></h1>
         <div class="say__meta">
           <a class="btn btn--fill" href="/catalogo">Ver catálogo completo</a>
-          <a class="btn" href="#contacto">Coordinar visita</a>
+          <a class="btn" href="#contacto">Coordinar una visita</a>
           <span class="mono mute">Actualizado hoy 08:40 · usados y 0 km</span>
         </div>
       </div>
@@ -576,199 +717,204 @@
         <div class="board__head">
           <h2>Pizarra de stock</h2>
           <p class="mono mute" style="margin: 0">
-            Últimos ingresos primero · precio final publicado
+            Últimos ingresos primero · precio publicado · aceptamos parte de
+            pago
           </p>
         </div>
 
-        <table>
-          <caption
-            class="mono mute"
-            style="text-align: left; padding: 0 0 10px"
-          >
-            Unidades disponibles en el lote
-          </caption>
-          <thead>
-            <tr>
-              <th scope="col"><span class="mono">Unidad</span></th>
-              <th scope="col"><span class="mono">Modelo / versión</span></th>
-              <th scope="col"><span class="mono">Año</span></th>
-              <th scope="col"><span class="mono">Km</span></th>
-              <th scope="col"><span class="mono">Estado</span></th>
-              <th scope="col" class="r"><span class="mono">Precio</span></th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td class="thumb">
-                <span
-                  ><svg aria-hidden="true"><use href="#car" /></svg
-                ></span>
-              </td>
-              <td class="model">
-                <b>Volkswagen Taos</b
-                ><span>Highline 1.4 TSI · SUV · Automática</span>
-              </td>
-              <td class="n">2025</td>
-              <td class="n">0 km</td>
-              <td class="st"><span class="tag tag--new">Nuevo</span></td>
-              <td class="price">$39.500.000</td>
-            </tr>
-            <tr>
-              <td class="thumb">
-                <span
-                  ><svg aria-hidden="true"><use href="#car" /></svg
-                ></span>
-              </td>
-              <td class="model">
-                <b>Volkswagen Amarok</b><span>V6 Highline · Pickup · 4x4</span>
-              </td>
-              <td class="n">2025</td>
-              <td class="n">0 km</td>
-              <td class="st"><span class="tag tag--new">Nuevo</span></td>
-              <td class="price">$62.000.000</td>
-            </tr>
-            <tr>
-              <td class="thumb">
-                <span
-                  ><svg aria-hidden="true"><use href="#car" /></svg
-                ></span>
-              </td>
-              <td class="model">
-                <b>Chevrolet Tracker</b><span>Premier · SUV · Automática</span>
-              </td>
-              <td class="n">2025</td>
-              <td class="n">0 km</td>
-              <td class="st"><span class="tag tag--new">Nuevo</span></td>
-              <td class="price">$39.900.000</td>
-            </tr>
-            <tr>
-              <td class="thumb">
-                <span
-                  ><svg aria-hidden="true"><use href="#car" /></svg
-                ></span>
-              </td>
-              <td class="model">
-                <b>Toyota Hilux</b><span>SRX 2.8 · Pickup · 4x4</span>
-              </td>
-              <td class="n">2022</td>
-              <td class="n">58.000</td>
-              <td class="st"><span class="tag tag--ok">Disponible</span></td>
-              <td class="price">$52.000.000</td>
-            </tr>
-            <tr>
-              <td class="thumb">
-                <span
-                  ><svg aria-hidden="true"><use href="#car" /></svg
-                ></span>
-              </td>
-              <td class="model">
-                <b>Toyota Corolla Cross</b><span>XEI · SUV · CVT</span>
-              </td>
-              <td class="n">2023</td>
-              <td class="n">24.000</td>
-              <td class="st"><span class="tag tag--ok">Disponible</span></td>
-              <td class="price">$36.500.000</td>
-            </tr>
-            <tr>
-              <td class="thumb">
-                <span
-                  ><svg aria-hidden="true"><use href="#car" /></svg
-                ></span>
-              </td>
-              <td class="model">
-                <b>Ford Ranger</b><span>XLT 3.2 · Pickup · 4x4</span>
-              </td>
-              <td class="n">2021</td>
-              <td class="n">89.000</td>
-              <td class="st"><span class="tag tag--ok">Disponible</span></td>
-              <td class="price">$42.000.000</td>
-            </tr>
-            <tr>
-              <td class="thumb">
-                <span
-                  ><svg aria-hidden="true"><use href="#car" /></svg
-                ></span>
-              </td>
-              <td class="model">
-                <b>Nissan Frontier</b><span>LE 2.5 · Pickup · 4x4</span>
-              </td>
-              <td class="n">2020</td>
-              <td class="n">105.000</td>
-              <td class="st"><span class="tag tag--ok">Disponible</span></td>
-              <td class="price">$38.500.000</td>
-            </tr>
-            <tr>
-              <td class="thumb">
-                <span
-                  ><svg aria-hidden="true"><use href="#car" /></svg
-                ></span>
-              </td>
-              <td class="model">
-                <b>Chevrolet Cruze</b><span>LTZ · Sedán · Automática</span>
-              </td>
-              <td class="n">2019</td>
-              <td class="n">62.000</td>
-              <td class="st"><span class="tag tag--ok">Disponible</span></td>
-              <td class="price">$24.500.000</td>
-            </tr>
-            <tr>
-              <td class="thumb">
-                <span
-                  ><svg aria-hidden="true"><use href="#car" /></svg
-                ></span>
-              </td>
-              <td class="model">
-                <b>Fiat Cronos</b><span>Precision · Sedán · CVT</span>
-              </td>
-              <td class="n">2022</td>
-              <td class="n">38.000</td>
-              <td class="st"><span class="tag">Reservado</span></td>
-              <td class="price">$21.500.000</td>
-            </tr>
-            <tr>
-              <td class="thumb">
-                <span
-                  ><svg aria-hidden="true"><use href="#car" /></svg
-                ></span>
-              </td>
-              <td class="model">
-                <b>Toyota Yaris</b><span>XLS · Hatchback · CVT</span>
-              </td>
-              <td class="n">2021</td>
-              <td class="n">45.000</td>
-              <td class="st"><span class="tag tag--ok">Disponible</span></td>
-              <td class="price">$20.500.000</td>
-            </tr>
-            <tr>
-              <td class="thumb">
-                <span
-                  ><svg aria-hidden="true"><use href="#car" /></svg
-                ></span>
-              </td>
-              <td class="model">
-                <b>Renault Sandero</b><span>Intens · Hatchback · Manual</span>
-              </td>
-              <td class="n">2020</td>
-              <td class="n">72.000</td>
-              <td class="st"><span class="tag tag--ok">Disponible</span></td>
-              <td class="price">$16.500.000</td>
-            </tr>
-            <tr>
-              <td class="thumb">
-                <span
-                  ><svg aria-hidden="true"><use href="#car" /></svg
-                ></span>
-              </td>
-              <td class="model">
-                <b>Renault Kangoo</b><span>Furgón · Van · Manual</span>
-              </td>
-              <td class="n">2019</td>
-              <td class="n">98.000</td>
-              <td class="st"><span class="tag tag--ok">Disponible</span></td>
-              <td class="price">$14.500.000</td>
-            </tr>
-          </tbody>
-        </table>
+        <div class="tscroll">
+          <table>
+            <caption
+              class="mono mute"
+              style="text-align: left; padding: 0 0 10px"
+            >
+              Unidades disponibles en el salón
+            </caption>
+            <thead>
+              <tr>
+                <th scope="col"><span class="mono">Unidad</span></th>
+                <th scope="col"><span class="mono">Modelo / versión</span></th>
+                <th scope="col"><span class="mono">Año</span></th>
+                <th scope="col"><span class="mono">Km</span></th>
+                <th scope="col"><span class="mono">Estado</span></th>
+                <th scope="col" class="r"><span class="mono">Precio</span></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="thumb">
+                  <span
+                    ><svg aria-hidden="true"><use href="#car" /></svg
+                  ></span>
+                </td>
+                <td class="model">
+                  <b>Volkswagen Taos</b
+                  ><span>Highline 1.4 TSI · SUV · Automática</span>
+                </td>
+                <td class="n">2025</td>
+                <td class="n">0 km</td>
+                <td class="st"><span class="tag tag--new">Nuevo</span></td>
+                <td class="price">$39.500.000</td>
+              </tr>
+              <tr>
+                <td class="thumb">
+                  <span
+                    ><svg aria-hidden="true"><use href="#car" /></svg
+                  ></span>
+                </td>
+                <td class="model">
+                  <b>Volkswagen Amarok</b
+                  ><span>V6 Highline · Pickup · 4x4</span>
+                </td>
+                <td class="n">2025</td>
+                <td class="n">0 km</td>
+                <td class="st"><span class="tag tag--new">Nuevo</span></td>
+                <td class="price">$62.000.000</td>
+              </tr>
+              <tr>
+                <td class="thumb">
+                  <span
+                    ><svg aria-hidden="true"><use href="#car" /></svg
+                  ></span>
+                </td>
+                <td class="model">
+                  <b>Chevrolet Tracker</b
+                  ><span>Premier · SUV · Automática</span>
+                </td>
+                <td class="n">2025</td>
+                <td class="n">0 km</td>
+                <td class="st"><span class="tag tag--new">Nuevo</span></td>
+                <td class="price">$39.900.000</td>
+              </tr>
+              <tr>
+                <td class="thumb">
+                  <span
+                    ><svg aria-hidden="true"><use href="#car" /></svg
+                  ></span>
+                </td>
+                <td class="model">
+                  <b>Toyota Hilux</b><span>SRX 2.8 · Pickup · 4x4</span>
+                </td>
+                <td class="n">2022</td>
+                <td class="n">58.000</td>
+                <td class="st"><span class="tag tag--ok">Disponible</span></td>
+                <td class="price">$52.000.000</td>
+              </tr>
+              <tr>
+                <td class="thumb">
+                  <span
+                    ><svg aria-hidden="true"><use href="#car" /></svg
+                  ></span>
+                </td>
+                <td class="model">
+                  <b>Toyota Corolla Cross</b><span>XEI · SUV · CVT</span>
+                </td>
+                <td class="n">2023</td>
+                <td class="n">24.000</td>
+                <td class="st"><span class="tag tag--ok">Disponible</span></td>
+                <td class="price">$36.500.000</td>
+              </tr>
+              <tr>
+                <td class="thumb">
+                  <span
+                    ><svg aria-hidden="true"><use href="#car" /></svg
+                  ></span>
+                </td>
+                <td class="model">
+                  <b>Ford Ranger</b><span>XLT 3.2 · Pickup · 4x4</span>
+                </td>
+                <td class="n">2021</td>
+                <td class="n">89.000</td>
+                <td class="st"><span class="tag tag--ok">Disponible</span></td>
+                <td class="price">$42.000.000</td>
+              </tr>
+              <tr>
+                <td class="thumb">
+                  <span
+                    ><svg aria-hidden="true"><use href="#car" /></svg
+                  ></span>
+                </td>
+                <td class="model">
+                  <b>Nissan Frontier</b><span>LE 2.5 · Pickup · 4x4</span>
+                </td>
+                <td class="n">2020</td>
+                <td class="n">105.000</td>
+                <td class="st"><span class="tag tag--ok">Disponible</span></td>
+                <td class="price">$38.500.000</td>
+              </tr>
+              <tr>
+                <td class="thumb">
+                  <span
+                    ><svg aria-hidden="true"><use href="#car" /></svg
+                  ></span>
+                </td>
+                <td class="model">
+                  <b>Chevrolet Cruze</b><span>LTZ · Sedán · Automática</span>
+                </td>
+                <td class="n">2019</td>
+                <td class="n">62.000</td>
+                <td class="st"><span class="tag tag--ok">Disponible</span></td>
+                <td class="price">$24.500.000</td>
+              </tr>
+              <tr>
+                <td class="thumb">
+                  <span
+                    ><svg aria-hidden="true"><use href="#car" /></svg
+                  ></span>
+                </td>
+                <td class="model">
+                  <b>Fiat Cronos</b><span>Precision · Sedán · CVT</span>
+                </td>
+                <td class="n">2022</td>
+                <td class="n">38.000</td>
+                <td class="st"><span class="tag">Reservado</span></td>
+                <td class="price">$21.500.000</td>
+              </tr>
+              <tr>
+                <td class="thumb">
+                  <span
+                    ><svg aria-hidden="true"><use href="#car" /></svg
+                  ></span>
+                </td>
+                <td class="model">
+                  <b>Toyota Yaris</b><span>XLS · Hatchback · CVT</span>
+                </td>
+                <td class="n">2021</td>
+                <td class="n">45.000</td>
+                <td class="st"><span class="tag tag--ok">Disponible</span></td>
+                <td class="price">$20.500.000</td>
+              </tr>
+              <tr>
+                <td class="thumb">
+                  <span
+                    ><svg aria-hidden="true"><use href="#car" /></svg
+                  ></span>
+                </td>
+                <td class="model">
+                  <b>Renault Sandero</b><span>Intens · Hatchback · Manual</span>
+                </td>
+                <td class="n">2020</td>
+                <td class="n">72.000</td>
+                <td class="st"><span class="tag tag--ok">Disponible</span></td>
+                <td class="price">$16.500.000</td>
+              </tr>
+              <tr>
+                <td class="thumb">
+                  <span
+                    ><svg aria-hidden="true"><use href="#car" /></svg
+                  ></span>
+                </td>
+                <td class="model">
+                  <b>Renault Kangoo</b><span>Furgón · Van · Manual</span>
+                </td>
+                <td class="n">2019</td>
+                <td class="n">98.000</td>
+                <td class="st"><span class="tag tag--ok">Disponible</span></td>
+                <td class="price">$14.500.000</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
 
         <div class="board__foot">
           <span class="mono mute">Mostrando 12 de 18 unidades</span>
@@ -780,29 +926,70 @@
         <div class="band" id="porque">
           <article>
             <span class="n">01</span>
-            <h3>Peritaje antes de publicar</h3>
+            <h3>Verificación y mecánica al día</h3>
             <p>
-              Revisión mecánica y de chapa en cada usado. Lo que no pasa se
-              corrige o no entra a la pizarra.
+              Verificación del automotor, informe de dominio y revisión
+              mecánica. Lo que no pasa se corrige o no entra a la pizarra.
             </p>
           </article>
           <article>
             <span class="n">02</span>
-            <h3>Un precio, el final</h3>
+            <h3>Aceptamos parte de pago</h3>
             <p>
-              El número de la columna de precio incluye todo. Sin gastos que
-              aparecen el día de la firma.
+              El precio de la columna es el de lista: entregás tu vehículo, se
+              descuenta y el saldo se financia.
             </p>
           </article>
           <article>
             <span class="n">03</span>
-            <h3>Permuta y papeles el mismo día</h3>
+            <h3>Tasación y papeles el mismo día</h3>
             <p>
               Tasamos tu usado en la visita y coordinamos transferencia y
               entrega desde 24 h.
             </p>
           </article>
         </div>
+      </div>
+
+      <div class="wrap">
+        <div class="pay" id="pago">
+          <article>
+            <span class="k">Parte de pago</span>
+            <h3>Tu vehículo vale</h3>
+            <p>
+              Auto, moto, camioneta o utilitario: se tasa en el salón y se
+              descuenta del precio.
+            </p>
+          </article>
+          <article>
+            <span class="k">Banco Nación</span>
+            <h3>+Autos con BNA</h3>
+            <p>
+              Hasta $100.000.000 en 12 a 60 cuotas, sin prenda y sin ser
+              cliente. Te acompañamos con el trámite.
+            </p>
+          </article>
+          <article>
+            <span class="k">Prendario</span>
+            <h3>Con el auto en garantía</h3>
+            <p>
+              Tasa fija en pesos hasta 60 meses, sobre el saldo después de la
+              parte de pago.
+            </p>
+          </article>
+          <article>
+            <span class="k">Llave por llave</span>
+            <h3>Si tu usado cubre el valor</h3>
+            <p>
+              Entregás y te llevás sin financiación, con las dos transferencias
+              coordinadas.
+            </p>
+          </article>
+        </div>
+        <p class="pay__note">
+          Sujeto a evaluación crediticia. Montos, plazos y tasas los define cada
+          banco y te los confirmamos antes de avanzar.
+        </p>
       </div>
 
       <div class="wrap">
@@ -842,8 +1029,8 @@
       <div class="wrap">
         <div class="contact" id="contacto">
           <div class="contact__l">
-            <p class="mono mute" style="margin: 0">Showroom</p>
-            <h2>El lote está abierto. Pasá sin turno.</h2>
+            <p class="mono mute" style="margin: 0">El salón</p>
+            <h2>El salón está abierto. Pasá cuando quieras.</h2>
             <address>
               <b>General López 3543</b>, Santa Fe<br />
               <a class="brand mono" href="tel:+5493425777646"

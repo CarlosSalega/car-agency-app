@@ -1,6 +1,6 @@
 {
   "title": "Landing GL Autos · rediseño sin radios",
-  "brief": "Rediseño completo de la landing pública y de /catalogo para un concesionario multimarcas de Santa Fe. Consigna: esquinas rectas en toda la superficie pública, borde de 1px en tarjetas y elementos, misma paleta con variaciones menores. Landing única con header, hero, últimos ingresos en slider, por qué elegirnos, reseñas en slider y contacto; /catalogo queda como única página aparte.",
+  "brief": "Rediseño completo de la landing pública y de /catalogo para una concesionaria multimarcas de Santa Fe. Consigna: esquinas rectas en toda la superficie pública, borde de 1px en tarjetas y elementos, misma paleta con variaciones menores. El buscador vive en el header y está visible en todos los breakpoints. El argumento de venta es el negocio armado: parte de pago (auto, moto, camioneta, utilitario), +Autos con BNA, crédito prendario y llave por llave, porque en el rubro casi nadie paga la unidad entera. Landing única con header, hero, últimos ingresos en slider, por qué elegirnos, formas de pago, reseñas en slider y contacto; /catalogo queda como única página aparte.",
   "artboards": [
     {
       "file": "01-ficha-tecnica.html",
