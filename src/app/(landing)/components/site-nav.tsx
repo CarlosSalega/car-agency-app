@@ -37,15 +37,39 @@ export function useSectionNavigation() {
   const router = useRouter();
   const pathname = usePathname();
 
-  // Al volver a la landing desde otra ruta, scrollear al destino pendiente una vez
-  // que el DOM existe. El `rAF` cubre el frame en el que react acaba de montar.
+  // Al volver a la landing desde otra ruta, scrollear al destino pendiente.
+  //
+  // Dos trampas que costaron este bug:
+  // 1. **Strict Mode** monta, limpia y vuelve a montar los efectos en desarrollo.
+  //    Si el destino se consumiera antes de scrollear, el primer montaje se lo
+  //    queda, el cleanup cancela el frame y el segundo no encuentra nada. Por eso
+  //    `pendingTarget` se borra **después** de scrollear.
+  // 2. La landing puede tardar un frame en tener las secciones en el DOM después
+  //    de la navegación, así que se reintenta por hasta ~1s antes de rendirse.
   useEffect(() => {
     if (!pendingTarget || pathname !== "/") return;
 
     const id = pendingTarget;
-    pendingTarget = null;
+    let attempts = 0;
+    let frame = 0;
 
-    const frame = requestAnimationFrame(() => scrollToSection(id));
+    const tryScroll = () => {
+      if (document.getElementById(id)) {
+        pendingTarget = null;
+        scrollToSection(id);
+        return;
+      }
+
+      // 60 frames ≈ 1 segundo; si el destino no aparece, se abandona sin romper.
+      if (attempts++ >= 60) {
+        pendingTarget = null;
+        return;
+      }
+
+      frame = requestAnimationFrame(tryScroll);
+    };
+
+    frame = requestAnimationFrame(tryScroll);
     return () => cancelAnimationFrame(frame);
   }, [pathname]);
 
@@ -58,7 +82,7 @@ export function useSectionNavigation() {
     }
 
     pendingTarget = id;
-    router.push("/");
+    router.push("/", { scroll: false });
   };
 }
 

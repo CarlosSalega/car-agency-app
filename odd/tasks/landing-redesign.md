@@ -288,3 +288,11 @@ committed on its own, so the owner can review and change direction between secti
   sticky (68px) no tape el título, y `behavior: "smooth"` se saltea con `prefers-reduced-motion`.
   El menú mobile usa el mismo hook. **No pude reproducir un error de runtime** (sin server): el fallo
   observable era que no navegaba y ensuciaba la URL.
+
+- **L32 (el scroll no ocurría al volver a la landing):** "ahora si redirige a '/' pero no hace el scroll
+  smooth hasta el id". Causa real: **React Strict Mode** (activo en `next dev`) monta, limpia y vuelve a
+  montar cada efecto. El código hacía `pendingTarget = null` **antes** de scrollear, así que el primer
+  montaje consumía el destino, el cleanup cancelaba el `requestAnimationFrame` y el segundo montaje ya
+  no tenía a dónde ir. Arreglado: el destino se borra **después** de scrollear, y si la sección todavía
+  no está en el DOM se reintenta por hasta ~60 frames (≈1s). Además `router.push("/", { scroll: false })`
+  para que la restauración al tope de Next no pise el scroll propio.
