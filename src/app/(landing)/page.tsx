@@ -12,6 +12,7 @@ import { withReviewStructuredData } from "@/lib/reviews";
 import Footer from "./components/Footer";
 import { Hero } from "./components/Hero";
 import { LatestArrivals } from "./components/LatestArrivals";
+import { AppraisalSection } from "./components/AppraisalSection";
 import { PaymentRoutes } from "./components/PaymentRoutes";
 import { Salon } from "./components/Salon";
 import { WhyUs } from "./components/WhyUs";
@@ -88,6 +89,7 @@ export default async function LandingPage() {
         <LatestArrivals cars={cars} totalCars={totalCars} />
         <WhyUs />
         <PaymentRoutes />
+        <AppraisalSection />
         <Reviews />
         <Salon />
       </main>

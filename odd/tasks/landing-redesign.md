@@ -234,3 +234,14 @@ committed on its own, so the owner can review and change direction between secti
   - Formas de pago: "Armamos el negocio" → "Vemos cómo se paga".
     **Lo que deliberadamente no se usó**: superlativos ("los mejores precios"), números sin fuente
     ("+1000 clientes") y "precio final" (que el owner ya había señalado como irreal).
+
+- **L27 (tasación + ritmo de superficies):** "agrega la tasación pero no digas sin compromiso, mejor
+  tasacion sin cargo o algo similar. Luego evalua diferenciar un poco las secciones para que todas no
+  sean el mismo color negro". Nueva `AppraisalSection` (`#tasacion`, entre formas de pago y reseñas):
+  tres campos (vehículo, año, km) que arman un mensaje de WhatsApp precargado con los datos que el
+  mostrador va a pedir igual. **No promete un número**: dice que el valor final se confirma con el
+  vehículo en el salón, porque un formulario no puede tasar. Copy con "sin cargo" y con la línea
+  "podés usarlo acá o compararlo con otra agencia" (invitar a comparar es más creíble que pedir
+  confianza). Se agregó al nav, y "Formas de pago" pasó a "Pago" para que seis items entren a 1280.
+  Superficies: ingresos `#121212` → por qué `#141414` → pago `#121212` → **tasación `#1c1c1c`** →
+  reseñas `#121212` → salón `#141414`. La banda de acción es la más clara de la gama.

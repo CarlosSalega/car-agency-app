@@ -27,7 +27,10 @@ export default async function Reviews() {
   if (reviews.length === 0) return null;
 
   return (
-    <section id="resenas" className="border-border border-b py-20">
+    <section
+      id="resenas"
+      className="bg-background border-border border-b py-20"
+    >
       <div className="mx-auto w-full max-w-[1320px] px-7">
         <div className="mb-8 grid items-end gap-6 md:grid-cols-[1fr_auto]">
           <div>

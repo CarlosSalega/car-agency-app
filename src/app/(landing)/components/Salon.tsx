@@ -14,7 +14,7 @@ export function Salon() {
   const { identity, whatsapp } = activeSite;
 
   return (
-    <section id="contacto" className="border-border border-b py-20">
+    <section id="contacto" className="bg-card border-border border-b py-20">
       <div className="mx-auto grid w-full max-w-[1320px] gap-10 px-7 md:grid-cols-2">
         <div>
           <p className="text-muted-foreground mb-2 flex items-center gap-3 font-mono text-[11px] tracking-[0.16em] uppercase">

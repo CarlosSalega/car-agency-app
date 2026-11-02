@@ -40,7 +40,10 @@ export function LatestArrivals({ cars, totalCars }: LatestArrivalsProps) {
   const remaining = Math.max(totalCars - cars.length, 0);
 
   return (
-    <section id="ingresos" className="border-border border-b py-20">
+    <section
+      id="ingresos"
+      className="bg-background border-border border-b py-20"
+    >
       <div className="mx-auto w-full max-w-[1320px] px-7">
         <div className="mb-8 grid items-end gap-6 md:grid-cols-[1fr_auto]">
           <div>

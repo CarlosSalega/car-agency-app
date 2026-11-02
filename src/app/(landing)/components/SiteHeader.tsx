@@ -27,7 +27,8 @@ import { MobileSearchToggle, SearchForm } from "./site-search";
 const SECTIONS = [
   { label: "Ingresos", href: "#ingresos" },
   { label: "Por qué", href: "#porque" },
-  { label: "Formas de pago", href: "#pago" },
+  { label: "Pago", href: "#pago" },
+  { label: "Tasación", href: "#tasacion" },
   { label: "Reseñas", href: "#resenas" },
   { label: "Contacto", href: "#contacto" },
 ] as const;
