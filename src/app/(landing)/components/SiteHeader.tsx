@@ -38,7 +38,7 @@ export function SiteHeader() {
 
   return (
     <header className="border-border bg-background/95 sticky top-0 z-40 w-full border-b backdrop-blur">
-      <div className="relative mx-auto flex min-h-[56px] w-full max-w-[1320px] items-center gap-2 px-4 py-2 md:min-h-[62px] md:gap-5 md:px-7">
+      <div className="relative mx-auto flex min-h-[56px] w-full max-w-[1320px] items-center gap-2 px-4 py-2 md:min-h-[68px] md:gap-6 md:px-8 xl:gap-8">
         {/* El logo es la imagen de la marca, no texto: el wordmark ya trae el
             monograma y el espaciado del logotipo. 16px de alto en mobile (150px de
             ancho) y 20px en desktop, que es lo que entra junto a la lupa en 320. */}
@@ -56,12 +56,14 @@ export function SiteHeader() {
           />
         </Link>
 
-        <nav aria-label="Secciones" className="hidden gap-5 xl:flex">
+        <nav aria-label="Secciones" className="hidden gap-6 xl:flex">
           {SECTIONS.map((section) => (
             <a
               key={section.href}
               href={section.href}
-              className="text-muted-foreground hover:text-foreground py-1 font-mono text-[11px] tracking-[0.14em] uppercase transition-colors"
+              /* Subrayado de marca: crece desde la izquierda en 200ms. Es la única
+                 animación del nav, y respeta `motion-reduce`. */
+              className="text-muted-foreground hover:text-foreground after:bg-brand relative py-2 font-mono text-[11px] tracking-[0.14em] uppercase transition-colors after:absolute after:inset-x-0 after:-bottom-0.5 after:h-0.5 after:origin-left after:scale-x-0 after:transition-transform after:duration-200 after:ease-out hover:after:scale-x-100 motion-reduce:after:transition-none"
             >
               {section.label}
             </a>
@@ -69,7 +71,7 @@ export function SiteHeader() {
         </nav>
 
         {/* Desktop: la barra vive en la fila. */}
-        <div className="ml-auto hidden w-full max-w-[360px] flex-1 basis-[200px] md:block">
+        <div className="ml-auto hidden w-full max-w-[340px] flex-1 basis-[200px] md:block">
           <SearchForm id="site-search" />
         </div>
 

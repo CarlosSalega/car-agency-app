@@ -267,3 +267,13 @@ committed on its own, so the owner can review and change direction between secti
   queda `md:hidden` porque a partir de `md` ya está la barra completa. `site-search.tsx` se borró.
   En `car-card.tsx` se quitó el badge de estado y el import de `getCarBadge` (sigue vivo para la ficha
   y el panel).
+
+- **L30 (aire en el header + subrayado de marca):** "resoluciones tablet/desktop el header necesita
+  espacio, esta todo muy junto, tambien agrega que al hacer hover haga underline del color rojo brand".
+  Alto del header 62 → **68px** desde `md`, gaps 20 → **24px** (`xl` 32), padding lateral 28 → 32, nav
+  `gap-5` → `gap-6` y cada link `py-2`. Subrayado: `after:h-0.5 after:bg-brand` con `scale-x` de 0 a 100
+  desde la izquierda en 200ms, apagado con `motion-reduce`. El buscador baja su techo de 360 a 340 para
+  que el nav tenga ancho propio a 1280.
+  **Sin medir** (no hay dev server): la cuenta a 1280 da 188 (logo) + 96 (gaps) + ~550 (nav de 6) + 107
+  (WhatsApp) + 200 (mínimo del buscador) = ~1141 sobre 1216 disponibles, así que entra con ~75px de
+  sobrante que absorbe el buscador. Es el ancho más ajustado y el primero a mirar.
