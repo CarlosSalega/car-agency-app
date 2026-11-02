@@ -99,9 +99,9 @@ export default async function MeliConfigPage({
       <div className="container mx-auto max-w-3xl px-4 py-8">
         <h1 className="text-2xl font-semibold tracking-tight">Mercado Libre</h1>
         <p className="text-muted-foreground mt-1 mb-6 text-sm">
-          Vinculá la cuenta de Mercado Libre del concesionario para publicar el
-          inventario. Mercado Libre valida la cuenta con OAuth: nosotros nunca
-          vemos la contraseña.
+          Vinculá la cuenta de Mercado Libre de la concesionaria para publicar
+          el inventario. Mercado Libre valida la cuenta con OAuth: nosotros
+          nunca vemos la contraseña.
         </p>
 
         {status ? (

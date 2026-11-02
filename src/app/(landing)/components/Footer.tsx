@@ -1,150 +1,108 @@
-"use client";
-
 import Link from "next/link";
-import { Fragment } from "react";
-import { Clock, MapPin, PhoneIcon } from "lucide-react";
-import { HEADER_CONTENT } from "@/data/header";
+
 import { activeSite } from "@/site/active";
-import { track } from "@/lib/meta-pixel";
-import { useScrollAnimation } from "../hooks/useScrollAnimation";
+
+/**
+ * The footer.
+ *
+ * It carries the last few things a visitor might still want — the other pages, the
+ * address, the phone — and nothing else. The previous version animated a three
+ * column grid with icons; this one is a hairline and four small columns, which is
+ * the same system as the rest of the page: no radius, no shadow, one border.
+ *
+ * The "Acceso" link is deliberate and stays: it is the only way into `/admin`
+ * from the public site, and the header dropped its user menu on purpose.
+ */
+const SITE_LINKS = [
+  { label: "Catálogo", href: "/catalogo" },
+  { label: "Últimos ingresos", href: "/#ingresos" },
+  { label: "Por qué elegirnos", href: "/#porque" },
+  { label: "Formas de pago", href: "/#pago" },
+] as const;
 
 export default function Footer() {
-  const { logo } = HEADER_CONTENT;
-  const { ref, isVisible } = useScrollAnimation({ threshold: 0.1 });
   const { identity, whatsapp } = activeSite;
-  // The env overrides live in `src/site/compose.ts` now: a component reading
-  // `process.env` on its own line is how three copies of the same phone number
-  // drifted apart.
-  const instagramUrl = identity.social.instagram ?? "";
-  const mapsUrl = identity.mapsUrl;
-  const phoneDisplay = identity.contact.phoneDisplay;
-  const phoneHref = whatsapp.telHref;
 
   return (
-    <footer
-      id="contacto"
-      ref={ref as React.RefObject<HTMLElement>}
-      className="bg-background text-foreground w-full px-8 py-24"
-    >
-      <div
-        className={`mx-auto mb-20 grid max-w-7xl grid-cols-1 gap-16 transition-all duration-700 md:grid-cols-3 ${
-          isVisible ? "translate-y-0 opacity-100" : "translate-y-10 opacity-0"
-        }`}
-      >
-        {/* Brand */}
-        <div className="col-span-1">
-          <Link href="/" aria-label="Ir al inicio">
-            <img
-              src={logo.src}
-              alt={logo.alt}
-              width={logo.width}
-              height={logo.height}
-              className="h-9 w-auto"
-            />
+    <footer className="py-12">
+      <div className="mx-auto w-full max-w-[1320px] px-7">
+        <div className="border-border grid gap-8 border-b pb-8 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="lg:col-span-2">
+            <p className="flex items-center gap-2.5 text-base font-black tracking-[0.3em] uppercase">
+              <i aria-hidden="true" className="bg-brand block size-2.5" />
+              {identity.name}
+            </p>
+            <p className="text-muted-foreground mt-3 max-w-[42ch] text-sm leading-relaxed">
+              {identity.dealerDescription} en {identity.address.locality}. Parte
+              de pago, financiación y transferencia en el mismo lugar.
+            </p>
+          </div>
+
+          <nav aria-label="Sitio">
+            <h2 className="text-muted-foreground mb-3 font-mono text-[10px] tracking-[0.2em] uppercase">
+              Sitio
+            </h2>
+            <ul className="text-subtle-foreground grid gap-2 text-sm">
+              {SITE_LINKS.map((link) => (
+                <li key={link.href}>
+                  <Link href={link.href} className="hover:text-foreground">
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+              <li>
+                <Link href="/ventas" className="hover:text-foreground">
+                  Vendé tu auto
+                </Link>
+              </li>
+            </ul>
+          </nav>
+
+          <div>
+            <h2 className="text-muted-foreground mb-3 font-mono text-[10px] tracking-[0.2em] uppercase">
+              Contacto
+            </h2>
+            <ul className="text-subtle-foreground grid gap-2 text-sm">
+              <li>{identity.address.display}</li>
+              <li>
+                <a
+                  href={whatsapp.telHref}
+                  className="hover:text-foreground font-mono"
+                >
+                  {identity.contact.phoneDisplay}
+                </a>
+              </li>
+              {identity.social.instagram ? (
+                <li>
+                  <a
+                    href={identity.social.instagram}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:text-foreground"
+                  >
+                    Instagram
+                  </a>
+                </li>
+              ) : null}
+              {identity.hoursDisplay.map((line) => (
+                <li key={line}>{line}</li>
+              ))}
+            </ul>
+          </div>
+        </div>
+
+        <div className="text-muted-foreground flex flex-wrap items-center justify-between gap-3 pt-5 font-mono text-[10px] tracking-[0.14em] uppercase">
+          <Link
+            href="/admin"
+            className="hover:text-foreground transition-colors"
+          >
+            Acceso
           </Link>
-          <p className="text-muted-foreground text-sm leading-relaxed tracking-tight uppercase">
-            {identity.name}
-          </p>
-          <p className="text-muted-foreground text-sm leading-relaxed tracking-tight uppercase">
-            Concesionario multimarcas de usados seleccionados y 0km
+          <p className="m-0 text-right">
+            © {new Date().getFullYear()} {identity.copyrightHolder}. Derechos
+            reservados.
           </p>
         </div>
-
-        {/* Nav */}
-        <div
-          className={`transition-all delay-100 duration-700 ${
-            isVisible ? "translate-y-0 opacity-100" : "translate-y-10 opacity-0"
-          }`}
-        >
-          <h3 className="text-muted-foreground mb-8 text-xs font-bold tracking-widest uppercase underline">
-            Navegación
-          </h3>
-          <ul className="text-muted-foreground space-y-4 text-xs font-bold uppercase">
-            <li>
-              <Link
-                href="/catalogo"
-                className="hover:text-foreground transition-colors"
-              >
-                Nuestro Stock
-              </Link>
-            </li>
-            <li>
-              <a
-                href="/ventas"
-                className="hover:text-foreground transition-colors"
-              >
-                Vende tu vehículo
-              </a>
-            </li>
-            <li>
-              <a
-                href={instagramUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Seguinos en Instagram (se abre en una pestaña nueva)"
-                className="hover:text-foreground transition-colors"
-              >
-                Seguínos en nuestras Redes
-              </a>
-            </li>
-          </ul>
-        </div>
-
-        {/* Contact */}
-        <address
-          className={`transition-all delay-200 duration-700 ${
-            isVisible ? "translate-y-0 opacity-100" : "translate-y-10 opacity-0"
-          } not-italic`}
-        >
-          <h3 className="text-muted-foreground mb-8 text-xs font-bold tracking-widest uppercase underline">
-            Contacto
-          </h3>
-          <ul className="text-muted-foreground space-y-4 text-xs font-bold uppercase">
-            <li>
-              <a
-                href={mapsUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Ver ubicación en Google Maps (se abre en una pestaña nueva)"
-                className="hover:text-foreground flex min-w-0 items-center gap-2 break-words transition-colors"
-              >
-                <MapPin size={16} className="shrink-0" />
-                {identity.address.display}
-              </a>
-            </li>
-            <li>
-              <a
-                href={phoneHref}
-                onClick={() => track("Contact", { method: "phone" })}
-                className="hover:text-foreground flex items-center gap-2 transition-colors"
-              >
-                <PhoneIcon size={16} />
-                {phoneDisplay}
-              </a>
-            </li>
-            <li className="flex items-start gap-2">
-              <Clock size={16} className="mt-0.5 shrink-0" />
-              <span>
-                {identity.hoursDisplay.map((line, index) => (
-                  <Fragment key={line}>
-                    {index > 0 && <br />}
-                    {line}
-                  </Fragment>
-                ))}
-              </span>
-            </li>
-          </ul>
-        </address>
-      </div>
-
-      <div className="border-border text-muted-foreground mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-4 border-t pt-8 text-[10px] font-bold uppercase">
-        <Link href="/admin" className="hover:text-foreground transition-colors">
-          Acceso
-        </Link>
-        <p className="text-muted-foreground flex flex-col items-center">
-          <span>{`© ${new Date().getFullYear()} ${identity.copyrightHolder}.`}</span>
-          <span>Derechos reservados.</span>
-        </p>
       </div>
     </footer>
   );

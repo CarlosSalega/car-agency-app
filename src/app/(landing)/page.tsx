@@ -13,6 +13,7 @@ import Footer from "./components/Footer";
 import { Hero } from "./components/Hero";
 import { LatestArrivals } from "./components/LatestArrivals";
 import { PaymentRoutes } from "./components/PaymentRoutes";
+import { Salon } from "./components/Salon";
 import { WhyUs } from "./components/WhyUs";
 import { SiteHeader } from "./components/SiteHeader";
 import Reviews from "./components/Reviews";
@@ -88,6 +89,7 @@ export default async function LandingPage() {
         <WhyUs />
         <PaymentRoutes />
         <Reviews />
+        <Salon />
       </main>
       <Footer />
       <WhatsAppFloatButton />

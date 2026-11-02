@@ -15,7 +15,7 @@ import type { SiteAssets, SiteIdentity } from "../contract";
 export const identity: SiteIdentity = {
   name: "GL Autos",
   description: "Vení y encontrá el auto de tus sueños.",
-  dealerDescription: "Concesionario multimarcas de usados seleccionados y 0km",
+  dealerDescription: "Concesionaria multimarcas de usados seleccionados y 0 km",
   contact: {
     phoneRaw: "+5493425777646",
     phoneDisplay: "+54 9 342 577 7646",
