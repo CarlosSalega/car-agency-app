@@ -1,204 +1,164 @@
-"use client";
-
-import { useEffect, useReducer, useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
-import { track } from "@/lib/meta-pixel";
 
+import { CarImage } from "@/components/cars/car-image";
+import { formatKm, formatPrice } from "@/lib/utils";
 import { activeSite } from "@/site/active";
 
-const BG_IMAGES = [
-  "https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&q=80&w=2000",
-  "https://images.unsplash.com/photo-1544636331-e26879cd4d9b?auto=format&fit=crop&q=80&w=2000",
-];
+/**
+ * The only split on the page: the unit on the left, the offer on the right.
+ *
+ * Everything below the hero is a single column, and that asymmetry is the point —
+ * this screen is the one that has to hold a photo and a decision at the same time.
+ *
+ * Three rules:
+ *
+ * 1. **The left half is a real photo of a real unit**, not a drawing. The artboard
+ *    used a silhouette only because a design file cannot load images.
+ * 2. **The caption sits on the photo, not beside it.** Name, year, kilometres and
+ *    the published price: what a person standing at the lot would read on the
+ *    sticker.
+ * 3. **The numbers are read, not written.** The stock count comes from the
+ *    database and the address from the site package, so a second dealership gets
+ *    its own without touching this file.
+ */
 
-const INTERVAL_MS = 6000;
-const TRANSITION_MS = 1800;
-
-type State = {
-  current: number;
-  activeDot: number;
-  transitioning: boolean;
-};
-
-type Action =
-  | { type: "START_TRANSITION"; next: number }
-  | { type: "FINISH_TRANSITION"; next: number };
-
-function reducer(state: State, action: Action): State {
-  switch (action.type) {
-    case "START_TRANSITION":
-      return { ...state, activeDot: action.next, transitioning: true };
-    case "FINISH_TRANSITION":
-      return {
-        current: action.next,
-        activeDot: action.next,
-        transitioning: false,
-      };
-  }
+interface HeroProps {
+  car: {
+    id: string;
+    title: string;
+    slug: string;
+    year: number;
+    kilometers: number;
+    price: number | string;
+    currency: string;
+    images: string[];
+  } | null;
+  totalCars: number;
 }
 
-const initialState: State = {
-  current: 0,
-  activeDot: 0,
-  transitioning: false,
-};
-
-export default function Hero() {
-  const [mounted, setMounted] = useState(false);
-  const [scrollY, setScrollY] = useState(0);
-  const [{ current, activeDot, transitioning }, dispatch] = useReducer(
-    reducer,
-    initialState,
-  );
-
-  useEffect(() => {
-    setMounted(true);
-    const handleScroll = () => setScrollY(window.scrollY);
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      const next = (current + 1) % BG_IMAGES.length;
-      dispatch({ type: "START_TRANSITION", next });
-      setTimeout(
-        () => dispatch({ type: "FINISH_TRANSITION", next }),
-        TRANSITION_MS,
-      );
-    }, INTERVAL_MS);
-    return () => clearInterval(timer);
-  }, [current]);
-
-  const next = (current + 1) % BG_IMAGES.length;
-
-  function goTo(i: number) {
-    if (transitioning) return;
-    dispatch({ type: "START_TRANSITION", next: i });
-    setTimeout(
-      () => dispatch({ type: "FINISH_TRANSITION", next: i }),
-      TRANSITION_MS,
-    );
-  }
+export function Hero({ car, totalCars }: HeroProps) {
+  const { identity, whatsapp } = activeSite;
+  const firstImage = car?.images?.[0] ?? null;
 
   return (
-    <section className="bg-background relative flex min-h-svh w-full items-center justify-center overflow-hidden py-32">
-      {BG_IMAGES.map((src, i) => {
-        const isActive = i === current;
-        const isNext = i === next;
-        return (
-          <div
-            key={src}
-            className="absolute inset-0"
-            style={{
-              opacity: isActive
-                ? transitioning
-                  ? 0
-                  : 1
-                : isNext
-                  ? transitioning
-                    ? 1
-                    : 0
-                  : 0,
-              transform: `translateY(${scrollY * 0.35}px) scale(${isActive && !transitioning ? 1.05 : 1})`,
-              filter: transitioning && isActive ? "blur(6px)" : "blur(0px)",
-              transition: `opacity ${TRANSITION_MS}ms cubic-bezier(0.4,0,0.2,1), filter ${TRANSITION_MS}ms ease, transform ${TRANSITION_MS}ms ease`,
-              willChange: "opacity, transform, filter",
-            }}
+    <section className="border-border grid border-b lg:grid-cols-2">
+      {/* La unidad, a sangre */}
+      <div className="bg-ground border-border relative min-h-[54svh] overflow-hidden border-b lg:min-h-[calc(100svh-62px)] lg:border-r lg:border-b-0">
+        {car ? (
+          <Link
+            href={`/autos/${car.slug}`}
+            className="absolute inset-0 block"
+            aria-label={`Ver la ficha de ${car.title}`}
           >
-            <Image
-              src={src}
-              alt=""
-              aria-hidden="true"
-              fill
-              sizes="100vw"
-              preload={i === 0}
-              className="object-cover opacity-45"
+            {/* `skipSkeleton`: el shimmer de la card tapaba el caption del hero, y
+                acá la foto ES el fondo. La capa es absoluta porque el contenedor
+                sólo declara min-height, así que un `h-full` interno mide 0. */}
+            <CarImage
+              imageKey={firstImage}
+              alt={`${car.title}, ${car.year}`}
+              variant="fullscreen"
+              sizes="(max-width: 1024px) 100vw, 50vw"
+              priority
+              skipSkeleton
+              className="absolute inset-0 h-full w-full object-cover"
             />
+          </Link>
+        ) : (
+          <div className="bg-accent absolute inset-0" />
+        )}
+
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 z-20 bg-gradient-to-t from-black/95 from-45% to-transparent p-5">
+          <div className="text-muted-foreground flex flex-wrap items-baseline justify-between gap-4 font-mono text-[11px] tracking-[0.16em] uppercase">
+            {car ? (
+              <>
+                <span>
+                  <b className="text-foreground font-medium">{car.title}</b>
+                  {" · "}
+                  {car.year}
+                  {" · "}
+                  {car.kilometers === 0
+                    ? "0 km"
+                    : `${formatKm(car.kilometers)} km`}
+                </span>
+                <span className="text-foreground text-sm">
+                  {formatPrice(Number(car.price), car.currency)}
+                </span>
+              </>
+            ) : (
+              <span>Salón abierto · {identity.address.display}</span>
+            )}
           </div>
-        );
-      })}
+        </div>
 
-      <div
-        className="pointer-events-none absolute inset-0 z-10"
-        style={{
-          boxShadow: "inset 0 0 240px 40px rgb(24 24 27 / 0.85)",
-        }}
-      />
-
-      <div
-        className="pointer-events-none absolute inset-x-0 top-0 z-10"
-        style={{
-          height: "420px",
-          background:
-            "linear-gradient(to bottom, rgb(0 0 0 / 0.95) 0%, rgb(0 0 0 / 0.5) 50%, transparent 100%)",
-        }}
-      />
-
-      <div className="from-background/20 to-background/60 absolute inset-0 bg-linear-to-b via-transparent" />
-
-      <div className="absolute bottom-20 left-1/2 z-20 flex -translate-x-1/2 gap-2 p-8">
-        {BG_IMAGES.map((_, i) => (
-          <button
-            key={i}
-            type="button"
-            onClick={() => goTo(i)}
-            aria-label={`Cambiar a imagen ${i + 1}`}
-            aria-current={i === activeDot}
-            className={`h-0.75 rounded-full transition-all duration-500 ${
-              i === activeDot ? "bg-brand w-8" : "w-3 bg-white/30"
-            }`}
-          />
-        ))}
+        {/* El rótulo no puede depender del brillo de la foto: va sobre su propio
+            scrim, con blanco puro (21:1 sobre negro), como el caption de abajo. */}
+        <div className="absolute top-5 left-5 z-20 flex items-center gap-2.5 bg-black/55 px-2.5 py-1.5 font-mono text-[11px] tracking-[0.16em] text-white uppercase backdrop-blur-sm">
+          <i aria-hidden="true" className="bg-brand block size-2" />
+          {identity.name}
+        </div>
       </div>
 
-      <div className="relative z-10 px-4 text-center">
-        <span
-          className={`text-muted-foreground mb-4 block text-base font-bold tracking-[0.3em] uppercase transition-all duration-700 ${
-            mounted ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"
-          }`}
-        >
-          {activeSite.identity.name}
-        </span>
-
-        <h1
-          className={`mb-8 text-6xl leading-none font-black tracking-tighter text-white uppercase italic transition-all delay-150 duration-700 md:text-8xl ${
-            mounted ? "translate-y-0 opacity-100" : "translate-y-6 opacity-0"
-          }`}
-        >
-          Tu próximo <br /> auto{" "}
-          <span className="text-brand">te espera acá</span>
-        </h1>
-
-        <p
-          className={`text-subtle-foreground mx-auto mb-10 max-w-xl text-lg transition-all delay-300 duration-700 lg:text-xl ${
-            mounted ? "translate-y-0 opacity-100" : "translate-y-6 opacity-0"
-          }`}
-        >
-          Vehículos seleccionados, atención personalizada y un proceso simple
-          para que compres sin vueltas.
+      {/* La información */}
+      <div className="flex flex-col justify-center px-7 py-12 lg:px-14">
+        <p className="text-muted-foreground mb-5 flex items-center gap-3 font-mono text-[11px] tracking-[0.16em] uppercase">
+          <s aria-hidden="true" className="bg-brand block h-px w-7" />
+          {identity.address.locality} · {identity.address.street}
         </p>
 
-        <div
-          className={`mx-auto flex w-full flex-col justify-center gap-4 px-4 transition-all delay-500 duration-700 md:w-auto md:flex-row ${
-            mounted ? "translate-y-0 opacity-100" : "translate-y-6 opacity-0"
-          }`}
-        >
+        <h1 className="text-[clamp(34px,3.9vw,62px)] leading-[0.96] font-black tracking-[-0.035em] text-balance">
+          Vos traés lo que tenés.{" "}
+          <em className="text-brand not-italic">El negocio se arma acá.</em>
+        </h1>
+
+        <p className="text-subtle-foreground mt-6 max-w-[46ch] text-[17px] leading-relaxed">
+          Entregás tu auto, moto o camioneta como parte de pago y financiamos la
+          diferencia con banco o prendario. La verificación y la transferencia
+          las resolvemos nosotros.
+        </p>
+
+        <div className="mt-8 flex flex-wrap gap-3">
           <Link
             href="/catalogo"
-            className="bg-primary text-primary-foreground hover:bg-primary/90 h-14 w-full rounded-lg px-10 py-4 text-sm font-bold tracking-widest uppercase transition-all hover:scale-105 active:scale-95 md:w-auto"
+            className="bg-primary text-primary-foreground hover:bg-primary/90 flex h-11 items-center justify-center px-5 font-mono text-[11px] font-bold tracking-[0.16em] uppercase transition-colors"
           >
-            Ver vehículos
+            Ver {totalCars === 1 ? "la unidad" : `las ${totalCars} unidades`}
           </Link>
-          <Link
-            href="/contacto"
-            onClick={() => track("Contact", { method: "maps" })}
-            className="h-14 w-full rounded-lg border border-white/20 bg-white/10 px-10 py-4 text-sm font-bold tracking-widest text-white uppercase backdrop-blur-md transition-all hover:scale-105 hover:bg-white/20 active:scale-95 md:w-auto"
+          <a
+            href="#contacto"
+            className="border-line-strong hover:bg-accent flex h-11 items-center justify-center border px-5 font-mono text-[11px] tracking-[0.16em] uppercase transition-colors"
           >
-            Contáctanos
-          </Link>
+            Coordinar una visita
+          </a>
         </div>
+
+        <dl className="border-border mt-9 grid grid-cols-3 border-t">
+          {[
+            { k: String(totalCars), label: "Unidades" },
+            { k: "24 h", label: "Entrega" },
+            { k: "60", label: "Cuotas" },
+          ].map((item, index) => (
+            <div
+              key={item.label}
+              className={`pt-4 pr-4 ${index < 2 ? "border-border border-r" : ""} ${index > 0 ? "pl-4" : ""}`}
+            >
+              <dd className="font-mono text-2xl font-medium tracking-tight">
+                {item.k}
+              </dd>
+              <dt className="text-muted-foreground mt-0.5 font-mono text-[10px] tracking-[0.16em] uppercase">
+                {item.label}
+              </dt>
+            </div>
+          ))}
+        </dl>
+
+        <a
+          href={whatsapp.href}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-muted-foreground hover:text-foreground mt-7 font-mono text-[11px] tracking-[0.16em] uppercase underline-offset-4 transition-colors hover:underline"
+        >
+          o escribinos: {identity.contact.phoneDisplay} →
+        </a>
       </div>
     </section>
   );

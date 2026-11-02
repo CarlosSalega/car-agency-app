@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 
 import { activeSite } from "@/site/active";
 import { buildPageMetadata } from "@/site/contract";
-import { getPublicLatestCars } from "@/lib/queries/cars";
+import { getPublicCarsCount, getPublicLatestCars } from "@/lib/queries/cars";
 import {
   getPublishedReviewSummary,
   getPublishedReviews,
@@ -11,7 +11,7 @@ import { withReviewStructuredData } from "@/lib/reviews";
 
 import FeatureCards from "./components/FeatureCards";
 import Footer from "./components/Footer";
-import Hero from "./components/Hero";
+import { Hero } from "./components/Hero";
 import { LatestCarsSlider } from "./components/LatestCarsSlider";
 import { SiteHeader } from "./components/SiteHeader";
 import Reviews from "./components/Reviews";
@@ -61,8 +61,9 @@ const dealerJsonLd = {
 };
 
 export default async function LandingPage() {
-  const [cars, reviews, reviewSummary] = await Promise.all([
+  const [cars, totalCars, reviews, reviewSummary] = await Promise.all([
     getPublicLatestCars(9),
+    getPublicCarsCount({}),
     getPublishedReviews(),
     getPublishedReviewSummary(),
   ]);
@@ -82,7 +83,7 @@ export default async function LandingPage() {
       />
       <SiteHeader />
       <main id="main-content">
-        <Hero />
+        <Hero car={cars[0] ?? null} totalCars={totalCars} />
         <FeatureCards />
         <LatestCarsSlider cars={cars} />
         <ServicesSection />
