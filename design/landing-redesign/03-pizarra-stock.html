@@ -1,0 +1,910 @@
+<!doctype html>
+<html lang="es-AR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>GL Autos · Pizarra de stock</title>
+    <style>
+      /*
+        03 — PIZARRA DE STOCK
+        Dirección: "contact-sheet" (tasteskill v2). Todo se muestra junto, chico
+        y en orden: la pizarra que el concesionario tiene en la oficina, con las
+        unidades, el año, los kilómetros y el precio a la derecha.
+        Es la dirección más comercial y la de menor carga emocional.
+
+        Radio 0 · borde de 1px · sin sombras · datos en mono.
+      */
+      :root {
+        --bg: #121212;
+        --ground: #0c0c0c;
+        --panel: #141414;
+        --row: #161616;
+        --hover: #202020;
+        --fg: #f5f5f5;
+        --body: #c4c7c8;
+        --mute: #a3a3a3;
+        --line: #2a2a2a;
+        --line-2: #3a3a3a;
+        --brand: #fe0000;
+        --ok: #4ade80;
+        --warn: #fcd34d;
+        --sans: Afacad, ui-sans-serif, system-ui, sans-serif;
+        --serif: Adamina, ui-serif, Georgia, serif;
+        --mono: "Fira Code", ui-monospace, "SF Mono", Menlo, monospace;
+        --r: 0px;
+        --gut: 28px;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--fg);
+        font-family: var(--sans);
+        -webkit-font-smoothing: antialiased;
+      }
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+      :focus-visible {
+        outline: 2px solid var(--brand);
+        outline-offset: 3px;
+      }
+      .mono {
+        font-family: var(--mono);
+        font-size: 11px;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+      }
+      .mute {
+        color: var(--mute);
+      }
+      .brand {
+        color: var(--brand);
+      }
+      .wrap {
+        max-width: 1380px;
+        margin: 0 auto;
+        padding: 0 var(--gut);
+      }
+      /* ---------- header ---------- */
+      .top {
+        border-bottom: 1px solid var(--line);
+        position: sticky;
+        top: 0;
+        z-index: 30;
+        background: color-mix(in srgb, var(--bg) 96%, transparent);
+        backdrop-filter: blur(8px);
+      }
+      .top__in {
+        display: flex;
+        align-items: center;
+        gap: 30px;
+        height: 58px;
+      }
+      .word {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        font-weight: 900;
+        font-size: 16px;
+        letter-spacing: 0.3em;
+        text-transform: uppercase;
+        white-space: nowrap;
+      }
+      .word i {
+        width: 9px;
+        height: 9px;
+        background: var(--brand);
+        display: block;
+      }
+      .top nav {
+        display: flex;
+        gap: 22px;
+        margin-left: auto;
+      }
+      .top nav a {
+        font-family: var(--mono);
+        font-size: 11px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--mute);
+      }
+      .top nav a:hover {
+        color: var(--fg);
+      }
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        height: 40px;
+        padding: 0 16px;
+        border: 1px solid var(--line-2);
+        background: transparent;
+        color: var(--fg);
+        font-family: var(--mono);
+        font-size: 11px;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        cursor: pointer;
+        border-radius: var(--r);
+      }
+      .btn:hover {
+        background: var(--hover);
+      }
+      .btn--fill {
+        background: var(--fg);
+        color: var(--bg);
+        border-color: var(--fg);
+        font-weight: 700;
+      }
+      .btn--brand {
+        background: var(--brand);
+        color: #000;
+        border-color: var(--brand);
+        font-weight: 700;
+      }
+      /* ---------- cabecera: tres bloques de texto chico ---------- */
+      .masthead {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 0;
+        border-bottom: 1px solid var(--line);
+      }
+      .masthead > div {
+        padding: 18px 22px;
+        border-right: 1px solid var(--line);
+        display: flex;
+        gap: 10px;
+        align-items: baseline;
+      }
+      .masthead > div:last-child {
+        border-right: 0;
+      }
+      .masthead b {
+        font-family: var(--mono);
+        font-size: 12px;
+        font-weight: 500;
+        color: var(--fg);
+      }
+      /* ---------- statement ---------- */
+      .say {
+        padding: 56px 0 40px;
+        border-bottom: 1px solid var(--line);
+      }
+      .say h1 {
+        margin: 0;
+        font-size: clamp(40px, 6vw, 92px);
+        line-height: 0.9;
+        letter-spacing: -0.04em;
+        font-weight: 900;
+        text-wrap: balance;
+        max-width: 20ch;
+      }
+      .say h1 em {
+        font-style: normal;
+        color: var(--brand);
+      }
+      .say__meta {
+        display: flex;
+        gap: 28px;
+        flex-wrap: wrap;
+        margin-top: 26px;
+        align-items: center;
+      }
+      /* ---------- pizarra ---------- */
+      .board {
+        border-bottom: 1px solid var(--line);
+        padding-bottom: 64px;
+      }
+      .board__head {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 20px;
+        padding: 26px 0 14px;
+      }
+      .board__head h2 {
+        margin: 0;
+        font-size: 20px;
+        letter-spacing: -0.01em;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        border-top: 1px solid var(--line-2);
+      }
+      thead th {
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--mute);
+        text-align: left;
+        padding: 10px 12px;
+        border-bottom: 1px solid var(--line-2);
+        background: var(--ground);
+        font-weight: 400;
+        white-space: nowrap;
+      }
+      thead th.r {
+        text-align: right;
+      }
+      tbody tr {
+        border-bottom: 1px solid var(--line);
+      }
+      tbody tr:hover {
+        background: var(--row);
+      }
+      tbody td {
+        padding: 12px;
+        vertical-align: middle;
+        font-size: 15px;
+      }
+      td.thumb {
+        width: 92px;
+      }
+      td.thumb span {
+        display: block;
+        border: 1px solid var(--line);
+        background: var(--ground);
+        padding: 7px 6px;
+        color: #d2d2d2;
+      }
+      td.thumb svg {
+        width: 100%;
+        height: auto;
+        display: block;
+      }
+      td.model b {
+        display: block;
+        font-size: 16px;
+        letter-spacing: -0.01em;
+      }
+      td.model span {
+        color: var(--mute);
+        font-family: var(--mono);
+        font-size: 11px;
+        letter-spacing: 0.06em;
+      }
+      td.n {
+        font-family: var(--mono);
+        font-size: 13px;
+        color: var(--body);
+        width: 110px;
+        white-space: nowrap;
+      }
+      td.price {
+        text-align: right;
+        font-family: var(--mono);
+        font-size: 15px;
+        white-space: nowrap;
+        width: 150px;
+      }
+      td.st {
+        width: 120px;
+      }
+      .tag {
+        display: inline-block;
+        font-family: var(--mono);
+        font-size: 9px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        padding: 4px 7px;
+        border: 1px solid var(--line-2);
+        color: var(--mute);
+        border-radius: var(--r);
+      }
+      .tag--ok {
+        color: var(--ok);
+        border-color: color-mix(in srgb, var(--ok) 38%, transparent);
+      }
+      .tag--new {
+        color: var(--brand);
+        border-color: color-mix(in srgb, var(--brand) 45%, transparent);
+      }
+      .board__foot {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 18px;
+        flex-wrap: wrap;
+        padding: 18px 0 0;
+      }
+      /* ---------- banda: por qué ---------- */
+      .band {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        border-bottom: 1px solid var(--line);
+      }
+      .band > article {
+        padding: 34px 26px;
+        border-right: 1px solid var(--line);
+      }
+      .band > article:last-child {
+        border-right: 0;
+      }
+      .band h3 {
+        margin: 10px 0 8px;
+        font-size: 18px;
+      }
+      .band p {
+        margin: 0;
+        color: var(--body);
+        font-size: 14px;
+        line-height: 1.6;
+      }
+      .n {
+        font-family: var(--mono);
+        font-size: 11px;
+        color: var(--brand);
+        letter-spacing: 0.1em;
+      }
+      /* ---------- reseñas en fila ---------- */
+      .quotes {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        border-bottom: 1px solid var(--line);
+      }
+      .quotes > figure {
+        margin: 0;
+        padding: 30px 26px 34px;
+        border-right: 1px solid var(--line);
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+      }
+      .quotes > figure:last-child {
+        border-right: 0;
+      }
+      .stars {
+        color: var(--warn);
+        letter-spacing: 0.26em;
+        font-size: 12px;
+      }
+      .quotes blockquote {
+        margin: 0;
+        font-family: var(--serif);
+        font-size: 19px;
+        line-height: 1.45;
+        color: #ecebe7;
+      }
+      .quotes figcaption {
+        margin-top: auto;
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        border-top: 1px solid var(--line);
+        padding-top: 12px;
+        font-size: 13px;
+      }
+      /* ---------- contacto ---------- */
+      .contact {
+        display: grid;
+        grid-template-columns: 1.1fr 0.9fr;
+        border-bottom: 1px solid var(--line);
+      }
+      .contact__l {
+        padding: 40px 26px;
+        border-right: 1px solid var(--line);
+      }
+      .contact__l h2 {
+        margin: 8px 0 20px;
+        font-size: 30px;
+        letter-spacing: -0.02em;
+        line-height: 1.05;
+      }
+      .contact address {
+        font-style: normal;
+        color: var(--body);
+        font-size: 15px;
+        line-height: 1.65;
+      }
+      .contact address b {
+        color: var(--fg);
+      }
+      .hours {
+        margin-top: 20px;
+        border-top: 1px solid var(--line);
+        max-width: 420px;
+      }
+      .hours div {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 9px 0;
+        border-bottom: 1px solid var(--line);
+        font-family: var(--mono);
+        font-size: 11px;
+      }
+      .hours span:first-child {
+        color: var(--mute);
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+      }
+      .contact__r {
+        background: var(--ground);
+        position: relative;
+        min-height: 320px;
+      }
+      .contact__r svg {
+        width: 100%;
+        height: 100%;
+        display: block;
+        color: #2b2b2b;
+      }
+      .contact__r .pin {
+        position: absolute;
+        inset: 0;
+        display: grid;
+        place-items: center;
+      }
+      .contact__r .pin div {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        border: 1px solid var(--line-2);
+        background: var(--panel);
+        padding: 9px 13px;
+      }
+      .contact__r .pin i {
+        width: 7px;
+        height: 7px;
+        background: var(--brand);
+        display: block;
+      }
+      footer {
+        display: flex;
+        justify-content: space-between;
+        gap: 18px;
+        flex-wrap: wrap;
+        padding: 34px 0 56px;
+        color: var(--mute);
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+      }
+      @media (max-width: 1080px) {
+        .masthead,
+        .band,
+        .quotes,
+        .contact {
+          grid-template-columns: 1fr;
+        }
+        .masthead > div,
+        .band > article,
+        .quotes > figure {
+          border-right: 0;
+          border-bottom: 1px solid var(--line);
+        }
+        .contact__l {
+          border-right: 0;
+          border-bottom: 1px solid var(--line);
+        }
+        .top nav {
+          display: none;
+        }
+        td.n,
+        td.st,
+        thead th:nth-child(4),
+        thead th:nth-child(6) {
+          display: none;
+        }
+        h1 {
+          font-size: clamp(34px, 9vw, 56px);
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        * {
+          transition: none !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <svg width="0" height="0" style="position: absolute" aria-hidden="true">
+      <symbol id="car" viewBox="0 0 340 110">
+        <path
+          d="M12 78 L20 62 q5-8 16-9 l52-4 q14-16 34-18 l84-1 q22 2 38 19 l58 4 q14 2 18 11 l4 14 Z"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="3"
+        />
+        <circle
+          cx="86"
+          cy="78"
+          r="15"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="3"
+        />
+        <circle
+          cx="262"
+          cy="78"
+          r="15"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="3"
+        />
+      </symbol>
+    </svg>
+
+    <header class="top">
+      <div class="wrap top__in">
+        <a class="word" href="#arriba"><i></i>GL Autos</a>
+        <nav aria-label="Secciones">
+          <a href="#pizarra">Stock</a>
+          <a href="#porque">Por qué</a>
+          <a href="#resenas">Reseñas</a>
+          <a href="#contacto">Contacto</a>
+        </nav>
+        <a class="btn btn--brand" href="https://wa.me/5493425777646"
+          >WhatsApp</a
+        >
+      </div>
+    </header>
+
+    <main id="arriba">
+      <div class="wrap">
+        <div class="masthead">
+          <div>
+            <span class="mono mute">Quiénes</span><b>GL Autos · Santa Fe</b>
+          </div>
+          <div>
+            <span class="mono mute">Stock</span><b>18 unidades activas</b>
+          </div>
+          <div>
+            <span class="mono mute">Dónde</span><b>General López 3543</b>
+          </div>
+        </div>
+      </div>
+
+      <div class="wrap say">
+        <h1>Dieciocho autos. <em>Ninguno sin peritaje.</em></h1>
+        <div class="say__meta">
+          <a class="btn btn--fill" href="/catalogo">Ver catálogo completo</a>
+          <a class="btn" href="#contacto">Coordinar visita</a>
+          <span class="mono mute">Actualizado hoy 08:40 · usados y 0 km</span>
+        </div>
+      </div>
+
+      <div class="wrap board" id="pizarra">
+        <div class="board__head">
+          <h2>Pizarra de stock</h2>
+          <p class="mono mute" style="margin: 0">
+            Últimos ingresos primero · precio final publicado
+          </p>
+        </div>
+
+        <table>
+          <caption
+            class="mono mute"
+            style="text-align: left; padding: 0 0 10px"
+          >
+            Unidades disponibles en el lote
+          </caption>
+          <thead>
+            <tr>
+              <th scope="col"><span class="mono">Unidad</span></th>
+              <th scope="col"><span class="mono">Modelo / versión</span></th>
+              <th scope="col"><span class="mono">Año</span></th>
+              <th scope="col"><span class="mono">Km</span></th>
+              <th scope="col"><span class="mono">Estado</span></th>
+              <th scope="col" class="r"><span class="mono">Precio</span></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="thumb">
+                <span
+                  ><svg aria-hidden="true"><use href="#car" /></svg
+                ></span>
+              </td>
+              <td class="model">
+                <b>Volkswagen Taos</b
+                ><span>Highline 1.4 TSI · SUV · Automática</span>
+              </td>
+              <td class="n">2025</td>
+              <td class="n">0 km</td>
+              <td class="st"><span class="tag tag--new">Nuevo</span></td>
+              <td class="price">$39.500.000</td>
+            </tr>
+            <tr>
+              <td class="thumb">
+                <span
+                  ><svg aria-hidden="true"><use href="#car" /></svg
+                ></span>
+              </td>
+              <td class="model">
+                <b>Volkswagen Amarok</b><span>V6 Highline · Pickup · 4x4</span>
+              </td>
+              <td class="n">2025</td>
+              <td class="n">0 km</td>
+              <td class="st"><span class="tag tag--new">Nuevo</span></td>
+              <td class="price">$62.000.000</td>
+            </tr>
+            <tr>
+              <td class="thumb">
+                <span
+                  ><svg aria-hidden="true"><use href="#car" /></svg
+                ></span>
+              </td>
+              <td class="model">
+                <b>Chevrolet Tracker</b><span>Premier · SUV · Automática</span>
+              </td>
+              <td class="n">2025</td>
+              <td class="n">0 km</td>
+              <td class="st"><span class="tag tag--new">Nuevo</span></td>
+              <td class="price">$39.900.000</td>
+            </tr>
+            <tr>
+              <td class="thumb">
+                <span
+                  ><svg aria-hidden="true"><use href="#car" /></svg
+                ></span>
+              </td>
+              <td class="model">
+                <b>Toyota Hilux</b><span>SRX 2.8 · Pickup · 4x4</span>
+              </td>
+              <td class="n">2022</td>
+              <td class="n">58.000</td>
+              <td class="st"><span class="tag tag--ok">Disponible</span></td>
+              <td class="price">$52.000.000</td>
+            </tr>
+            <tr>
+              <td class="thumb">
+                <span
+                  ><svg aria-hidden="true"><use href="#car" /></svg
+                ></span>
+              </td>
+              <td class="model">
+                <b>Toyota Corolla Cross</b><span>XEI · SUV · CVT</span>
+              </td>
+              <td class="n">2023</td>
+              <td class="n">24.000</td>
+              <td class="st"><span class="tag tag--ok">Disponible</span></td>
+              <td class="price">$36.500.000</td>
+            </tr>
+            <tr>
+              <td class="thumb">
+                <span
+                  ><svg aria-hidden="true"><use href="#car" /></svg
+                ></span>
+              </td>
+              <td class="model">
+                <b>Ford Ranger</b><span>XLT 3.2 · Pickup · 4x4</span>
+              </td>
+              <td class="n">2021</td>
+              <td class="n">89.000</td>
+              <td class="st"><span class="tag tag--ok">Disponible</span></td>
+              <td class="price">$42.000.000</td>
+            </tr>
+            <tr>
+              <td class="thumb">
+                <span
+                  ><svg aria-hidden="true"><use href="#car" /></svg
+                ></span>
+              </td>
+              <td class="model">
+                <b>Nissan Frontier</b><span>LE 2.5 · Pickup · 4x4</span>
+              </td>
+              <td class="n">2020</td>
+              <td class="n">105.000</td>
+              <td class="st"><span class="tag tag--ok">Disponible</span></td>
+              <td class="price">$38.500.000</td>
+            </tr>
+            <tr>
+              <td class="thumb">
+                <span
+                  ><svg aria-hidden="true"><use href="#car" /></svg
+                ></span>
+              </td>
+              <td class="model">
+                <b>Chevrolet Cruze</b><span>LTZ · Sedán · Automática</span>
+              </td>
+              <td class="n">2019</td>
+              <td class="n">62.000</td>
+              <td class="st"><span class="tag tag--ok">Disponible</span></td>
+              <td class="price">$24.500.000</td>
+            </tr>
+            <tr>
+              <td class="thumb">
+                <span
+                  ><svg aria-hidden="true"><use href="#car" /></svg
+                ></span>
+              </td>
+              <td class="model">
+                <b>Fiat Cronos</b><span>Precision · Sedán · CVT</span>
+              </td>
+              <td class="n">2022</td>
+              <td class="n">38.000</td>
+              <td class="st"><span class="tag">Reservado</span></td>
+              <td class="price">$21.500.000</td>
+            </tr>
+            <tr>
+              <td class="thumb">
+                <span
+                  ><svg aria-hidden="true"><use href="#car" /></svg
+                ></span>
+              </td>
+              <td class="model">
+                <b>Toyota Yaris</b><span>XLS · Hatchback · CVT</span>
+              </td>
+              <td class="n">2021</td>
+              <td class="n">45.000</td>
+              <td class="st"><span class="tag tag--ok">Disponible</span></td>
+              <td class="price">$20.500.000</td>
+            </tr>
+            <tr>
+              <td class="thumb">
+                <span
+                  ><svg aria-hidden="true"><use href="#car" /></svg
+                ></span>
+              </td>
+              <td class="model">
+                <b>Renault Sandero</b><span>Intens · Hatchback · Manual</span>
+              </td>
+              <td class="n">2020</td>
+              <td class="n">72.000</td>
+              <td class="st"><span class="tag tag--ok">Disponible</span></td>
+              <td class="price">$16.500.000</td>
+            </tr>
+            <tr>
+              <td class="thumb">
+                <span
+                  ><svg aria-hidden="true"><use href="#car" /></svg
+                ></span>
+              </td>
+              <td class="model">
+                <b>Renault Kangoo</b><span>Furgón · Van · Manual</span>
+              </td>
+              <td class="n">2019</td>
+              <td class="n">98.000</td>
+              <td class="st"><span class="tag tag--ok">Disponible</span></td>
+              <td class="price">$14.500.000</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="board__foot">
+          <span class="mono mute">Mostrando 12 de 18 unidades</span>
+          <a class="btn" href="/catalogo">Ver las 18 en el catálogo →</a>
+        </div>
+      </div>
+
+      <div class="wrap">
+        <div class="band" id="porque">
+          <article>
+            <span class="n">01</span>
+            <h3>Peritaje antes de publicar</h3>
+            <p>
+              Revisión mecánica y de chapa en cada usado. Lo que no pasa se
+              corrige o no entra a la pizarra.
+            </p>
+          </article>
+          <article>
+            <span class="n">02</span>
+            <h3>Un precio, el final</h3>
+            <p>
+              El número de la columna de precio incluye todo. Sin gastos que
+              aparecen el día de la firma.
+            </p>
+          </article>
+          <article>
+            <span class="n">03</span>
+            <h3>Permuta y papeles el mismo día</h3>
+            <p>
+              Tasamos tu usado en la visita y coordinamos transferencia y
+              entrega desde 24 h.
+            </p>
+          </article>
+        </div>
+      </div>
+
+      <div class="wrap">
+        <div class="quotes" id="resenas">
+          <figure>
+            <p class="stars" aria-label="5 de 5 estrellas">★★★★★</p>
+            <blockquote>
+              “Gracias Facundo por la amabilidad y atención a los detalles que
+              hizo fuese una hermosa experiencia.”
+            </blockquote>
+            <figcaption>
+              <b>Norma Soñez</b><span class="mono mute">hace 4 meses</span>
+            </figcaption>
+          </figure>
+          <figure>
+            <p class="stars" aria-label="5 de 5 estrellas">★★★★★</p>
+            <blockquote>
+              “Excelente la atención, el asesoramiento de Lionel que me dio
+              mucha confianza en todo.”
+            </blockquote>
+            <figcaption>
+              <b>Diego Pucheta</b><span class="mono mute">hace 3 semanas</span>
+            </figcaption>
+          </figure>
+          <figure>
+            <p class="stars" aria-label="5 de 5 estrellas">★★★★★</p>
+            <blockquote>
+              “Muy agradecidos por su agilidad para la entrega de nuestro 0km.”
+            </blockquote>
+            <figcaption>
+              <b>Marisa Moreno</b><span class="mono mute">hace 1 mes</span>
+            </figcaption>
+          </figure>
+        </div>
+      </div>
+
+      <div class="wrap">
+        <div class="contact" id="contacto">
+          <div class="contact__l">
+            <p class="mono mute" style="margin: 0">Showroom</p>
+            <h2>El lote está abierto. Pasá sin turno.</h2>
+            <address>
+              <b>General López 3543</b>, Santa Fe<br />
+              <a class="brand mono" href="tel:+5493425777646"
+                >+54 9 342 577 7646</a
+              >
+            </address>
+            <div class="hours">
+              <div>
+                <span>Lun a Vie</span><span>8:30–12:30 · 16:00–20:00</span>
+              </div>
+              <div><span>Sábado</span><span>9:00–12:30</span></div>
+            </div>
+            <div
+              style="
+                display: flex;
+                gap: 10px;
+                margin-top: 22px;
+                flex-wrap: wrap;
+              "
+            >
+              <a class="btn btn--brand" href="https://wa.me/5493425777646"
+                >WhatsApp</a
+              >
+              <a class="btn" href="https://maps.google.com">Cómo llegar</a>
+            </div>
+          </div>
+          <div class="contact__r">
+            <svg viewBox="0 0 500 360" aria-hidden="true">
+              <defs>
+                <pattern
+                  id="m3"
+                  width="32"
+                  height="32"
+                  patternUnits="userSpaceOnUse"
+                >
+                  <path
+                    d="M32 0H0V32"
+                    fill="none"
+                    stroke="#242424"
+                    stroke-width="1"
+                  />
+                </pattern>
+              </defs>
+              <rect width="500" height="360" fill="url(#m3)" />
+              <path d="M0 230 H500" stroke="#333" stroke-width="12" />
+              <path d="M260 0 V360" stroke="#333" stroke-width="8" />
+            </svg>
+            <div class="pin">
+              <div><i></i><span class="mono">GL Autos</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="wrap">
+        <footer>
+          <span>© 2026 GL Autos · Derechos reservados</span>
+          <span>General López 3543, Santa Fe · AR</span>
+          <span>@gl.autos.sf</span>
+        </footer>
+      </div>
+    </main>
+  </body>
+</html>
