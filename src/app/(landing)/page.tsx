@@ -12,7 +12,7 @@ import { withReviewStructuredData } from "@/lib/reviews";
 import FeatureCards from "./components/FeatureCards";
 import Footer from "./components/Footer";
 import { Hero } from "./components/Hero";
-import { LatestCarsSlider } from "./components/LatestCarsSlider";
+import { LatestArrivals } from "./components/LatestArrivals";
 import { SiteHeader } from "./components/SiteHeader";
 import Reviews from "./components/Reviews";
 import ServicesSection from "./components/ServicesSection";
@@ -85,7 +85,7 @@ export default async function LandingPage() {
       <main id="main-content">
         <Hero car={cars[0] ?? null} totalCars={totalCars} />
         <FeatureCards />
-        <LatestCarsSlider cars={cars} />
+        <LatestArrivals cars={cars} totalCars={totalCars} />
         <ServicesSection />
         <div aria-hidden="true" className="bg-background">
           <div className="mx-auto flex max-w-6xl items-center gap-5 px-4 md:px-10">
