@@ -41,9 +41,9 @@ export function Hero({ car, totalCars }: HeroProps) {
   const firstImage = car?.images?.[0] ?? null;
 
   return (
-    <section className="border-border grid border-b lg:grid-cols-2">
+    <section className="border-border grid border-b xl:grid-cols-2">
       {/* La unidad, a sangre */}
-      <div className="bg-ground border-border relative min-h-[54svh] overflow-hidden border-b lg:min-h-[calc(100svh-62px)] lg:border-r lg:border-b-0">
+      <div className="bg-ground border-border relative min-h-[56svh] overflow-hidden border-b xl:min-h-[calc(100svh-62px)] xl:border-r xl:border-b-0">
         {car ? (
           <Link
             href={`/autos/${car.slug}`}
@@ -99,7 +99,7 @@ export function Hero({ car, totalCars }: HeroProps) {
       </div>
 
       {/* La información */}
-      <div className="flex flex-col justify-center px-7 py-12 lg:px-14">
+      <div className="flex flex-col justify-center px-7 py-12 xl:px-14">
         <p className="text-muted-foreground mb-5 flex items-center gap-3 font-mono text-[11px] tracking-[0.16em] uppercase">
           <s aria-hidden="true" className="bg-brand block h-px w-7" />
           {identity.address.locality} · {identity.address.street}

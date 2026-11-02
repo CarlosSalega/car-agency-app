@@ -128,3 +128,9 @@ committed on its own, so the owner can review and change direction between secti
   buscador baja su techo de 400 a 360. Medido con Chrome: 1024/1180 → sin nav, campo de 283px,
   `scrollWidth` 1009/1165; 1280/1366/1440 → nav de 438px, campo 283px, `scrollWidth` 1265/1351/1425.
   En todos los anchos el header mide 63px y no hay scroll horizontal.
+
+- **L15 (hero a 1024, reportado por el owner):** "esta dividido en 2 columnas verticales lo cual hace
+  que quede mal, imagen muy grande y demasiado espacio en la columna derecha donde esta el texto". El
+  split pasa a `xl` (1280), el mismo corte que el nav: entre 1024 y 1279 el hero se apila. Medido:
+  1024 → una columna de 1009px, foto 1009×448 y panel 1009×500; 1280 → dos columnas de 632px, foto y
+  panel de 633×738. Sin scroll horizontal en ningún ancho.
