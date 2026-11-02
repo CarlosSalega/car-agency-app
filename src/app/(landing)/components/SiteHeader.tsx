@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 
 import { activeSite } from "@/site/active";
@@ -37,14 +38,21 @@ export function SiteHeader() {
   return (
     <header className="border-border bg-background/95 sticky top-0 z-40 w-full border-b backdrop-blur">
       <div className="relative mx-auto flex min-h-[56px] w-full max-w-[1320px] items-center gap-2 px-4 py-2 md:min-h-[62px] md:gap-5 md:px-7">
+        {/* El logo es la imagen de la marca, no texto: el wordmark ya trae el
+            monograma y el espaciado del logotipo. 16px de alto en mobile (150px de
+            ancho) y 20px en desktop, que es lo que entra junto a la lupa en 320. */}
         <Link
           href="/"
-          className="flex shrink-0 items-center gap-2 transition-opacity hover:opacity-80 md:gap-2.5"
+          className="flex shrink-0 items-center transition-opacity hover:opacity-80"
         >
-          <i aria-hidden="true" className="bg-brand block size-2 md:size-2.5" />
-          <span className="text-[13px] font-black tracking-[0.24em] whitespace-nowrap uppercase md:text-base md:tracking-[0.3em]">
-            {identity.name}
-          </span>
+          <Image
+            src={activeSite.assets.wordmark.src}
+            alt={identity.name}
+            width={activeSite.assets.wordmark.width}
+            height={activeSite.assets.wordmark.height}
+            className="h-4 w-auto md:h-5"
+            preload
+          />
         </Link>
 
         <nav aria-label="Secciones" className="hidden gap-5 lg:flex">

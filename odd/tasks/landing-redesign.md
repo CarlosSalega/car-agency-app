@@ -116,3 +116,9 @@ committed on its own, so the owner can review and change direction between secti
   click en la lupa → abierto, `aria-expanded="true"`, foco en `site-search-mobile-field`; click en el
   espacio en blanco del header → cerrado; Escape → cerrado; `scrollWidth` = 320 en los cuatro
   estados, así que ningún estado introduce scroll horizontal.
+
+- **L13 (logo del header):** "el detalle que falta es que el logo debe de ser el logo-wordmark.png".
+  El header usaba texto con tracking; ahora usa la imagen de marca (`activeSite.assets.wordmark`)
+  con `next/image`, sin el cuadrado rojo (el wordmark ya trae el monograma). Altura 16px en mobile
+  (151px de ancho) y 20px en desktop (188px). Medido: `scrollWidth === viewport` en 320 y 375, header
+  de 57px; en 768 y 1440 el logo pasa a 188x20.
