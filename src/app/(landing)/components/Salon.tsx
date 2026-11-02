@@ -49,12 +49,12 @@ export function Salon() {
             ))}
           </ul>
 
-          <div className="mt-6 flex flex-wrap gap-3">
+          <div className="mt-6 grid gap-3 sm:grid-cols-2">
             <a
               href={whatsapp.href}
               target="_blank"
               rel="noopener noreferrer"
-              className="bg-brand hover:bg-brand/90 flex h-11 items-center justify-center px-5 font-mono text-[11px] font-bold tracking-[0.16em] text-black uppercase transition-colors"
+              className="bg-brand hover:bg-brand/90 flex h-11 w-full items-center justify-center px-5 font-mono text-[11px] font-bold tracking-[0.16em] text-black uppercase transition-colors"
             >
               WhatsApp
             </a>
@@ -62,7 +62,7 @@ export function Salon() {
               href={identity.mapsUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="border-line-strong hover:bg-accent flex h-11 items-center justify-center border px-5 font-mono text-[11px] tracking-[0.16em] uppercase transition-colors"
+              className="border-line-strong hover:bg-accent flex h-11 w-full items-center justify-center border px-5 font-mono text-[11px] tracking-[0.16em] uppercase transition-colors"
             >
               Cómo llegar
             </a>

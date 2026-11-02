@@ -134,3 +134,13 @@ committed on its own, so the owner can review and change direction between secti
   split pasa a `xl` (1280), el mismo corte que el nav: entre 1024 y 1279 el hero se apila. Medido:
   1024 → una columna de 1009px, foto 1009×448 y panel 1009×500; 1280 → dos columnas de 632px, foto y
   panel de 633×738. Sin scroll horizontal en ningún ancho.
+
+- **L16 (CTA del hero y del salón, reportado por el owner):** "no puede pasar que los cta tengan
+  diferentes tamaños de ancho, menos en mobile que ocupen todo el ancho, el padding x de su contenedor
+  les da el respiro". Los pares de CTA pasan a `grid gap-3 sm:grid-cols-2` con `w-full`: en mobile
+  cada uno toma el ancho del contenedor (264px a 320, 334px a 390) y desde `sm` las dos columnas son
+  `1fr`, así que miden exacto igual. **`flex-1` no servía**: reparte el sobrante pero respeta el
+  `min-content` de cada hijo y dejaba 2px de diferencia a 768 y 1440.
+- **L17 (caption de la foto):** a 320 el dato cortaba "0 / KM" en dos líneas. Ahora se apila: nombre
+  arriba, año/kilómetros y precio abajo, cada fragmento con `whitespace-nowrap`. La línea de teléfono
+  del hero también evita partir el número.

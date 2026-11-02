@@ -68,24 +68,31 @@ export function Hero({ car, totalCars }: HeroProps) {
         )}
 
         <div className="pointer-events-none absolute inset-x-0 bottom-0 z-20 bg-gradient-to-t from-black/95 from-45% to-transparent p-5">
-          <div className="text-muted-foreground flex flex-wrap items-baseline justify-between gap-4 font-mono text-[11px] tracking-[0.16em] uppercase">
+          {/* En 320 el caption se apila en dos líneas y ningún dato se corta a la
+              mitad: el nombre arriba, año/kilómetros y precio abajo. */}
+          <div className="text-muted-foreground flex flex-col gap-1 font-mono text-[11px] tracking-[0.16em] uppercase sm:flex-row sm:items-baseline sm:justify-between sm:gap-4">
             {car ? (
               <>
-                <span>
+                <span className="whitespace-nowrap">
                   <b className="text-foreground font-medium">{car.title}</b>
-                  {" · "}
-                  {car.year}
-                  {" · "}
-                  {car.kilometers === 0
-                    ? "0 km"
-                    : `${formatKm(car.kilometers)} km`}
                 </span>
-                <span className="text-foreground text-sm">
-                  {formatPrice(Number(car.price), car.currency)}
+                <span className="flex items-baseline justify-between gap-4 sm:gap-6">
+                  <span className="whitespace-nowrap">
+                    {car.year}
+                    {" · "}
+                    {car.kilometers === 0
+                      ? "0 km"
+                      : `${formatKm(car.kilometers)} km`}
+                  </span>
+                  <span className="text-foreground text-sm whitespace-nowrap">
+                    {formatPrice(Number(car.price), car.currency)}
+                  </span>
                 </span>
               </>
             ) : (
-              <span>Salón abierto · {identity.address.display}</span>
+              <span className="whitespace-nowrap">
+                Salón abierto · {identity.address.display}
+              </span>
             )}
           </div>
         </div>
@@ -116,16 +123,20 @@ export function Hero({ car, totalCars }: HeroProps) {
           las resolvemos nosotros.
         </p>
 
-        <div className="mt-8 flex flex-wrap gap-3">
+        {/* Los CTA no pueden medir distinto: en mobile toman el ancho completo
+            (el padding del contenedor es su respiro) y desde `sm` se reparten en
+            partes iguales. Dos botones de ancho dispar se leen como jerarquía,
+            y acá los dos son la misma acción: empezar. */}
+        <div className="mt-8 grid gap-3 sm:grid-cols-2">
           <Link
             href="/catalogo"
-            className="bg-primary text-primary-foreground hover:bg-primary/90 flex h-11 items-center justify-center px-5 font-mono text-[11px] font-bold tracking-[0.16em] uppercase transition-colors"
+            className="bg-primary text-primary-foreground hover:bg-primary/90 flex h-11 w-full items-center justify-center px-5 font-mono text-[11px] font-bold tracking-[0.16em] uppercase transition-colors"
           >
             Ver {totalCars === 1 ? "la unidad" : `las ${totalCars} unidades`}
           </Link>
           <a
             href="#contacto"
-            className="border-line-strong hover:bg-accent flex h-11 items-center justify-center border px-5 font-mono text-[11px] tracking-[0.16em] uppercase transition-colors"
+            className="border-line-strong hover:bg-accent flex h-11 w-full items-center justify-center border px-5 font-mono text-[11px] tracking-[0.16em] uppercase transition-colors"
           >
             Coordinar una visita
           </a>
@@ -155,9 +166,12 @@ export function Hero({ car, totalCars }: HeroProps) {
           href={whatsapp.href}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-muted-foreground hover:text-foreground mt-7 font-mono text-[11px] tracking-[0.16em] uppercase underline-offset-4 transition-colors hover:underline"
+          className="text-muted-foreground hover:text-foreground mt-7 flex flex-wrap items-baseline gap-x-1.5 font-mono text-[11px] tracking-[0.16em] uppercase underline-offset-4 transition-colors hover:underline"
         >
-          o escribinos: {identity.contact.phoneDisplay} →
+          <span>o escribinos:</span>
+          <span className="whitespace-nowrap">
+            {identity.contact.phoneDisplay} →
+          </span>
         </a>
       </div>
     </section>
