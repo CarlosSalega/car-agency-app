@@ -193,3 +193,12 @@ committed on its own, so the owner can review and change direction between secti
   hace hover sobre la imagen principal". El contenedor de la imagen principal es `group` y las flechas
   llevan `md:opacity-0 md:group-hover:opacity-100`, con `focus-visible:opacity-100` para teclado. En
   mobile quedan **siempre visibles**: ahí no existe hover y esconderlas las haría inalcanzables.
+
+- **L24 (lightbox de la galería):** "al hacer click sobre la imagen principal abre un lightbox y en esta
+  vista tenemos los mismos botones flecha pero con borde redondeado, verifica que en esta vista no haya
+  nada más redondeado". Causa: el lightbox se renderiza en un **portal**, así que el selector
+  descendiente del contenedor de la ruta no lo alcanza; los cuatro `Button` (cerrar, flechas del
+  lightbox, flechas de la imagen) heredaban `rounded-md` de la base compartida. Ahora llevan
+  `rounded-none` explícito. Auditoría del resto de la vista: `DialogContent` ya tenía `rounded-none!`,
+  las miniaturas `rounded-none`, `CarImage` sin radio, y el botón de cierre por defecto del `Dialog`
+  está oculto. **Regla**: un portal no hereda los selectores del contenedor de la página.
