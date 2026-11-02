@@ -253,3 +253,17 @@ committed on its own, so the owner can review and change direction between secti
   filas `dl` con la ruta en mono a la izquierda y la explicación a la derecha, una línea por fila.
   Ahora las tres secciones seguidas tienen estructuras distintas: **por qué** = 3 columnas con número,
   **formas de pago** = ledger de filas, **tasación** = título + formulario.
+
+- **L29 (menú hamburguesa + sin badge en las cards):** "en el header vamos a agregar un boton de menu
+  hamburger para resoluciones mobile que va a desplegar el menu, puedes repetir el mismo patron de
+  despliegue que la barra de busqueda. tambien en las car-card vamos a quitar el status badge".
+  `MobileHeaderActions` (`mobile-header-actions.tsx`) unifica lupa y menú en **un solo estado**
+  (`"search" | "menu" | null`): con dos toggles independientes se podían apilar dos paneles abiertos.
+  Mismo patrón que antes: click afuera cierra, Escape cierra y devuelve el foco al botón que abrió, y
+  el campo se enfoca al abrir la búsqueda. Micro-interacción igual (hundido al presionar, borde de
+  marca, ícono que rota a X).
+  **Hueco que apareció al implementarlo**: el nav se muestra recién en `xl` (1280), así que entre 768 y
+  1279 no había **ningún** menú. El hamburger va de `xl:hidden` para abajo (no `md:hidden`), y la lupa
+  queda `md:hidden` porque a partir de `md` ya está la barra completa. `site-search.tsx` se borró.
+  En `car-card.tsx` se quitó el badge de estado y el import de `getCarBadge` (sigue vivo para la ficha
+  y el panel).

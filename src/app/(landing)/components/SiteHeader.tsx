@@ -3,7 +3,7 @@ import Link from "next/link";
 
 import { activeSite } from "@/site/active";
 
-import { MobileSearchToggle, SearchForm } from "./site-search";
+import { MobileHeaderActions, SearchForm } from "./mobile-header-actions";
 
 /**
  * The public header.
@@ -82,9 +82,9 @@ export function SiteHeader() {
           WhatsApp
         </a>
 
-        {/* Mobile: logo — espacio — lupa. El panel y el cierre por click viven
-            en el componente cliente. */}
-        <MobileSearchToggle />
+        {/* Mobile: logo — espacio — lupa y menú. Los dos paneles y el cierre por
+            click viven en el componente cliente. */}
+        <MobileHeaderActions sections={SECTIONS} />
       </div>
     </header>
   );

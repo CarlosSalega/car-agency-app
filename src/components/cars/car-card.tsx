@@ -5,7 +5,6 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 
 import { CarImage } from "@/components/cars";
-import { getCarBadge } from "@/components/status-badges";
 import { fuelLabels } from "@/lib/constants";
 import { safeJsonParse, formatPrice, formatKm } from "@/lib/utils";
 
@@ -25,8 +24,6 @@ export function CarCard({ car }: CarCardProps) {
 
   const imageKey = images[0] ?? undefined;
 
-  const badge = getCarBadge(car.status);
-
   return (
     <Link href={`/autos/${slug}`} className="group block w-full">
       {/* A hairline makes the edge deliberate: without it the card is a light
@@ -42,14 +39,6 @@ export function CarCard({ car }: CarCardProps) {
 
         {/* GRADIENT: neutro, sin tintes de color (design system) */}
         <div className="from-background via-background/80 pointer-events-none absolute inset-x-0 bottom-0 h-3/5 bg-linear-to-t to-transparent" />
-
-        {badge ? (
-          <span
-            className={`absolute top-3 left-3 z-10 rounded-none px-2 py-0.5 font-mono text-[10px] font-semibold tracking-[0.08em] uppercase ${badge.className}`}
-          >
-            {badge.label}
-          </span>
-        ) : null}
 
         {/* CONTENT OVERLAY */}
         <div className="absolute inset-x-0 bottom-0 z-10 flex flex-col gap-2.5 p-3.5">
