@@ -55,7 +55,7 @@ export function SiteHeader() {
           />
         </Link>
 
-        <nav aria-label="Secciones" className="hidden gap-5 lg:flex">
+        <nav aria-label="Secciones" className="hidden gap-5 xl:flex">
           {SECTIONS.map((section) => (
             <a
               key={section.href}
@@ -68,7 +68,7 @@ export function SiteHeader() {
         </nav>
 
         {/* Desktop: la barra vive en la fila. */}
-        <div className="ml-auto hidden w-full max-w-[400px] flex-1 basis-[220px] md:block">
+        <div className="ml-auto hidden w-full max-w-[360px] flex-1 basis-[200px] md:block">
           <SearchForm id="site-search" />
         </div>
 

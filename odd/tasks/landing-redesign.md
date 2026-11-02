@@ -122,3 +122,9 @@ committed on its own, so the owner can review and change direction between secti
   con `next/image`, sin el cuadrado rojo (el wordmark ya trae el monograma). Altura 16px en mobile
   (151px de ancho) y 20px en desktop (188px). Medido: `scrollWidth === viewport` en 320 y 375, header
   de 57px; en 768 y 1440 el logo pasa a 188x20.
+
+- **L14 (header a 1024, reportado por el owner):** a partir de 1024 el nav entraba (`lg`) y ya no
+  cabía: el campo quedaba en ~60px con el placeholder cortado. El nav pasa a `xl` (1280) y el
+  buscador baja su techo de 400 a 360. Medido con Chrome: 1024/1180 → sin nav, campo de 283px,
+  `scrollWidth` 1009/1165; 1280/1366/1440 → nav de 438px, campo 283px, `scrollWidth` 1265/1351/1425.
+  En todos los anchos el header mide 63px y no hay scroll horizontal.
