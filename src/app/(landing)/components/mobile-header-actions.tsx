@@ -5,6 +5,8 @@ import { useEffect, useRef, useState } from "react";
 
 import { activeSite } from "@/site/active";
 
+import { useSectionNavigation } from "./site-nav";
+
 /**
  * The mobile header actions: the search and the menu.
  *
@@ -28,6 +30,7 @@ export function MobileHeaderActions({
   sections: readonly { label: string; href: string }[];
 }) {
   const [open, setOpen] = useState<Panel | null>(null);
+  const onNavigate = useSectionNavigation();
   const searchButtonRef = useRef<HTMLButtonElement>(null);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
@@ -144,8 +147,11 @@ export function MobileHeaderActions({
               {sections.map((section) => (
                 <a
                   key={section.href}
-                  href={section.href}
-                  onClick={() => setOpen(null)}
+                  href={`/${section.href}`}
+                  onClick={(event) => {
+                    setOpen(null);
+                    onNavigate(event, section.href.slice(1));
+                  }}
                   className="border-border text-subtle-foreground hover:text-foreground flex items-center justify-between border-b py-3.5 font-mono text-[12px] tracking-[0.16em] uppercase transition-colors last:border-b-0"
                 >
                   {section.label}

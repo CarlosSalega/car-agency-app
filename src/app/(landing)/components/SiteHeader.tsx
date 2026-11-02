@@ -4,6 +4,7 @@ import Link from "next/link";
 import { activeSite } from "@/site/active";
 
 import { MobileHeaderActions, SearchForm } from "./mobile-header-actions";
+import { SiteNav } from "./site-nav";
 
 /**
  * The public header.
@@ -56,19 +57,7 @@ export function SiteHeader() {
           />
         </Link>
 
-        <nav aria-label="Secciones" className="hidden gap-6 xl:flex">
-          {SECTIONS.map((section) => (
-            <a
-              key={section.href}
-              href={section.href}
-              /* Subrayado de marca: crece desde la izquierda en 200ms. Es la única
-                 animación del nav, y respeta `motion-reduce`. */
-              className="text-muted-foreground hover:text-foreground after:bg-brand relative py-2 font-mono text-[11px] tracking-[0.14em] uppercase transition-colors after:absolute after:inset-x-0 after:-bottom-0.5 after:h-0.5 after:origin-left after:scale-x-0 after:transition-transform after:duration-200 after:ease-out hover:after:scale-x-100 motion-reduce:after:transition-none"
-            >
-              {section.label}
-            </a>
-          ))}
-        </nav>
+        <SiteNav sections={SECTIONS} />
 
         {/* Desktop: la barra vive en la fila. */}
         <div className="ml-auto hidden w-full max-w-[340px] flex-1 basis-[200px] md:block">

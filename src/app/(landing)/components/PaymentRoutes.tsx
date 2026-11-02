@@ -38,7 +38,10 @@ const ROUTES = [
 
 export function PaymentRoutes() {
   return (
-    <section id="pago" className="bg-background border-border border-b py-20">
+    <section
+      id="pago"
+      className="bg-background border-border scroll-mt-[88px] border-b py-20"
+    >
       <div className="mx-auto grid w-full max-w-[1320px] gap-10 px-7 lg:grid-cols-[minmax(0,300px)_1fr] lg:gap-16">
         {/* El título vive en una columna propia y acompaña el scroll de la lista. */}
         <div className="self-start lg:sticky lg:top-24">

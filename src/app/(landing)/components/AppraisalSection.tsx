@@ -41,7 +41,7 @@ export function AppraisalSection() {
   return (
     <section
       id="tasacion"
-      className="bg-secondary border-border border-b py-20"
+      className="bg-secondary border-border scroll-mt-[88px] border-b py-20"
     >
       <div className="mx-auto grid w-full max-w-[1320px] items-start gap-10 px-7 lg:grid-cols-[1fr_0.9fr]">
         <div>

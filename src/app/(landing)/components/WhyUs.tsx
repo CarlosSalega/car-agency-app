@@ -29,7 +29,10 @@ const CLAIMS = [
 
 export function WhyUs() {
   return (
-    <section id="porque" className="bg-card border-border border-b py-20">
+    <section
+      id="porque"
+      className="bg-card border-border scroll-mt-[88px] border-b py-20"
+    >
       <div className="mx-auto w-full max-w-[1320px] px-7">
         <p className="text-muted-foreground mb-2 flex items-center gap-3 font-mono text-[11px] tracking-[0.16em] uppercase">
           <s aria-hidden="true" className="bg-brand block h-px w-7" />

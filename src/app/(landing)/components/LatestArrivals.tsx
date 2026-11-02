@@ -42,7 +42,7 @@ export function LatestArrivals({ cars, totalCars }: LatestArrivalsProps) {
   return (
     <section
       id="ingresos"
-      className="bg-background border-border border-b py-20"
+      className="bg-background border-border scroll-mt-[88px] border-b py-20"
     >
       <div className="mx-auto w-full max-w-[1320px] px-7">
         <div className="mb-8 grid items-end gap-6 md:grid-cols-[1fr_auto]">

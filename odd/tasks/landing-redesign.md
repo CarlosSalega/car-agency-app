@@ -277,3 +277,14 @@ committed on its own, so the owner can review and change direction between secti
   **Sin medir** (no hay dev server): la cuenta a 1280 da 188 (logo) + 96 (gaps) + ~550 (nav de 6) + 107
   (WhatsApp) + 200 (mínimo del buscador) = ~1141 sobre 1216 disponibles, así que entra con ~75px de
   sobrante que absorbe el buscador. Es el ancho más ajustado y el primero a mirar.
+
+- **L31 (nav desde otras rutas, sin hash en la URL):** "revisa el path cuando estoy en /catalogo y quiero
+  ir por ejemplo a pagos, revisa ese error, tampoco se debe de ensuciar la url con # por el id". Los
+  links del nav eran anclas (`#pago`): en `/` funcionaban y en cualquier otra ruta no hacían nada y
+  dejaban un `#pago` apuntando a un elemento inexistente. Ahora `site-nav.tsx` intercepta el click:
+  en la landing hace `scrollIntoView` sin tocar la URL; desde otra ruta guarda el destino en una
+  variable de módulo, hace `router.push("/")` y scrollea cuando la landing ya está montada. El hash no
+  llega nunca a la barra de direcciones. `scroll-mt-[88px]` en las seis secciones para que el header
+  sticky (68px) no tape el título, y `behavior: "smooth"` se saltea con `prefers-reduced-motion`.
+  El menú mobile usa el mismo hook. **No pude reproducir un error de runtime** (sin server): el fallo
+  observable era que no navegaba y ensuciaba la URL.
