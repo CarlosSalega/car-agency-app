@@ -73,6 +73,7 @@
         grid-template-columns: 42% 58%;
         min-height: 100svh;
       }
+      /* La vidriera ocupa toda la mitad izquierda: la unidad ES la pantalla. */
       .pane {
         position: sticky;
         top: 0;
@@ -80,76 +81,85 @@
         background: var(--ground);
         border-right: 1px solid var(--line);
         overflow: hidden;
-        display: flex;
-        flex-direction: column;
       }
-      .pane__label {
+      .pane__media {
         position: absolute;
         inset: 0;
-        pointer-events: none;
-        padding: 26px;
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
+        width: 100%;
+        height: 100%;
+        display: block;
+        color: #cfcfcf;
       }
-      .pane__label .v {
+      .pane__tag {
+        position: absolute;
+        top: 22px;
+        left: 22px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: var(--mute);
+      }
+      .pane__tag i {
+        width: 8px;
+        height: 8px;
+        background: var(--brand);
+        display: block;
+      }
+      .pane__v {
+        position: absolute;
+        top: 22px;
+        right: 22px;
         writing-mode: vertical-rl;
         color: var(--mute);
-        letter-spacing: 0.34em;
+        letter-spacing: 0.32em;
+        font-family: var(--mono);
+        font-size: 10px;
+        text-transform: uppercase;
       }
-      .pane__art {
-        flex: 1;
-        display: grid;
-        place-items: center;
-        padding: 40px;
-        color: #d8d8d8;
-        position: relative;
-      }
-      .pane__art svg.car {
-        width: 78%;
-        height: auto;
-        filter: drop-shadow(0 30px 60px rgba(0, 0, 0, 0.6));
-      }
-      .pane__floor {
-        border-top: 1px solid var(--line);
-        padding: 18px 26px;
+      .pane__overlay {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
         display: flex;
+        align-items: baseline;
         justify-content: space-between;
-        gap: 14px;
-      }
-      .pane__foot {
-        border-top: 1px solid var(--line);
-        padding: 20px 26px 26px;
-        background: var(--panel);
-      }
-      .pane__foot h3 {
-        margin: 0 0 6px;
-        font-size: 22px;
-        letter-spacing: -0.01em;
-      }
-      .pane__foot p {
-        margin: 0;
+        gap: 16px;
+        padding: 22px;
+        background: linear-gradient(
+          to top,
+          rgba(8, 8, 8, 0.94) 45%,
+          rgba(8, 8, 8, 0)
+        );
         color: var(--mute);
-        font-size: 14px;
-        line-height: 1.6;
       }
-      .redline {
-        height: 3px;
-        background: var(--brand);
-        width: 84px;
+      .pane__overlay b {
+        color: var(--fg);
+        font-weight: 500;
+      }
+      .pane__overlay .price {
+        color: var(--fg);
+        font-family: var(--mono);
+        font-size: 14px;
+        letter-spacing: 0.04em;
       }
       .col {
         display: flex;
         flex-direction: column;
+        /* El header de esta columna vive en ~835px aunque la ventana tenga 1440:
+           las media queries miran la ventana, así que acá manda el ancho del
+           contenedor. */
+        container-type: inline-size;
       }
       /* ---------- header ---------- */
       .top {
         border-bottom: 1px solid var(--line);
-        padding: 0 40px;
-        height: 62px;
+        padding: 0 28px;
+        min-height: 62px;
         display: flex;
+        flex-wrap: wrap;
         align-items: center;
-        gap: 28px;
+        gap: 14px 18px;
         position: sticky;
         top: 0;
         z-index: 20;
@@ -529,9 +539,9 @@
         display: flex;
         align-items: center;
         margin-left: auto;
-        flex: 1 1 220px;
-        max-width: 340px;
-        min-width: 170px;
+        flex: 1 1 190px;
+        max-width: 300px;
+        min-width: 150px;
         border: 1px solid var(--line-2);
         background: var(--ground);
         border-radius: var(--r);
@@ -615,6 +625,14 @@
         font-size: 12px;
         line-height: 1.6;
       }
+      @container (max-width: 940px) {
+        .top nav {
+          display: none;
+        }
+        .search {
+          max-width: none;
+        }
+      }
       @media (max-width: 1240px) {
         .top nav {
           display: none;
@@ -627,14 +645,14 @@
         .stage {
           grid-template-columns: 1fr;
         }
+        .pane__v {
+          display: none;
+        }
         .pane {
           position: relative;
-          height: 46svh;
+          height: 52svh;
           border-right: 0;
           border-bottom: 1px solid var(--line);
-        }
-        .pane__foot {
-          display: none;
         }
         .top {
           padding: 0 20px;
@@ -691,17 +709,42 @@
     <div class="stage">
       <!-- La mitad que no se mueve: la vidriera -->
       <aside class="pane" aria-hidden="true">
-        <div class="pane__label">
-          <span class="mono mute">GL Autos</span>
-          <span class="mono v">Vidriera · General López 3543</span>
-        </div>
-        <div class="pane__art">
-          <svg
-            class="car"
-            viewBox="0 0 340 110"
-            role="img"
-            aria-label="Silueta de la unidad destacada"
-          >
+        <!-- La "foto": un gráfico a sangre que se recorta con el panel, como una
+             unidad vista desde la vereda. En producción es la foto de la unidad
+             destacada, con object-fit: cover. -->
+        <svg
+          class="pane__media"
+          viewBox="0 0 620 1000"
+          preserveAspectRatio="xMidYMid slice"
+        >
+          <defs>
+            <pattern
+              id="paneGrid"
+              width="38"
+              height="38"
+              patternUnits="userSpaceOnUse"
+            >
+              <path
+                d="M38 0H0V38"
+                fill="none"
+                stroke="#1e1e1e"
+                stroke-width="1"
+              />
+            </pattern>
+            <linearGradient id="paneFade" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#171717" />
+              <stop offset="0.55" stop-color="#0e0e0e" />
+              <stop offset="1" stop-color="#080808" />
+            </linearGradient>
+            <radialGradient id="paneGlow" cx="0.5" cy="0.5" r="0.6">
+              <stop offset="0" stop-color="#2e2e2e" stop-opacity="0.85" />
+              <stop offset="1" stop-color="#0b0b0b" stop-opacity="0" />
+            </radialGradient>
+          </defs>
+          <rect width="620" height="1000" fill="url(#paneFade)" />
+          <rect width="620" height="1000" fill="url(#paneGrid)" />
+          <ellipse cx="310" cy="575" rx="310" ry="215" fill="url(#paneGlow)" />
+          <g transform="translate(28, 430) scale(1.66)">
             <path
               d="M12 78 L20 62 q5-8 16-9 l52-4 q14-16 34-18 l84-1 q22 2 38 19 l58 4 q14 2 18 11 l4 14 Z"
               fill="none"
@@ -746,24 +789,20 @@
               stroke="currentColor"
               stroke-width="1.5"
             />
-            <path
-              d="M12 86 h316"
-              stroke="currentColor"
-              stroke-width="1"
-              stroke-dasharray="2 6"
-            />
-          </svg>
-        </div>
-        <div class="pane__floor">
-          <div class="redline"></div>
-          <span class="mono mute">0 km · 2025</span>
-        </div>
-        <div class="pane__foot">
-          <h3>Volkswagen Taos Highline</h3>
-          <p>
-            La última que entró al salón. $39.500.000, con parte de pago y
-            financiación.
-          </p>
+          </g>
+          <path
+            d="M0 642 H620"
+            stroke="#333"
+            stroke-width="1"
+            stroke-dasharray="3 7"
+          />
+        </svg>
+
+        <div class="pane__tag mono"><i></i>GL Autos</div>
+        <span class="pane__v">Vidriera · General López 3543</span>
+        <div class="pane__overlay mono">
+          <span><b>Taos Highline</b> · 2025 · 0 km</span>
+          <span class="price">$39.500.000</span>
         </div>
       </aside>
 
