@@ -103,3 +103,16 @@ committed on its own, so the owner can review and change direction between secti
 - **L10 (bug evitado):** `autoFocus` en el input del buscador mobile no puede funcionar — vive dentro
   de un `<details>` cerrado, así que el navegador lo ignora y sólo queda código muerto con riesgo de
   scroll inesperado. Se quitó.
+
+- **L11 (`<details>` → componente cliente, pedido del owner):** "agrega una micro interaccion al
+  boton de busqueda y haz que si clickeo en el espacio en blanco del header este cierre la barra de
+  busqueda, ahora solo cierra cuando hago click en el boton de busqueda con lupa". Un `<details>`
+  nativo no cierra con un click afuera ni con Escape, así que la lupa pasó a
+  `site-search.tsx` (cliente, el único del header). Mantiene: abrir/cerrar con click, cierre por
+  `pointerdown` fuera del panel y del botón, Escape devuelve el foco al botón, y el campo se enfoca
+  al abrir. Micro-interacción: `scale(0.95)` al presionar, 120–150ms ease-out, el borde toma el
+  color de marca y la lupa rota a una X; todo con `motion-reduce:` apagado para quien lo pide.
+- **L12 (verificación de la interacción, CDP a 320px):** inicial cerrado (`aria-expanded="false"`);
+  click en la lupa → abierto, `aria-expanded="true"`, foco en `site-search-mobile-field`; click en el
+  espacio en blanco del header → cerrado; Escape → cerrado; `scrollWidth` = 320 en los cuatro
+  estados, así que ningún estado introduce scroll horizontal.
