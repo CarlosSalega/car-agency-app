@@ -66,3 +66,29 @@ committed on its own, so the owner can review and change direction between secti
 - **L5 (hallazgo):** `src/proxy.ts` tiene una allowlist `PUBLIC_PATHS = ["/", "/autos", "/contacto"]`
   y su `isPublicRoute` sólo acepta el prefijo `/autos/`. Agregar `/catalogo` sin tocar esa lista
   habría mandado el catálogo nuevo al login: entra en T1.
+
+## Verified
+
+`tsc` 0 · **54 files / 408 tests** · `pnpm build` 0 · `/autos` answers 308 to `/catalogo` ·
+`/catalogo`, `/ventas`, `/contacto` and a car detail answer 200 with the new footer ·
+`/catalogo?q=hilux` returns one unit · renders checked at 1440, 1024, 768 and 390.
+
+## Log (continuación)
+
+- **L6 (bugs que sólo aparecieron al mirar el render):**
+  1. La foto del hero no llenaba: el contenedor declara `min-height`, así que un
+     `h-full` adentro mide 0. Se resolvió con capas absolutas.
+  2. El skeleton de `CarImage` (`z-10`) tapaba el caption del hero. Ahí corre con
+     `skipSkeleton`, porque en el hero la foto **es** el fondo.
+  3. El rótulo de marca quedaba gris sobre una foto clara. Ahora va con su propio
+     scrim.
+  4. Los horarios se partían por espacios y producían "SÁB 9–12:30" como etiqueta y
+     "hs" como valor. Se renderizan como líneas.
+  5. `dealerDescription` todavía decía "Concesionario" (y se publica en el JSON-LD):
+     el barrido de vocabulario no lo veía porque el test de marca sólo busca nombres.
+- **L7 (decisión, mapa):** el artboard dibujaba un mapa; se implementó un **cartel**
+  con la dirección y un link a Google Maps. Un iframe de Google carga sus scripts y
+  cookies, y el texto de privacidad que lo justificaría sigue pendiente (T0.5).
+- **L8 (pendiente real):** `/catalogo` funciona (18 unidades, paginado, `?q=`) pero
+  conserva el lenguaje visual anterior: cards con radio, navbar viejo, buscador
+  redondeado. Necesita su propio artboard antes de tocarse. Es T8.
