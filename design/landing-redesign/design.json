@@ -11,8 +11,8 @@
     },
     {
       "file": "02-vidriera.html",
-      "title": "Vidriera partida",
-      "tradeoff": "La mitad izquierda queda fija como vidriera del local y la derecha se lee como documento: mucha atmósfera. Peor para comparar muchas unidades de un vistazo.",
+      "title": "Vidriera (hero partido, resto en una columna)",
+      "tradeoff": "La primera pantalla se parte en dos —la unidad a sangre a la izquierda, la información a la derecha— y de ahí para abajo la página es una sola columna a todo el ancho. Máximo impacto en el primer scroll, y el resto se lee como un documento. El hero ocupa una pantalla completa, así que el stock aparece recién al segundo scroll.",
       "width": 1440,
       "height": 2600
     },
