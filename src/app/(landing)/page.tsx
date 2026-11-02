@@ -9,13 +9,13 @@ import {
 } from "@/lib/queries/reviews";
 import { withReviewStructuredData } from "@/lib/reviews";
 
-import FeatureCards from "./components/FeatureCards";
 import Footer from "./components/Footer";
 import { Hero } from "./components/Hero";
 import { LatestArrivals } from "./components/LatestArrivals";
+import { PaymentRoutes } from "./components/PaymentRoutes";
+import { WhyUs } from "./components/WhyUs";
 import { SiteHeader } from "./components/SiteHeader";
 import Reviews from "./components/Reviews";
-import ServicesSection from "./components/ServicesSection";
 import { WhatsAppFloatButton } from "./components/ui/WhatsAppFloatButton";
 
 export const metadata: Metadata = buildPageMetadata(activeSite, "home", "/");
@@ -84,16 +84,9 @@ export default async function LandingPage() {
       <SiteHeader />
       <main id="main-content">
         <Hero car={cars[0] ?? null} totalCars={totalCars} />
-        <FeatureCards />
         <LatestArrivals cars={cars} totalCars={totalCars} />
-        <ServicesSection />
-        <div aria-hidden="true" className="bg-background">
-          <div className="mx-auto flex max-w-6xl items-center gap-5 px-4 md:px-10">
-            <div className="bg-border h-0.5 flex-1" />
-            <div className="bg-brand h-1.5 w-24 rounded-full" />
-            <div className="bg-border h-0.5 flex-1" />
-          </div>
-        </div>
+        <WhyUs />
+        <PaymentRoutes />
         <Reviews />
       </main>
       <Footer />
