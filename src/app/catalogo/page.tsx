@@ -23,7 +23,7 @@ export const revalidate = 300;
 export const metadata: Metadata = buildPageMetadata(
   activeSite,
   "catalog",
-  "/autos",
+  "/catalogo",
 );
 function buildFilters(params: {
   [key: string]: string | string[] | undefined;
@@ -43,11 +43,18 @@ function buildFilters(params: {
   if (params.maxYear) filters.maxYear = Number(params.maxYear);
   if (params.minPrice) filters.minPrice = Number(params.minPrice);
   if (params.maxPrice) filters.maxPrice = Number(params.maxPrice);
-  if (params.search) filters.search = params.search as string;
+  // El buscador del header manda `q`; los filtros del panel mandan `search`.
+  // Los dos alimentan el mismo `where`, así que un link viejo sigue funcionando.
+  const search = params.q ?? params.search;
+  if (typeof search === "string" && search.trim()) {
+    filters.search = search.trim();
+  }
   return filters;
 }
 
-export default async function AutosPage({ searchParams }: PageProps<"/autos">) {
+export default async function CatalogoPage({
+  searchParams,
+}: PageProps<"/catalogo">) {
   const params = await searchParams;
   const page = Number(params.page) || 1;
   const limit = 12;
@@ -100,7 +107,7 @@ export default async function AutosPage({ searchParams }: PageProps<"/autos">) {
           <div className="flex min-w-0 flex-col lg:col-start-2 lg:row-start-2">
             <CarGrid
               cars={cars}
-              emptyAction={{ href: "/autos", label: "Limpiar filtros" }}
+              emptyAction={{ href: "/catalogo", label: "Limpiar filtros" }}
               pagination={{ currentPage: page, totalPages, baseUrl }}
             />
           </div>

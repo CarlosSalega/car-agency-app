@@ -12,7 +12,7 @@ export function SearchComponent() {
   return (
     <>
       <form
-        action="/autos"
+        action="/catalogo"
         method="GET"
         className="mx-auto mt-8 block max-w-sm px-4"
       >

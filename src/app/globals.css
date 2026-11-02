@@ -125,6 +125,12 @@
   --destructive: #ff5c5c;
   --destructive-foreground: #000000;
 
+  /* Dos neutros que la superficie pública necesita y el panel no: un escalón
+     por debajo del fondo (la vidriera del hero, los marcos de las fotos) y una
+     línea que sí carga jerarquía. La de 1px default separa; ésta destaca. */
+  --ground: #0b0b0b;
+  --line-strong: #3a3a3a;
+
   --border: #2a2a2a;
   --input: #3d3d3d;
   /* Focus follows the brand, not the action: a red ring is identity. */
@@ -195,6 +201,8 @@
   --color-popover-foreground: var(--popover-foreground);
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
+  --color-ground: var(--ground);
+  --color-line-strong: var(--line-strong);
   --color-brand: var(--brand);
   --color-brand-foreground: var(--brand-foreground);
   --color-secondary: var(--secondary);

@@ -1,6 +1,21 @@
 /** @type {import('next').NextConfig} */
 
 const nextConfig = {
+  /**
+   * The catalog moved from `/autos` to `/catalogo`. The list redirects so old
+   * links and indexed URLs keep working; the car detail does NOT move, because
+   * `/autos/[slug]` is what search engines have indexed and what people share.
+   */
+  async redirects() {
+    return [
+      {
+        source: "/autos",
+        destination: "/catalogo",
+        permanent: true,
+      },
+    ];
+  },
+
   async headers() {
     return [
       // No rule for `/_next/static/:path*`, and that is a measured decision.

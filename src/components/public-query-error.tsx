@@ -48,7 +48,7 @@ export function PublicQueryError({
               <Button
                 variant="outline"
                 size="lg"
-                render={<Link href="/autos">Volver al catálogo</Link>}
+                render={<Link href="/catalogo">Volver al catálogo</Link>}
               />
             ) : null}
           </div>

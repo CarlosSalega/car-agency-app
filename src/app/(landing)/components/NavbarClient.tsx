@@ -22,7 +22,7 @@ interface NavbarClientProps {
 
 const NAV_LINKS = [
   { label: "Inicio", href: "/" },
-  { label: "Catálogo", href: "/autos" },
+  { label: "Catálogo", href: "/catalogo" },
   { label: "Contacto", href: "/contacto" },
 ];
 

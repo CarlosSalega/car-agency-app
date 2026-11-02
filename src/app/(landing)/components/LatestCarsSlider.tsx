@@ -209,7 +209,7 @@ export function LatestCarsSlider({ cars }: LatestCarsSliderProps) {
           Hay más autos esperándote
         </p>
         <Link
-          href="/autos"
+          href="/catalogo"
           className="group bg-primary text-primary-foreground hover:bg-primary/90 flex h-14 w-full max-w-xs items-center justify-center gap-2 rounded-lg px-6 py-3.5 text-sm font-bold tracking-widest whitespace-nowrap uppercase transition-all hover:scale-105 active:scale-95 sm:px-8"
         >
           Ver todos los autos

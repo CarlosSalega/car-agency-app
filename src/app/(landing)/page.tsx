@@ -13,7 +13,7 @@ import FeatureCards from "./components/FeatureCards";
 import Footer from "./components/Footer";
 import Hero from "./components/Hero";
 import { LatestCarsSlider } from "./components/LatestCarsSlider";
-import { NavbarServer } from "./components/NavbarServer";
+import { SiteHeader } from "./components/SiteHeader";
 import Reviews from "./components/Reviews";
 import ServicesSection from "./components/ServicesSection";
 import { WhatsAppFloatButton } from "./components/ui/WhatsAppFloatButton";
@@ -80,7 +80,7 @@ export default async function LandingPage() {
           __html: JSON.stringify(landingJsonLd),
         }}
       />
-      <NavbarServer />
+      <SiteHeader />
       <main id="main-content">
         <Hero />
         <FeatureCards />

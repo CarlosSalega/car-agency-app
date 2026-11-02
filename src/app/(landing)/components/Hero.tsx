@@ -186,7 +186,7 @@ export default function Hero() {
           }`}
         >
           <Link
-            href="/autos"
+            href="/catalogo"
             className="bg-primary text-primary-foreground hover:bg-primary/90 h-14 w-full rounded-lg px-10 py-4 text-sm font-bold tracking-widest uppercase transition-all hover:scale-105 active:scale-95 md:w-auto"
           >
             Ver vehículos

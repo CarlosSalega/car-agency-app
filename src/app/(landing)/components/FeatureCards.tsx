@@ -9,7 +9,7 @@ const cards = [
     desc: "Encontrá el auto que estabas buscando con revisión mecánica garantizada.",
     icon: "ph-shopping-cart",
     bg: "/compra.webp",
-    href: "/autos",
+    href: "/catalogo",
   },
   {
     title: "Vendé",

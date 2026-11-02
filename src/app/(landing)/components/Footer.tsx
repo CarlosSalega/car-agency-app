@@ -62,7 +62,7 @@ export default function Footer() {
           <ul className="text-muted-foreground space-y-4 text-xs font-bold uppercase">
             <li>
               <Link
-                href="/autos"
+                href="/catalogo"
                 className="hover:text-foreground transition-colors"
               >
                 Nuestro Stock

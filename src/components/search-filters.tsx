@@ -153,7 +153,7 @@ export function SearchFilters({
 
     const query = params.toString();
     startTransition(() => {
-      router.push(query ? `/autos/?${query}` : "/autos");
+      router.push(query ? `/catalogo/?${query}` : "/catalogo");
     });
     onApply?.();
   };
@@ -173,7 +173,7 @@ export function SearchFilters({
     if (search) params.set("search", search);
 
     const query = params.toString();
-    router.push(query ? `/autos/?${query}` : "/autos");
+    router.push(query ? `/catalogo/?${query}` : "/catalogo");
     onApply?.();
   };
 
