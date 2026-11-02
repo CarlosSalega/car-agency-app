@@ -323,7 +323,7 @@ export function CarDetailGallery({ images, title }: CarDetailGalleryProps) {
     <div className="space-y-4">
       {/* Main image trigger */}
       <div
-        className="relative aspect-4/3 cursor-zoom-in overflow-hidden rounded-lg"
+        className="relative aspect-4/3 cursor-zoom-in overflow-hidden rounded-none"
         onClick={() => setLightboxOpen(true)}
       >
         <CarImage
@@ -371,7 +371,7 @@ export function CarDetailGallery({ images, title }: CarDetailGalleryProps) {
               <button
                 key={`${imageKey}-${index}`}
                 onClick={() => setCurrentIndex(index)}
-                className={`relative aspect-4/3 overflow-hidden rounded-lg ring-1 transition ${
+                className={`relative aspect-4/3 overflow-hidden rounded-none ring-1 transition ${
                   index === currentIndex
                     ? "ring-brand"
                     : "ring-muted hover:ring-muted-foreground/40"

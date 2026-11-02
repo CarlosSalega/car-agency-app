@@ -28,12 +28,18 @@ export function CarDetailInfo({ car }: CarDetailInfoProps) {
       </div>
 
       <div className="flex items-center gap-2">
-        <Badge className={badge.className}>{badge.label}</Badge>
+        <Badge className={`${badge.className} rounded-none`}>
+          {badge.label}
+        </Badge>
 
         {car.kilometers === 0 ? (
-          <Badge variant="outline">0Km</Badge>
+          <Badge variant="outline" className="rounded-none">
+            0Km
+          </Badge>
         ) : car.kilometers > 0 && car.kilometers < 50000 ? (
-          <Badge variant="secondary">Pocos kilómetros</Badge>
+          <Badge variant="secondary" className="rounded-none">
+            Pocos kilómetros
+          </Badge>
         ) : null}
       </div>
 

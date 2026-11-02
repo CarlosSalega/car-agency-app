@@ -172,3 +172,12 @@ committed on its own, so the owner can review and change direction between secti
   `car-grid` y no en el botón. Ahora el catálogo pasa un override descendiente
   (`[&_a]:rounded-none`) al `Pagination`, así el panel conserva su radio. El filtrado no se pierde:
   el buscador del header llega como `?q=` y la página lo mapea a `filters.search`.
+
+- **L21 (la ficha entra a la superficie pública):** "ahora elimina los bordes redondeados de
+  /autos/[slug]" y "tampoco tiene el mismo header publico de la landing". `NavbarServer` →
+  `SiteHeader` (y `py-32` → `pt-8 pb-16`, que compensaba al navbar `fixed`), y esquinas rectas en:
+  galería (imagen y miniaturas), `Card` de especificaciones (además `shadow-none`: el sistema público
+  no usa sombra y esa Card se sostenía sólo con `shadow-xl/20` porque tenía `border-0`), y los tres
+  `Badge` de estado. Los `input`/`button`/`a` del formulario y del botón de WhatsApp son primitivas
+  compartidas con el panel, así que se apagan por selector descendiente en el contenedor de la ruta,
+  no editando los componentes.
