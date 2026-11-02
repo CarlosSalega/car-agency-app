@@ -163,3 +163,12 @@ committed on its own, so the owner can review and change direction between secti
   (buscador y filtros): eran `shadow-sm` y `shadow-lg/30`, y el sistema nuevo no usa sombra.
   **Lo que queda de T8**: el layout del catálogo sigue siendo barra lateral de filtros + grilla;
   no hay artboard para eso todavía.
+
+- **L20 (`/catalogo`, segunda pasada):** "quedó una barra de busqueda antigua que dice 'busca tu proximo
+  auto' eliminala, tambien en el paginado los botones quedaron redondeados". Eliminado el
+  `SearchComponent` de la página —y con él el componente y `src/data/hero.ts`, que sólo él importaba:
+  quedaban como código muerto con el copy viejo adentro—. El paginado seguía redondeado porque los
+  botones son el `Button` compartido, cuya base trae `rounded-md`; mi cambio anterior estaba en
+  `car-grid` y no en el botón. Ahora el catálogo pasa un override descendiente
+  (`[&_a]:rounded-none`) al `Pagination`, así el panel conserva su radio. El filtrado no se pierde:
+  el buscador del header llega como `?q=` y la página lo mapea a `filters.search`.

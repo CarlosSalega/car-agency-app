@@ -8,7 +8,6 @@ import { Badge } from "@/components/ui/badge";
 
 import MobileFiltersSheet from "@/components/mobile-filters-sheet";
 import { SearchFilters } from "@/components/search-filters";
-import { SearchComponent } from "@/components/search/search-component";
 import { getBrandsWithModels } from "@/lib/queries/brands";
 import {
   type CarListFilters,
@@ -87,35 +86,32 @@ export default async function CatalogoPage({
       {/* El header es el mismo de la home y es `sticky`, no `fixed`: no necesita
           el `pt-24` que compensaba al navbar anterior. */}
       <SiteHeader />
-      <div>
-        <SearchComponent />
-        <div className="grid gap-x-8 gap-y-4 px-4 py-8 md:px-8 lg:grid-cols-[320px_1fr]">
-          <div
-            role="status"
-            aria-live="polite"
-            className="lg:col-start-2 lg:row-start-1"
+      <div className="grid gap-x-8 gap-y-4 px-4 py-8 md:px-8 lg:grid-cols-[320px_1fr]">
+        <div
+          role="status"
+          aria-live="polite"
+          className="lg:col-start-2 lg:row-start-1"
+        >
+          <Badge
+            variant="outline"
+            className="border-brand text-brand rounded-none"
           >
-            <Badge
-              variant="outline"
-              className="border-brand text-brand rounded-none"
-            >
-              {total === 0
-                ? "No se encontraron vehículos"
-                : total === 1
-                  ? "1 vehículo encontrado"
-                  : `Mostrando ${total} vehículos`}
-            </Badge>
-          </div>
-          <div className="hidden lg:col-start-1 lg:row-start-2 lg:block">
-            <SearchFilters brands={brands} />
-          </div>
-          <div className="flex min-w-0 flex-col lg:col-start-2 lg:row-start-2">
-            <CarGrid
-              cars={cars}
-              emptyAction={{ href: "/catalogo", label: "Limpiar filtros" }}
-              pagination={{ currentPage: page, totalPages, baseUrl }}
-            />
-          </div>
+            {total === 0
+              ? "No se encontraron vehículos"
+              : total === 1
+                ? "1 vehículo encontrado"
+                : `Mostrando ${total} vehículos`}
+          </Badge>
+        </div>
+        <div className="hidden lg:col-start-1 lg:row-start-2 lg:block">
+          <SearchFilters brands={brands} />
+        </div>
+        <div className="flex min-w-0 flex-col lg:col-start-2 lg:row-start-2">
+          <CarGrid
+            cars={cars}
+            emptyAction={{ href: "/catalogo", label: "Limpiar filtros" }}
+            pagination={{ currentPage: page, totalPages, baseUrl }}
+          />
         </div>
       </div>
       <MobileFiltersSheet brands={brands} />

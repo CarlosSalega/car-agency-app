@@ -26,15 +26,19 @@ export function CarGrid({
   totalPages,
   emptyAction,
 }: CarGridProps) {
-  const finalPagination =
-    pagination ||
-    (currentPage && totalPages
-      ? {
-          currentPage,
-          totalPages,
-          baseUrl: "?",
-        }
-      : undefined);
+  // La superficie pública no tiene radio y los botones del paginado son el
+  // `Button` compartido (base `rounded-md`, que el panel también usa). El override
+  // va como selector descendiente desde el catálogo para no tocar el admin.
+  const SQUARE_PAGINATION = "[&_a]:rounded-none";
+
+  const finalPagination = pagination
+    ? {
+        ...pagination,
+        className: `${pagination.className ?? ""} ${SQUARE_PAGINATION}`,
+      }
+    : currentPage && totalPages
+      ? { currentPage, totalPages, baseUrl: "?", className: SQUARE_PAGINATION }
+      : undefined;
 
   if (cars.length === 0) {
     return (
