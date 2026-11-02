@@ -84,7 +84,7 @@ export default async function LandingPage() {
       />
       <SiteHeader />
       <main id="main-content">
-        <Hero car={cars[0] ?? null} totalCars={totalCars} />
+        <Hero totalCars={totalCars} />
         <LatestArrivals cars={cars} totalCars={totalCars} />
         <WhyUs />
         <PaymentRoutes />

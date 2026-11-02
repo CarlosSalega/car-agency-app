@@ -1,7 +1,6 @@
+import Image from "next/image";
 import Link from "next/link";
 
-import { CarImage } from "@/components/cars/car-image";
-import { formatKm, formatPrice } from "@/lib/utils";
 import { activeSite } from "@/site/active";
 
 /**
@@ -23,77 +22,38 @@ import { activeSite } from "@/site/active";
  */
 
 interface HeroProps {
-  car: {
-    id: string;
-    title: string;
-    slug: string;
-    year: number;
-    kilometers: number;
-    price: number | string;
-    currency: string;
-    images: string[];
-  } | null;
   totalCars: number;
 }
 
-export function Hero({ car, totalCars }: HeroProps) {
+export function Hero({ totalCars }: HeroProps) {
   const { identity, whatsapp } = activeSite;
-  const firstImage = car?.images?.[0] ?? null;
 
   return (
     <section className="border-border grid border-b xl:grid-cols-2">
       {/* La unidad, a sangre */}
       <div className="bg-ground border-border relative min-h-[56svh] overflow-hidden border-b xl:min-h-[calc(100svh-62px)] xl:border-r xl:border-b-0">
-        {car ? (
-          <Link
-            href={`/autos/${car.slug}`}
-            className="absolute inset-0 block"
-            aria-label={`Ver la ficha de ${car.title}`}
-          >
-            {/* `skipSkeleton`: el shimmer de la card tapaba el caption del hero, y
-                acá la foto ES el fondo. La capa es absoluta porque el contenedor
-                sólo declara min-height, así que un `h-full` interno mide 0. */}
-            <CarImage
-              imageKey={firstImage}
-              alt={`${car.title}, ${car.year}`}
-              variant="fullscreen"
-              sizes="(max-width: 1024px) 100vw, 50vw"
-              priority
-              skipSkeleton
-              className="absolute inset-0 h-full w-full object-cover"
-            />
-          </Link>
-        ) : (
-          <div className="bg-accent absolute inset-0" />
-        )}
+        <Image
+          src={activeSite.assets.hero.src}
+          alt={`El equipo de ${identity.name} en ${identity.address.display}`}
+          width={activeSite.assets.hero.width}
+          height={activeSite.assets.hero.height}
+          sizes="(max-width: 1280px) 100vw, 50vw"
+          priority
+          className="absolute inset-0 h-full w-full object-cover object-[50%_42%]"
+        />
 
         <div className="pointer-events-none absolute inset-x-0 bottom-0 z-20 bg-gradient-to-t from-black/95 from-45% to-transparent p-5">
-          {/* En 320 el caption se apila en dos líneas y ningún dato se corta a la
-              mitad: el nombre arriba, año/kilómetros y precio abajo. */}
+          {/* El caption es del equipo, no de una unidad: el precio vive en la
+              sección de ingresos, que es donde se compara. */}
           <div className="text-muted-foreground flex flex-col gap-1 font-mono text-[11px] tracking-[0.16em] uppercase sm:flex-row sm:items-baseline sm:justify-between sm:gap-4">
-            {car ? (
-              <>
-                <span className="whitespace-nowrap">
-                  <b className="text-foreground font-medium">{car.title}</b>
-                </span>
-                <span className="flex items-baseline justify-between gap-4 sm:gap-6">
-                  <span className="whitespace-nowrap">
-                    {car.year}
-                    {" · "}
-                    {car.kilometers === 0
-                      ? "0 km"
-                      : `${formatKm(car.kilometers)} km`}
-                  </span>
-                  <span className="text-foreground text-sm whitespace-nowrap">
-                    {formatPrice(Number(car.price), car.currency)}
-                  </span>
-                </span>
-              </>
-            ) : (
-              <span className="whitespace-nowrap">
-                Salón abierto · {identity.address.display}
-              </span>
-            )}
+            <span className="whitespace-nowrap">
+              <b className="text-foreground font-medium">
+                El equipo de {identity.name}
+              </b>
+            </span>
+            <span className="whitespace-nowrap">
+              {identity.address.display}
+            </span>
           </div>
         </div>
 

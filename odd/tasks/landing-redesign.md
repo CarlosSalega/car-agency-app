@@ -144,3 +144,12 @@ committed on its own, so the owner can review and change direction between secti
 - **L17 (caption de la foto):** a 320 el dato cortaba "0 / KM" en dos líneas. Ahora se apila: nombre
   arriba, año/kilómetros y precio abajo, cada fragmento con `whitespace-nowrap`. La línea de teléfono
   del hero también evita partir el número.
+
+- **L18 (la foto del equipo como hero):** el owner dejó `public/hero` —un JPEG de 1440×1920 y
+  897 KB sin extensión— y preguntó si genera confianza. Sí: cinco personas abrazadas delante del
+  salón real, con el cartel de la dirección y el de "VENDEMOS TU USADO", prueba que el lugar existe y
+  que atiende una familia. Implementado con tres recaudos: (1) convertido a `public/hero.webp`
+  (430 KB) porque la LCP no puede ser un JPEG de 900 KB; (2) declarado como asset del cliente
+  (`SiteAssets.hero`), no como contenido de la base; (3) `object-position: 50% 42%` para que el
+  recorte deje las caras y el cartel del salón dentro del panel en todos los anchos. El hero deja de
+  mostrar la última unidad: el precio se compara en la sección de ingresos, no en la portada.

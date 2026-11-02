@@ -95,6 +95,11 @@ export interface SiteAssets {
   wordmark: { src: string; width: number; height: number };
   /** The monogram the collapsed admin rail shows. */
   mark: { src: string; width: number; height: number };
+  /**
+   * The hero photo: the people in front of the shop. It is a brand asset, not
+   * content, so it ships with the client and not from the database.
+   */
+  hero: { src: string; width: number; height: number };
   /** Social preview image. */
   preview: { src: string; width: number; height: number };
   /** Square social preview, used by the platforms that crop. */
