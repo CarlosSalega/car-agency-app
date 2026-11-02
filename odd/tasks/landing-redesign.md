@@ -245,3 +245,11 @@ committed on its own, so the owner can review and change direction between secti
   confianza). Se agregó al nav, y "Formas de pago" pasó a "Pago" para que seis items entren a 1280.
   Superficies: ingresos `#121212` → por qué `#141414` → pago `#121212` → **tasación `#1c1c1c`** →
   reseñas `#121212` → salón `#141414`. La banda de acción es la más clara de la gama.
+
+- **L28 (dos secciones calcadas):** "las secciones de 'porque elegirnos' y 'formas de pago' son un calco
+  ambas". Tenían el mismo esqueleto (kicker + h2 + grilla de columnas con borde), a dos secciones de
+  distancia. Se rediseñó **formas de pago** como **libro/ledger**, que es lo que la sección realmente
+  es: un menú de formas de pagar. Columna izquierda con el título (sticky en desktop) y, a la derecha,
+  filas `dl` con la ruta en mono a la izquierda y la explicación a la derecha, una línea por fila.
+  Ahora las tres secciones seguidas tienen estructuras distintas: **por qué** = 3 columnas con número,
+  **formas de pago** = ledger de filas, **tasación** = título + formulario.
