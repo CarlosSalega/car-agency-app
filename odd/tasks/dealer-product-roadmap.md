@@ -61,7 +61,7 @@ Leads plus Meta Pixel plus IP/UA in `Visit` are personal data (AR Ley 25.326). N
 a policy page and Pixel that does not fire before consent. Acceptance: no `fbq` call
 until the visitor accepts.
 
-T0.6 — Brand config instead of brand literals. **M**
+T0.6 — Brand config instead of brand literals. **Phase 0 done, see below.**
 One `dealer` config (name, legal name, domain, phone, WhatsApp, address, hours,
 socials, logo paths) as the single source, consumed by `metadata.ts`, the JSON-LD, the
 footer, the contact defaults, the seed and the linktree. The page-level

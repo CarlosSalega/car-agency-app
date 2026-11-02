@@ -1,22 +1,24 @@
 "use client";
 
 import Link from "next/link";
+import { Fragment } from "react";
 import { Clock, MapPin, PhoneIcon } from "lucide-react";
 import { HEADER_CONTENT } from "@/data/header";
+import { activeSite } from "@/site/active";
 import { track } from "@/lib/meta-pixel";
 import { useScrollAnimation } from "../hooks/useScrollAnimation";
 
 export default function Footer() {
   const { logo } = HEADER_CONTENT;
   const { ref, isVisible } = useScrollAnimation({ threshold: 0.1 });
-  const instagramUrl =
-    process.env.NEXT_PUBLIC_INSTAGRAM_URL ??
-    "https://www.instagram.com/gl.autos.sf/";
-  const mapsUrl =
-    process.env.NEXT_PUBLIC_MAPS_URL ??
-    "https://www.google.com/maps/place/GL+Autos/@-31.6552097,-60.7221098,17z/data=!3m1!4b1!4m6!3m5!1s0x95b5a98297abae09:0xbc2d98ddab36bb27!8m2!3d-31.6552097!4d-60.7221098!16s%2Fg%2F11ww7df7k8";
-  const phoneDisplay = "+54 9 342 577 7646";
-  const phoneHref = "tel:+5493425777646";
+  const { identity, whatsapp } = activeSite;
+  // The env overrides live in `src/site/compose.ts` now: a component reading
+  // `process.env` on its own line is how three copies of the same phone number
+  // drifted apart.
+  const instagramUrl = identity.social.instagram ?? "";
+  const mapsUrl = identity.mapsUrl;
+  const phoneDisplay = identity.contact.phoneDisplay;
+  const phoneHref = whatsapp.telHref;
 
   return (
     <footer
@@ -41,7 +43,7 @@ export default function Footer() {
             />
           </Link>
           <p className="text-muted-foreground text-sm leading-relaxed tracking-tight uppercase">
-            GL Autos
+            {identity.name}
           </p>
           <p className="text-muted-foreground text-sm leading-relaxed tracking-tight uppercase">
             Concesionario multimarcas de usados seleccionados y 0km
@@ -107,7 +109,7 @@ export default function Footer() {
                 className="hover:text-foreground flex min-w-0 items-center gap-2 break-words transition-colors"
               >
                 <MapPin size={16} className="shrink-0" />
-                General López 3543, Santa Fe
+                {identity.address.display}
               </a>
             </li>
             <li>
@@ -123,9 +125,12 @@ export default function Footer() {
             <li className="flex items-start gap-2">
               <Clock size={16} className="mt-0.5 shrink-0" />
               <span>
-                Lun a Vie 8:30&ndash;12:30 y 16&ndash;20 hs
-                <br />
-                S&aacute;b 9&ndash;12:30 hs
+                {identity.hoursDisplay.map((line, index) => (
+                  <Fragment key={line}>
+                    {index > 0 && <br />}
+                    {line}
+                  </Fragment>
+                ))}
               </span>
             </li>
           </ul>
@@ -137,7 +142,7 @@ export default function Footer() {
           Acceso
         </Link>
         <p className="text-muted-foreground flex flex-col items-center">
-          <span>&copy; {new Date().getFullYear()} GL Autos.</span>
+          <span>{`© ${new Date().getFullYear()} ${identity.copyrightHolder}.`}</span>
           <span>Derechos reservados.</span>
         </p>
       </div>

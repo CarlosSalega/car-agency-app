@@ -204,7 +204,8 @@ export function AdminSidebar({ user }: { user: AuthUser }) {
     <Sidebar collapsible="icon">
       <SidebarHeader className="group-data-[collapsible=icon]:p-0">
         {/* The header padding has to go with the rail: 48px minus the 8px of
-            p-2 on both sides leaves 32px, which is exactly the monogram. */}
+            p-2 on both sides leaves 32px, and the monogram at its shared 14px
+            height is 32.7px wide, so keeping the padding would crop it. */}
         <div className="px-2 py-1 group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:py-2">
           <AdminLogo />
         </div>

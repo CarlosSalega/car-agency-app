@@ -1,5 +1,8 @@
 import type { Metadata } from "next";
 
+import { activeSite } from "@/site/active";
+import { buildPageMetadata } from "@/site/contract";
+
 import { CarGrid } from "@/components/cars/car-grid";
 import { Badge } from "@/components/ui/badge";
 
@@ -17,15 +20,11 @@ import { NavbarServer } from "../(landing)/components/NavbarServer";
 
 export const revalidate = 300;
 
-export const metadata: Metadata = {
-  title: "Catálogo de autos usados y 0km en Santa Fe | GL Autos",
-  description:
-    "Explorá el catálogo de GL Autos: autos usados y 0km en Santa Fe con revisión mecánica garantizada y financiación a medida. ¡Encontrá el tuyo hoy!",
-  alternates: {
-    canonical: "/autos",
-  },
-};
-
+export const metadata: Metadata = buildPageMetadata(
+  activeSite,
+  "catalog",
+  "/autos",
+);
 function buildFilters(params: {
   [key: string]: string | string[] | undefined;
 }): CarListFilters {

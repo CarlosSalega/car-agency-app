@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 import { getSession } from "@/lib/auth";
 import { buildMlExport, type ExportCar } from "@/lib/cars/export-csv";
-import { SITE_CONFIG } from "@/data/metadata";
+import { activeSite } from "@/site/active";
 import { prisma } from "@/lib/db";
 import { resolveImageUrl } from "@/lib/images/resolve-image-url";
 
@@ -34,7 +34,7 @@ function absoluteImageUrl(key: string): string {
   // of dropping it.
   if (/^https?:\/\//i.test(resolved)) return resolved;
 
-  const base = SITE_CONFIG.url.replace(/\/$/, "");
+  const base = activeSite.url.replace(/\/$/, "");
   return `${base}${resolved.startsWith("/") ? resolved : `/${resolved}`}`;
 }
 

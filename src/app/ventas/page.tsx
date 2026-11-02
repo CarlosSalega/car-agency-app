@@ -1,21 +1,19 @@
 import type { Metadata } from "next";
 
+import { activeSite } from "@/site/active";
+import { buildPageMetadata } from "@/site/contract";
+
 import { NavbarServer } from "../(landing)/components/NavbarServer";
 import Footer from "../(landing)/components/Footer";
 import { WhatsAppButton } from "@/components/ui/whatsapp-button";
 
-export const metadata: Metadata = {
-  title: "Vendé tu auto en 48 horas en Santa Fe | GL Autos",
-  description:
-    "Vendé tu auto en Santa Fe con GL Autos: tasación inmediata, transferencia segura en 48 horas hábiles y pago rápido. ¡Envianos tus datos por WhatsApp!",
-  alternates: {
-    canonical: "/ventas",
-  },
-};
-
+export const metadata: Metadata = buildPageMetadata(
+  activeSite,
+  "sell",
+  "/ventas",
+);
 export default function SellPage() {
-  const phoneRaw = process.env.NEXT_PUBLIC_WHATSAPP_PHONE ?? "+5493425777646";
-  const phone = phoneRaw.replace(/\D/g, "");
+  const phone = activeSite.whatsapp.digits;
 
   const messageTemplate = [
     "Hola! Quiero vender mi vehículo. Estos son los datos:",

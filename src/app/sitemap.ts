@@ -1,10 +1,10 @@
 import type { MetadataRoute } from "next";
 
-import { SITE_CONFIG } from "@/data/metadata";
+import { activeSite } from "@/site/active";
 import { getPublicCarSlugs } from "@/lib/queries/cars";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const base = SITE_CONFIG.url;
+  const base = activeSite.url;
   const lastModified = new Date();
 
   const staticRoutes: MetadataRoute.Sitemap = [

@@ -1,4 +1,4 @@
-import { SITE_CONFIG } from "@/data/metadata";
+import { activeSite } from "@/site/active";
 import {
   isEmailConfigured,
   sendEmail,
@@ -73,10 +73,10 @@ export async function notifyNewLead(
     email: input.email,
     message: input.message,
     carTitle: input.carTitle,
-    carUrl: input.carSlug ? `${SITE_CONFIG.url}/autos/${input.carSlug}` : null,
+    carUrl: input.carSlug ? `${activeSite.url}/autos/${input.carSlug}` : null,
     // T1.4 creates `/admin/leads`. Until it exists, point at the panel that does:
     // a notification linking to a 404 is worse than one linking a level up.
-    adminUrl: `${SITE_CONFIG.url}/admin`,
+    adminUrl: `${activeSite.url}/admin`,
     receivedAt: now(),
   });
 

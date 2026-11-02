@@ -1,3 +1,5 @@
+import { activeSite } from "@/site/active";
+
 /**
  * `logo` is the wordmark for the expanded rail, `mark` the "GL" monogram for the
  * 3rem collapsed one.
@@ -11,22 +13,34 @@
  * stops flex-shrink from crushing the aspect ratio: without them the 64px image
  * collapsed to 16x64, because only the main-axis size shrinks.
  */
+
+/**
+ * One height for both marks.
+ *
+ * The wordmark used to be `h-5` (188px wide) while the monogram was `w-8`
+ * (13.7px tall): collapsing the rail made the brand visibly shrink. Sharing a
+ * single token is the fix — the two cannot drift apart again while the text
+ * stays complete, and 14px is the height the monogram already had.
+ *
+ * Measured: the wordmark is 9.4:1, so 14px tall renders 132px wide, inside the
+ * 208px the 16rem rail leaves after its padding.
+ */
+const LOGO_HEIGHT = "h-3.5";
+
 export const ADMIN_HEADER_CONTENT = {
   logo: {
-    src: "/logo-wordmark.png",
-    alt: "GL Autos",
-    // 179x19 is 9.4:1: at h-5 (20px) the mark is 188px wide, which fits the
-    // 224px the 16rem rail leaves after its padding. h-7 would ask for 264px.
-    className: "h-5 w-auto shrink-0 group-data-[collapsible=icon]:hidden",
-    width: 179,
-    height: 19,
+    src: activeSite.assets.wordmark.src,
+    alt: activeSite.identity.name,
+    className: `${LOGO_HEIGHT} w-auto shrink-0 group-data-[collapsible=icon]:hidden`,
+    width: activeSite.assets.wordmark.width,
+    height: activeSite.assets.wordmark.height,
   },
   mark: {
-    src: "/logo-mark.png",
-    alt: "GL Autos",
-    className: "hidden h-auto w-8 shrink-0 group-data-[collapsible=icon]:block",
-    width: 42,
-    height: 18,
+    src: activeSite.assets.mark.src,
+    alt: activeSite.identity.name,
+    className: `hidden ${LOGO_HEIGHT} w-auto shrink-0 group-data-[collapsible=icon]:block`,
+    width: activeSite.assets.mark.width,
+    height: activeSite.assets.mark.height,
   },
   styles: {
     link: {

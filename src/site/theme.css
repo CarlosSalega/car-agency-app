@@ -1,0 +1,11 @@
+/*
+ * The active client's theme.
+ *
+ * This file is the only thing the product imports for brand tokens. Swapping the
+ * client means changing the one `@import` below — and it happens *inside* the
+ * seam, so `src/app/layout.tsx` never learns which dealership it is serving.
+ * Keeping it as a stable path is what stops the layout from being edited on every
+ * new client; a CSS import has to be static, so a single indirection is the whole
+ * trick available.
+ */
+@import "./glautos/theme.css";

@@ -2,16 +2,14 @@
 
 import Link from "next/link";
 import { track } from "@/lib/meta-pixel";
+import { activeSite } from "@/site/active";
 
 export function WhatsAppFloatButton() {
-  // wa.me wants digits only: the env var carries a leading "+", so passing it
-  // through produced https://wa.me/+5493425777646 here while /ventas already
-  // normalised its own copy. Same rule in both places.
-  const phone = (
-    process.env.NEXT_PUBLIC_WHATSAPP_PHONE ?? "+5493425777646"
-  ).replace(/\D/g, "");
+  // `digits` is already normalised once, in `src/site/compose.ts`: the version
+  // that normalised it in three different components is how `wa.me/+54…` shipped.
+  const phone = activeSite.whatsapp.digits;
   const message = encodeURIComponent(
-    "Hola! Vi tu página y quiero consultar por un auto 🚗",
+    activeSite.identity.contact.whatsappMessage,
   );
 
   return (
