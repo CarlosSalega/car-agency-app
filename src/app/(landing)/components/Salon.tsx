@@ -3,15 +3,22 @@ import { activeSite } from "@/site/active";
 /**
  * The salon: where it is, when it is open, and how to get there.
  *
- * One deliberate departure from the artboard: it drew a map, and this renders a
- * **sign** instead. An embedded Google map is a third-party iframe — it loads
- * their scripts, sets their cookies, and the privacy page that would justify it
- * is still pending (roadmap T0.5). Until that exists, the honest version is the
- * address, a large "how to get there" link, and the opening hours, which is what
- * a person actually needs and what the map was standing in for.
+ * The map is the **key-less Google embed** (`output=embed`, no API key, no billing),
+ * built from the coordinates in the site identity rather than from a hardcoded URL,
+ * so a second dealership gets its own map from its own data.
+ *
+ * It is a third-party iframe: it loads Google's scripts and can set their cookies.
+ * `loading="lazy"` keeps that from happening until the section is close to the
+ * viewport, and the address and the "cómo llegar" link live in the left column, so
+ * the section is complete even if the map never loads. The privacy text that should
+ * mention it is still pending (roadmap T0.5).
  */
 export function Salon() {
   const { identity, whatsapp } = activeSite;
+  const { latitude, longitude } = identity.geo;
+  // `output=embed` es el mapa clásico sin API key. El zoom 16 deja el salón y la
+  // manzana; `hl=es` mantiene la interfaz en castellano.
+  const mapSrc = `https://maps.google.com/maps?q=${latitude},${longitude}&z=16&hl=es&output=embed`;
 
   return (
     <section
@@ -72,34 +79,24 @@ export function Salon() {
           </div>
         </div>
 
-        {/* Cartel, no mapa: ver el comentario del componente. */}
-        <a
-          href={identity.mapsUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="border-line-strong bg-ground hover:border-brand group relative flex min-h-[320px] flex-col justify-between border p-7 transition-colors"
-        >
-          <span className="text-muted-foreground font-mono text-[11px] tracking-[0.16em] uppercase">
-            Santa Fe · Argentina
-          </span>
-
-          <span className="flex flex-col gap-3">
-            <span aria-hidden="true" className="bg-accent h-px w-full" />
-            <span className="text-foreground flex items-center gap-3 font-mono text-[13px] tracking-[0.1em] uppercase">
-              <i className="bg-brand block size-2.5" />
-              {identity.name} · aquí
-            </span>
-            <span className="text-subtle-foreground text-2xl leading-tight font-bold tracking-[-0.02em]">
-              {identity.address.street}
-              <br />
-              {identity.address.locality}
-            </span>
-          </span>
-
-          <span className="text-muted-foreground group-hover:text-foreground font-mono text-[11px] tracking-[0.16em] uppercase transition-colors">
-            Abrir en Google Maps →
-          </span>
-        </a>
+        <div className="border-line-strong bg-ground border">
+          <iframe
+            src={mapSrc}
+            title={`Ubicación de ${identity.name} en ${identity.address.locality}`}
+            loading="lazy"
+            referrerPolicy="no-referrer-when-downgrade"
+            className="block h-[320px] w-full lg:h-full lg:min-h-[380px]"
+          />
+          <a
+            href={identity.mapsUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="border-border text-muted-foreground hover:text-foreground flex items-center justify-between gap-4 border-t px-5 py-3 font-mono text-[11px] tracking-[0.16em] uppercase transition-colors"
+          >
+            {identity.address.display}
+            <span aria-hidden="true">Abrir en Maps →</span>
+          </a>
+        </div>
       </div>
     </section>
   );
