@@ -73,7 +73,9 @@ export function CarDetailSpecs({ car }: CarDetailSpecsProps) {
             </h1>
           </div>
 
-          <Badge className={badge.className}>{badge.label}</Badge>
+          <Badge className={`${badge.className} rounded-none`}>
+            {badge.label}
+          </Badge>
 
           <div className="border-border border-t border-b py-4">
             <p className="text-muted-foreground mt-1 text-sm">Entrega Mínima</p>
@@ -98,7 +100,7 @@ export function CarDetailSpecs({ car }: CarDetailSpecsProps) {
                 <Badge
                   key={method}
                   variant="outline"
-                  className="border-brand text-brand"
+                  className="border-brand text-brand rounded-none"
                 >
                   {getPaymentMethodLabel(method)}
                 </Badge>

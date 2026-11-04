@@ -17,6 +17,7 @@ import { MetaPixelViewContent } from "@/components/ui/meta-pixel-view-content";
 import { LeadForm } from "@/components/leads";
 import { buildCarJsonLd } from "@/lib/cars/json-ld";
 import { WhatsAppButton } from "@/components/ui/whatsapp-button";
+import { WhatsAppFloatButton } from "@/app/(landing)/components/ui/WhatsAppFloatButton";
 
 export const revalidate = 600;
 
@@ -217,6 +218,8 @@ export default async function CarDetailPage({
       </div>
 
       <Footer session={(await getSession())?.user ?? null} />
+
+      <WhatsAppFloatButton />
 
       <MetaPixelViewContent
         content_name={car.title}
