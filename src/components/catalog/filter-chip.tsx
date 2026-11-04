@@ -38,7 +38,7 @@ export function FilterChip({
       aria-current={active ? "true" : undefined}
       className={`border px-2.5 py-1.5 font-mono text-[11px] tracking-[0.04em] whitespace-nowrap transition-colors ${
         active
-          ? "border-brand bg-brand font-bold text-black"
+          ? "border-brand bg-brand text-foreground font-bold"
           : "border-line-strong text-subtle-foreground hover:border-foreground hover:text-foreground"
       }`}
     >
