@@ -5,6 +5,7 @@ import { buildPageMetadata } from "@/site/contract";
 
 import { CarGrid } from "@/components/cars/car-grid";
 import { CatalogFilterBar } from "@/components/catalog/catalog-filter-bar";
+import { getSession } from "@/lib/auth";
 import { getBrandsWithModels } from "@/lib/queries/brands";
 import {
   type CarListFilters,
@@ -70,10 +71,11 @@ export default async function CatalogoPage({
   const skip = (page - 1) * limit;
   const filters = buildFilters(params);
 
-  const [cars, total, brands] = await Promise.all([
+  const [cars, total, brands, session] = await Promise.all([
     getPublicCarsList(filters, skip, limit),
     getPublicCarsCount(filters),
     getBrandsWithModels(),
+    getSession(),
   ]);
 
   const totalPages = Math.ceil(total / limit);
@@ -116,7 +118,7 @@ export default async function CatalogoPage({
         />
       </div>
 
-      <Footer />
+      <Footer session={session?.user ?? null} />
       <WhatsAppFloatButton />
     </div>
   );

@@ -344,3 +344,11 @@ committed on its own, so the owner can review and change direction between secti
      el foco al summary) y cierre al elegir una opción; y el panel pasa a `inset-x-0` en mobile (ancho de la fila) y a
      `md:inset-x-auto md:right-0 md:w-*` en desktop. La fila de acciones y la de resultado son `relative`: son el anclaje
      en mobile. Sin JS el `<details>` sigue abriendo y cerrando con el summary.
+
+- **L37 (footer con sesión):** "cuando haya sesion activa, en el footer se cambiará el link de 'Acceso' por un admin
+  dropdown". `AdminDropdown` gana `variant?: "icon" | "text"`: el ícono sigue siendo el del panel y el footer usa un
+  trigger de texto (el nombre en mono, con caret) que hereda el estilo del link que reemplaza. `Footer` recibe
+  `session?: FooterSession | null` **como prop y no la lee adentro**: el componente también se renderiza desde
+  `PublicQueryError`, que es cliente, y un `getSession()` ahí adentro lo volvería componente de servidor y rompería
+  ese árbol. Las tres páginas públicas (landing, catálogo, ficha) resuelven la sesión en el servidor y la pasan.
+  **Consecuencia**: la landing vuelve a ser dinámica (lee cookies), como era cuando montaba `NavbarServer`.

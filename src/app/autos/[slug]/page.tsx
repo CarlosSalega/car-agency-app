@@ -6,6 +6,7 @@ import { notFound } from "next/navigation";
 import { CarDetailGallery, CarDetailSpecs } from "@/components/cars";
 
 import { FALLBACK_IMAGE } from "@/lib/constants";
+import { getSession } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { getPublicCarBySlug, getPublicCarSlugs } from "@/lib/queries";
 import { activeSite } from "@/site/active";
@@ -215,7 +216,7 @@ export default async function CarDetailPage({
         </section>
       </div>
 
-      <Footer />
+      <Footer session={(await getSession())?.user ?? null} />
 
       <MetaPixelViewContent
         content_name={car.title}

@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { AdminDropdown } from "@/components/admin";
 import { activeSite } from "@/site/active";
 
 /**
@@ -20,7 +21,23 @@ const SITE_LINKS = [
   { label: "Formas de pago", href: "/#pago" },
 ] as const;
 
-export default function Footer() {
+/** Lo mínimo que el dropdown necesita; se resuelve en la página, en el servidor. */
+export interface FooterSession {
+  name: string | null;
+  email: string;
+  role: "ADMIN" | "COLLABORATOR";
+}
+
+/**
+ * La sesión llega como prop y no se lee acá: este componente también se renderiza
+ * desde `PublicQueryError`, que es cliente, y un `getSession()` acá adentro lo
+ * volvería un componente de servidor y rompería ese árbol.
+ */
+export default function Footer({
+  session = null,
+}: {
+  session?: FooterSession | null;
+}) {
   const { identity, whatsapp } = activeSite;
 
   return (
@@ -86,12 +103,18 @@ export default function Footer() {
         </div>
 
         <div className="text-muted-foreground flex flex-wrap items-center justify-between gap-3 pt-5 font-mono text-[10px] tracking-[0.14em] uppercase">
-          <Link
-            href="/admin"
-            className="hover:text-foreground transition-colors"
-          >
-            Acceso
-          </Link>
+          {/* Con sesión, el acceso se vuelve el menú de la cuenta; sin sesión
+              sigue siendo el link al login. */}
+          {session ? (
+            <AdminDropdown user={session} variant="text" />
+          ) : (
+            <Link
+              href="/admin"
+              className="hover:text-foreground transition-colors"
+            >
+              Acceso
+            </Link>
+          )}
           <p className="m-0 text-right">
             © {new Date().getFullYear()} {identity.copyrightHolder}
             <br />

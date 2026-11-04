@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 
 import { activeSite } from "@/site/active";
 import { buildPageMetadata } from "@/site/contract";
+import { getSession } from "@/lib/auth";
 import { getPublicCarsCount, getPublicLatestCars } from "@/lib/queries/cars";
 import {
   getPublishedReviewSummary,
@@ -63,11 +64,12 @@ const dealerJsonLd = {
 };
 
 export default async function LandingPage() {
-  const [cars, totalCars, reviews, reviewSummary] = await Promise.all([
+  const [cars, totalCars, reviews, reviewSummary, session] = await Promise.all([
     getPublicLatestCars(9),
     getPublicCarsCount({}),
     getPublishedReviews(),
     getPublishedReviewSummary(),
+    getSession(),
   ]);
 
   const landingJsonLd = withReviewStructuredData(dealerJsonLd, {
@@ -93,7 +95,7 @@ export default async function LandingPage() {
         <Reviews />
         <Salon />
       </main>
-      <Footer />
+      <Footer session={session?.user ?? null} />
       <WhatsAppFloatButton />
     </div>
   );
