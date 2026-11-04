@@ -1,0 +1,474 @@
+<!doctype html>
+<html lang="es-AR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>GL Autos · Catálogo mobile</title>
+    <style>
+      /*
+        CATÁLOGO MOBILE — la misma franja de chips, con scroll horizontal.
+
+        En 390px no entran tres grupos de chips: la franja se desliza de costado
+        (`scroll-snap`), el título de página se achica, y "Más filtros" queda como
+        barra fija abajo con el contador, que es el punto donde el pulgar llega.
+      */
+      :root {
+        --bg: #121212;
+        --ground: #0b0b0b;
+        --card: #141414;
+        --surface: #1c1c1c;
+        --fg: #f5f5f5;
+        --body: #c4c7c8;
+        --mute: #a3a3a3;
+        --line: #2a2a2a;
+        --line-2: #3a3a3a;
+        --brand: #fe0000;
+        --sans: Afacad, ui-sans-serif, system-ui, sans-serif;
+        --mono: "Fira Code", ui-monospace, "SF Mono", Menlo, monospace;
+        --r: 0px;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        width: 390px;
+        background: var(--bg);
+        color: var(--fg);
+        font-family: var(--sans);
+        -webkit-font-smoothing: antialiased;
+        padding-bottom: 76px;
+      }
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+      .mono {
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+      }
+      .mute {
+        color: var(--mute);
+      }
+      /* header */
+      .top {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        border-bottom: 1px solid var(--line);
+        padding: 8px 16px;
+        min-height: 56px;
+      }
+      .word {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-weight: 900;
+        font-size: 13px;
+        letter-spacing: 0.24em;
+        text-transform: uppercase;
+      }
+      .word i {
+        width: 8px;
+        height: 8px;
+        background: var(--brand);
+        display: block;
+      }
+      .icon {
+        margin-left: auto;
+        width: 40px;
+        height: 40px;
+        border: 1px solid var(--line-2);
+        display: grid;
+        place-items: center;
+        color: var(--fg);
+      }
+      /* título */
+      .page {
+        padding: 20px 16px 14px;
+      }
+      .page h1 {
+        margin: 0;
+        font-size: 28px;
+        letter-spacing: -0.03em;
+      }
+      .page p {
+        margin: 6px 0 0;
+        color: var(--mute);
+      }
+      /* franja de chips: scroll horizontal con snap */
+      .bar {
+        border-top: 1px solid var(--line-2);
+        border-bottom: 1px solid var(--line-2);
+        background: var(--ground);
+        padding: 12px 0 14px;
+        overflow-x: auto;
+        scroll-snap-type: x proximity;
+        scrollbar-width: none;
+      }
+      .bar::-webkit-scrollbar {
+        display: none;
+      }
+      .bar__row {
+        display: flex;
+        gap: 18px;
+        padding: 0 16px;
+        width: max-content;
+      }
+      .facet {
+        scroll-snap-align: start;
+      }
+      .facet > .label {
+        display: block;
+        font-family: var(--mono);
+        font-size: 9px;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--mute);
+        margin-bottom: 8px;
+      }
+      .chips {
+        display: flex;
+        gap: 6px;
+      }
+      .chip {
+        border: 1px solid var(--line-2);
+        padding: 7px 10px;
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.04em;
+        color: var(--body);
+        white-space: nowrap;
+      }
+      .chip[aria-pressed="true"] {
+        background: var(--brand);
+        border-color: var(--brand);
+        color: #000;
+        font-weight: 700;
+      }
+      .hint {
+        padding: 8px 16px 0;
+        color: var(--mute);
+        font-family: var(--mono);
+        font-size: 9px;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+      /* aplicados */
+      .applied {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 12px 16px;
+        overflow-x: auto;
+      }
+      .applied .a {
+        border: 1px solid var(--line-2);
+        background: var(--card);
+        padding: 6px 9px;
+        font-family: var(--mono);
+        font-size: 9px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        white-space: nowrap;
+      }
+      .applied .a b {
+        color: var(--brand);
+        font-weight: 400;
+      }
+      .results {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 4px 16px 14px;
+      }
+      /* grilla: 2 columnas con línea de 1px */
+      .grid {
+        margin: 0 16px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1px;
+        background: var(--line);
+        border: 1px solid var(--line);
+      }
+      .card {
+        background: var(--card);
+        display: flex;
+        flex-direction: column;
+      }
+      .card__media {
+        aspect-ratio: 4 / 3;
+        background: repeating-linear-gradient(
+          135deg,
+          #161616 0 8px,
+          #121212 8px 16px
+        );
+        display: grid;
+        place-items: center;
+        color: #4a4a4a;
+        border-bottom: 1px solid var(--line);
+      }
+      .card__media svg {
+        width: 66%;
+        height: auto;
+      }
+      .card__b {
+        padding: 10px 12px 12px;
+      }
+      .card__t {
+        margin: 0;
+        font-size: 13px;
+        font-weight: 700;
+        line-height: 1.2;
+      }
+      .card__d {
+        margin: 5px 0 8px;
+        color: var(--mute);
+        font-family: var(--mono);
+        font-size: 9px;
+        letter-spacing: 0.06em;
+      }
+      .price {
+        font-family: var(--mono);
+        font-size: 12px;
+      }
+      /* barra fija de filtros */
+      .stickybar {
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        width: 390px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 16px;
+        background: var(--card);
+        border-top: 1px solid var(--line-2);
+      }
+      .stickybar .count {
+        flex: 1;
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--mute);
+      }
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        height: 42px;
+        padding: 0 16px;
+        background: var(--fg);
+        color: var(--bg);
+        font-family: var(--mono);
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+      }
+    </style>
+  </head>
+  <body>
+    <header class="top">
+      <a class="word" href="#"><i></i>GL Autos</a>
+      <a class="icon" href="#" aria-label="Buscar">⌕</a>
+      <a class="icon" href="#" aria-label="Abrir el menú">≡</a>
+    </header>
+
+    <div class="page">
+      <h1>Catálogo</h1>
+      <p class="mono">18 unidades · usados y 0 km</p>
+    </div>
+
+    <div class="bar">
+      <div class="bar__row">
+        <div class="facet">
+          <span class="label">Tipo</span>
+          <div class="chips">
+            <a class="chip" href="#" aria-pressed="true">Todos</a>
+            <a class="chip" href="#">SUV</a>
+            <a class="chip" href="#">Pickup</a>
+            <a class="chip" href="#">Sedán</a>
+          </div>
+        </div>
+        <div class="facet">
+          <span class="label">Combustible</span>
+          <div class="chips">
+            <a class="chip" href="#" aria-pressed="true">Todos</a>
+            <a class="chip" href="#">Nafta</a>
+            <a class="chip" href="#">Diésel</a>
+          </div>
+        </div>
+        <div class="facet">
+          <span class="label">Caja</span>
+          <div class="chips">
+            <a class="chip" href="#" aria-pressed="true">Todas</a>
+            <a class="chip" href="#">Manual</a>
+            <a class="chip" href="#">Automática</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <p class="hint">Deslizá para ver todos los filtros →</p>
+
+    <div class="applied">
+      <a class="a" href="#">SUV <b>×</b></a>
+      <a class="a" href="#">Nafta <b>×</b></a>
+    </div>
+
+    <div class="results">
+      <span class="mono mute"
+        >Mostrando <b style="color: #f5f5f5">6</b> de 18</span
+      >
+      <a class="chip" href="#">Recientes ▾</a>
+    </div>
+
+    <div class="grid">
+      <a class="card" href="#">
+        <div class="card__media">
+          <svg viewBox="0 0 340 110" aria-hidden="true">
+            <path
+              d="M12 78 L20 62 q5-8 16-9 l52-4 q14-16 34-18 l84-1 q22 2 38 19 l58 4 q14 2 18 11 l4 14 Z"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="3"
+            />
+            <circle
+              cx="86"
+              cy="78"
+              r="15"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="3"
+            />
+            <circle
+              cx="262"
+              cy="78"
+              r="15"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="3"
+            />
+          </svg>
+        </div>
+        <div class="card__b">
+          <p class="card__t">Volkswagen Taos 2025</p>
+          <p class="card__d">2025 · 0 km · SUV</p>
+          <span class="price">$ 39.500.000</span>
+        </div>
+      </a>
+
+      <a class="card" href="#">
+        <div class="card__media">
+          <svg viewBox="0 0 340 110" aria-hidden="true">
+            <path
+              d="M12 78 L20 62 q5-8 16-9 l52-4 q14-16 34-18 l84-1 q22 2 38 19 l58 4 q14 2 18 11 l4 14 Z"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="3"
+            />
+            <circle
+              cx="86"
+              cy="78"
+              r="15"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="3"
+            />
+            <circle
+              cx="262"
+              cy="78"
+              r="15"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="3"
+            />
+          </svg>
+        </div>
+        <div class="card__b">
+          <p class="card__t">Chevrolet Tracker 2025</p>
+          <p class="card__d">2025 · 0 km · SUV</p>
+          <span class="price">$ 39.900.000</span>
+        </div>
+      </a>
+
+      <a class="card" href="#">
+        <div class="card__media">
+          <svg viewBox="0 0 340 110" aria-hidden="true">
+            <path
+              d="M12 78 L20 62 q5-8 16-9 l52-4 q14-16 34-18 l84-1 q22 2 38 19 l58 4 q14 2 18 11 l4 14 Z"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="3"
+            />
+            <circle
+              cx="86"
+              cy="78"
+              r="15"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="3"
+            />
+            <circle
+              cx="262"
+              cy="78"
+              r="15"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="3"
+            />
+          </svg>
+        </div>
+        <div class="card__b">
+          <p class="card__t">Toyota Corolla Cross 2023</p>
+          <p class="card__d">2023 · 24.000 km · SUV</p>
+          <span class="price">$ 36.500.000</span>
+        </div>
+      </a>
+
+      <a class="card" href="#">
+        <div class="card__media">
+          <svg viewBox="0 0 340 110" aria-hidden="true">
+            <path
+              d="M12 78 L20 62 q5-8 16-9 l52-4 q14-16 34-18 l84-1 q22 2 38 19 l58 4 q14 2 18 11 l4 14 Z"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="3"
+            />
+            <circle
+              cx="86"
+              cy="78"
+              r="15"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="3"
+            />
+            <circle
+              cx="262"
+              cy="78"
+              r="15"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="3"
+            />
+          </svg>
+        </div>
+        <div class="card__b">
+          <p class="card__t">Toyota Yaris 2021</p>
+          <p class="card__d">2021 · 45.000 km · Hatchback</p>
+          <span class="price">$ 20.500.000</span>
+        </div>
+      </a>
+    </div>
+
+    <div class="stickybar">
+      <span class="count">6 de 18 vehículos</span>
+      <a class="btn" href="#">Más filtros ⚙</a>
+    </div>
+  </body>
+</html>

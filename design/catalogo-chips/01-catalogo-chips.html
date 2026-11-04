@@ -1,0 +1,817 @@
+<!doctype html>
+<html lang="es-AR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>GL Autos · Catálogo con chips</title>
+    <style>
+      /*
+        CATÁLOGO — filtros como chips arriba de la grilla.
+
+        Lo que se mantiene: la grilla de cards y las cards mismas.
+        Lo que cambia: la barra lateral de filtros desaparece y los facets viven en
+        una franja de chips sobre los resultados.
+
+        Tokens del sistema (`design/system.md`, más `--ground` y `--line-strong` que
+        se agregaron después del último sync). Radio 0 en todo: la única excepción
+        deliberada es el punto del contador, que no es una caja.
+      */
+      :root {
+        --bg: #121212;
+        --ground: #0b0b0b;
+        --card: #141414;
+        --surface: #1c1c1c;
+        --hover: #242424;
+        --fg: #f5f5f5;
+        --body: #c4c7c8;
+        --mute: #a3a3a3;
+        --line: #2a2a2a;
+        --line-2: #3a3a3a;
+        --brand: #fe0000;
+        --warn: #fcd34d;
+        --sans: Afacad, ui-sans-serif, system-ui, sans-serif;
+        --mono: "Fira Code", ui-monospace, "SF Mono", Menlo, monospace;
+        --r: 0px;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        width: 1440px;
+        background: var(--bg);
+        color: var(--fg);
+        font-family: var(--sans);
+        -webkit-font-smoothing: antialiased;
+      }
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+      .wrap {
+        max-width: 1320px;
+        margin: 0 auto;
+        padding: 0 32px;
+      }
+      .mono {
+        font-family: var(--mono);
+        font-size: 11px;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+      }
+      .mute {
+        color: var(--mute);
+      }
+      /* ---------- header ---------- */
+      .top {
+        border-bottom: 1px solid var(--line);
+        background: var(--bg);
+      }
+      .top__in {
+        display: flex;
+        align-items: center;
+        gap: 24px;
+        min-height: 68px;
+      }
+      .word {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: 900;
+        font-size: 16px;
+        letter-spacing: 0.3em;
+        text-transform: uppercase;
+        white-space: nowrap;
+      }
+      .word i {
+        width: 9px;
+        height: 9px;
+        background: var(--brand);
+        display: block;
+      }
+      .nav {
+        display: flex;
+        gap: 24px;
+      }
+      .nav a {
+        font-family: var(--mono);
+        font-size: 11px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--mute);
+        padding: 8px 0;
+        border-bottom: 2px solid transparent;
+      }
+      .nav a:hover {
+        color: var(--fg);
+        border-bottom-color: var(--brand);
+      }
+      .search {
+        display: flex;
+        align-items: center;
+        margin-left: auto;
+        min-width: 200px;
+        flex: 1;
+        max-width: 340px;
+        border: 1px solid var(--line-2);
+        background: var(--ground);
+      }
+      .search span {
+        flex: 1;
+        padding: 0 12px;
+        font-size: 14px;
+        color: var(--mute);
+      }
+      .search b {
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        padding: 11px 14px;
+        border-left: 1px solid var(--line-2);
+        background: var(--surface);
+        font-weight: 400;
+      }
+      .cta {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 44px;
+        padding: 0 20px;
+        background: var(--brand);
+        color: #000;
+        font-family: var(--mono);
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+      }
+      /* ---------- título de página ---------- */
+      .page {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 24px;
+        padding: 36px 0 22px;
+      }
+      .page h1 {
+        margin: 0;
+        font-size: 40px;
+        letter-spacing: -0.03em;
+        line-height: 1;
+      }
+      .page p {
+        margin: 0;
+      }
+      /* ---------- la franja de chips ---------- */
+      .bar {
+        border-top: 1px solid var(--line-2);
+        border-bottom: 1px solid var(--line-2);
+        background: var(--ground);
+      }
+      .bar__row {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 10px 28px;
+        padding: 14px 0;
+      }
+      .facet {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .facet > .label {
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--mute);
+        white-space: nowrap;
+      }
+      .chips {
+        display: flex;
+        gap: 6px;
+      }
+      .chip {
+        border: 1px solid var(--line-2);
+        padding: 7px 11px;
+        font-family: var(--mono);
+        font-size: 11px;
+        letter-spacing: 0.06em;
+        color: var(--body);
+        background: transparent;
+        white-space: nowrap;
+      }
+      .chip:hover {
+        border-color: var(--fg);
+        color: var(--fg);
+      }
+      .chip[aria-pressed="true"] {
+        background: var(--brand);
+        border-color: var(--brand);
+        color: #000;
+        font-weight: 700;
+      }
+      .chip--menu {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .chip--more {
+        border-style: dashed;
+      }
+      .bar__right {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-left: auto;
+      }
+      .clear {
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--brand);
+      }
+      /* chips de filtros aplicados */
+      .applied {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 0 0 14px;
+      }
+      .applied .a {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        border: 1px solid var(--line-2);
+        background: var(--card);
+        padding: 6px 10px;
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+      }
+      .applied .a b {
+        color: var(--brand);
+        font-weight: 400;
+      }
+      /* popover de más filtros */
+      .pop {
+        position: relative;
+      }
+      .pop__panel {
+        position: absolute;
+        top: calc(100% + 10px);
+        right: 0;
+        width: 420px;
+        border: 1px solid var(--line-2);
+        background: var(--card);
+        padding: 20px;
+        z-index: 20;
+      }
+      .pop__grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+      }
+      .field {
+        display: grid;
+        gap: 6px;
+      }
+      .field label {
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--mute);
+      }
+      .field div {
+        border: 1px solid var(--line-2);
+        background: var(--bg);
+        padding: 10px 12px;
+        font-size: 13px;
+        color: var(--body);
+      }
+      .pop__foot {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 18px;
+        padding-top: 14px;
+        border-top: 1px solid var(--line);
+      }
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        height: 40px;
+        padding: 0 18px;
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        border: 1px solid var(--line-2);
+        background: transparent;
+        color: var(--fg);
+      }
+      .btn--fill {
+        background: var(--fg);
+        color: var(--bg);
+        border-color: var(--fg);
+        font-weight: 700;
+      }
+      /* ---------- resultados ---------- */
+      .results {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        padding: 22px 0 16px;
+      }
+      .results .count b {
+        color: var(--fg);
+        font-weight: 500;
+      }
+      .sort {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1px;
+        background: var(--line);
+        border: 1px solid var(--line);
+        margin-bottom: 28px;
+      }
+      .card {
+        background: var(--card);
+        display: flex;
+        flex-direction: column;
+      }
+      .card__media {
+        aspect-ratio: 4 / 3;
+        background: repeating-linear-gradient(
+          135deg,
+          #161616 0 8px,
+          #121212 8px 16px
+        );
+        border-bottom: 1px solid var(--line);
+        display: grid;
+        place-items: center;
+        color: #4a4a4a;
+      }
+      .card__media svg {
+        width: 62%;
+        height: auto;
+      }
+      .card__b {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 14px 16px 16px;
+      }
+      .card__t {
+        font-size: 17px;
+        font-weight: 700;
+        letter-spacing: -0.01em;
+        line-height: 1.2;
+      }
+      .card__d {
+        color: var(--mute);
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.08em;
+        margin-top: 6px;
+      }
+      .card__right {
+        text-align: right;
+        white-space: nowrap;
+      }
+      .price {
+        font-family: var(--mono);
+        font-size: 15px;
+        display: block;
+      }
+      .see {
+        font-family: var(--mono);
+        font-size: 9px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--mute);
+        margin-top: 4px;
+        display: block;
+      }
+      .card:hover .see {
+        color: var(--brand);
+      }
+      /* paginado */
+      .pager {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 16px;
+        padding: 0 0 56px;
+      }
+      .pager a {
+        border: 1px solid var(--line-2);
+        background: var(--card);
+        width: 44px;
+        height: 40px;
+        display: grid;
+        place-items: center;
+      }
+      .pager a:hover {
+        border-color: var(--brand);
+      }
+      .pager span {
+        font-family: var(--mono);
+        font-size: 12px;
+        color: var(--mute);
+      }
+      .note {
+        padding: 0 0 40px;
+        color: var(--mute);
+        font-size: 12px;
+      }
+    </style>
+  </head>
+  <body>
+    <header class="top">
+      <div class="wrap top__in">
+        <a class="word" href="#"><i></i>GL Autos</a>
+        <nav class="nav">
+          <a href="#">Ingresos</a>
+          <a href="#">Por qué</a>
+          <a href="#">Pago</a>
+          <a href="#">Tasación</a>
+          <a href="#">Reseñas</a>
+          <a href="#">Contacto</a>
+        </nav>
+        <div class="search">
+          <span>Marca, modelo o versión</span><b>Buscar</b>
+        </div>
+        <a class="cta" href="#">WhatsApp</a>
+      </div>
+    </header>
+
+    <main class="wrap">
+      <div class="page">
+        <h1>Catálogo</h1>
+        <p class="mono mute">18 unidades · usados y 0 km</p>
+      </div>
+
+      <!-- LA FRANJA DE CHIPS -->
+      <div class="bar">
+        <div class="bar__row">
+          <div class="facet">
+            <span class="label">Tipo</span>
+            <div class="chips">
+              <a class="chip" href="#" aria-pressed="true">Todos</a>
+              <a class="chip" href="#">SUV</a>
+              <a class="chip" href="#">Pickup</a>
+              <a class="chip" href="#">Sedán</a>
+              <a class="chip" href="#">Hatchback</a>
+              <a class="chip" href="#">Furgón</a>
+            </div>
+          </div>
+
+          <div class="facet">
+            <span class="label">Combustible</span>
+            <div class="chips">
+              <a class="chip" href="#" aria-pressed="true">Todos</a>
+              <a class="chip" href="#">Nafta</a>
+              <a class="chip" href="#">Diésel</a>
+              <a class="chip" href="#">Híbrido</a>
+            </div>
+          </div>
+
+          <div class="facet">
+            <span class="label">Caja</span>
+            <div class="chips">
+              <a class="chip" href="#" aria-pressed="true">Todas</a>
+              <a class="chip" href="#">Manual</a>
+              <a class="chip" href="#">Automática</a>
+              <a class="chip" href="#">CVT</a>
+            </div>
+          </div>
+
+          <div class="bar__right">
+            <a class="chip chip--menu" href="#">Marca: todas <span>▾</span></a>
+
+            <div class="pop">
+              <a class="chip chip--more" href="#">Más filtros ⚙</a>
+              <div class="pop__panel">
+                <div class="pop__grid">
+                  <div class="field">
+                    <label>Año desde</label>
+                    <div>2019</div>
+                  </div>
+                  <div class="field">
+                    <label>Año hasta</label>
+                    <div>2025</div>
+                  </div>
+                  <div class="field">
+                    <label>Precio desde</label>
+                    <div>$ 15.000.000</div>
+                  </div>
+                  <div class="field">
+                    <label>Precio hasta</label>
+                    <div>$ 60.000.000</div>
+                  </div>
+                </div>
+                <div class="pop__foot">
+                  <a class="mono" style="color: var(--mute)" href="#"
+                    >Limpiar</a
+                  >
+                  <a class="btn btn--fill" href="#">Aplicar</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- FILTROS APLICADOS: sólo aparecen cuando hay alguno -->
+      <div class="applied" style="padding-top: 14px">
+        <span class="mono mute">Filtros:</span>
+        <a class="a" href="#">SUV <b>×</b></a>
+        <a class="a" href="#">Nafta <b>×</b></a>
+        <a class="a" href="#">Limpiar todo <b>×</b></a>
+      </div>
+
+      <div class="results">
+        <p class="mono mute count" style="margin: 0">
+          Mostrando <b>6</b> de 18 vehículos
+        </p>
+        <div class="sort">
+          <span class="mono mute">Ordenar</span>
+          <a class="chip chip--menu" href="#">Recientes <span>▾</span></a>
+        </div>
+      </div>
+
+      <div class="grid">
+        <a class="card" href="#">
+          <div class="card__media">
+            <svg viewBox="0 0 340 110" aria-hidden="true">
+              <path
+                d="M12 78 L20 62 q5-8 16-9 l52-4 q14-16 34-18 l84-1 q22 2 38 19 l58 4 q14 2 18 11 l4 14 Z"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="3"
+              />
+              <circle
+                cx="86"
+                cy="78"
+                r="15"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="3"
+              />
+              <circle
+                cx="262"
+                cy="78"
+                r="15"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="3"
+              />
+            </svg>
+          </div>
+          <div class="card__b">
+            <div>
+              <p class="card__t" style="margin: 0">Volkswagen Taos 2025</p>
+              <p class="card__d" style="margin: 6px 0 0">
+                2025 · 0 km · SUV · Nafta
+              </p>
+            </div>
+            <div class="card__right">
+              <span class="price">$ 39.500.000</span>
+              <span class="see">Ver →</span>
+            </div>
+          </div>
+        </a>
+
+        <a class="card" href="#">
+          <div class="card__media">
+            <svg viewBox="0 0 340 110" aria-hidden="true">
+              <path
+                d="M12 78 L20 62 q5-8 16-9 l52-4 q14-16 34-18 l84-1 q22 2 38 19 l58 4 q14 2 18 11 l4 14 Z"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="3"
+              />
+              <circle
+                cx="86"
+                cy="78"
+                r="15"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="3"
+              />
+              <circle
+                cx="262"
+                cy="78"
+                r="15"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="3"
+              />
+            </svg>
+          </div>
+          <div class="card__b">
+            <div>
+              <p class="card__t" style="margin: 0">Toyota Corolla Cross 2023</p>
+              <p class="card__d" style="margin: 6px 0 0">
+                2023 · 24.000 km · SUV · Híbrido
+              </p>
+            </div>
+            <div class="card__right">
+              <span class="price">$ 36.500.000</span>
+              <span class="see">Ver →</span>
+            </div>
+          </div>
+        </a>
+
+        <a class="card" href="#">
+          <div class="card__media">
+            <svg viewBox="0 0 340 110" aria-hidden="true">
+              <path
+                d="M12 78 L20 62 q5-8 16-9 l52-4 q14-16 34-18 l84-1 q22 2 38 19 l58 4 q14 2 18 11 l4 14 Z"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="3"
+              />
+              <circle
+                cx="86"
+                cy="78"
+                r="15"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="3"
+              />
+              <circle
+                cx="262"
+                cy="78"
+                r="15"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="3"
+              />
+            </svg>
+          </div>
+          <div class="card__b">
+            <div>
+              <p class="card__t" style="margin: 0">Chevrolet Tracker 2025</p>
+              <p class="card__d" style="margin: 6px 0 0">
+                2025 · 0 km · SUV · Nafta
+              </p>
+            </div>
+            <div class="card__right">
+              <span class="price">$ 39.900.000</span>
+              <span class="see">Ver →</span>
+            </div>
+          </div>
+        </a>
+
+        <a class="card" href="#">
+          <div class="card__media">
+            <svg viewBox="0 0 340 110" aria-hidden="true">
+              <path
+                d="M12 78 L20 62 q5-8 16-9 l52-4 q14-16 34-18 l84-1 q22 2 38 19 l58 4 q14 2 18 11 l4 14 Z"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="3"
+              />
+              <circle
+                cx="86"
+                cy="78"
+                r="15"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="3"
+              />
+              <circle
+                cx="262"
+                cy="78"
+                r="15"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="3"
+              />
+            </svg>
+          </div>
+          <div class="card__b">
+            <div>
+              <p class="card__t" style="margin: 0">Toyota Hilux 2022</p>
+              <p class="card__d" style="margin: 6px 0 0">
+                2022 · 58.000 km · Pickup · Diésel
+              </p>
+            </div>
+            <div class="card__right">
+              <span class="price">$ 52.000.000</span>
+              <span class="see">Ver →</span>
+            </div>
+          </div>
+        </a>
+
+        <a class="card" href="#">
+          <div class="card__media">
+            <svg viewBox="0 0 340 110" aria-hidden="true">
+              <path
+                d="M12 78 L20 62 q5-8 16-9 l52-4 q14-16 34-18 l84-1 q22 2 38 19 l58 4 q14 2 18 11 l4 14 Z"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="3"
+              />
+              <circle
+                cx="86"
+                cy="78"
+                r="15"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="3"
+              />
+              <circle
+                cx="262"
+                cy="78"
+                r="15"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="3"
+              />
+            </svg>
+          </div>
+          <div class="card__b">
+            <div>
+              <p class="card__t" style="margin: 0">Fiat Cronos 2022</p>
+              <p class="card__d" style="margin: 6px 0 0">
+                2022 · 38.000 km · Sedán · Nafta
+              </p>
+            </div>
+            <div class="card__right">
+              <span class="price">$ 21.500.000</span>
+              <span class="see">Ver →</span>
+            </div>
+          </div>
+        </a>
+
+        <a class="card" href="#">
+          <div class="card__media">
+            <svg viewBox="0 0 340 110" aria-hidden="true">
+              <path
+                d="M12 78 L20 62 q5-8 16-9 l52-4 q14-16 34-18 l84-1 q22 2 38 19 l58 4 q14 2 18 11 l4 14 Z"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="3"
+              />
+              <circle
+                cx="86"
+                cy="78"
+                r="15"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="3"
+              />
+              <circle
+                cx="262"
+                cy="78"
+                r="15"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="3"
+              />
+            </svg>
+          </div>
+          <div class="card__b">
+            <div>
+              <p class="card__t" style="margin: 0">Toyota Yaris 2021</p>
+              <p class="card__d" style="margin: 6px 0 0">
+                2021 · 45.000 km · Hatchback · Nafta
+              </p>
+            </div>
+            <div class="card__right">
+              <span class="price">$ 20.500.000</span>
+              <span class="see">Ver →</span>
+            </div>
+          </div>
+        </a>
+      </div>
+
+      <div class="pager">
+        <a href="#" aria-label="Anterior">←</a>
+        <span>Página 1 de 3</span>
+        <a href="#" aria-label="Siguiente">→</a>
+      </div>
+
+      <p class="note mono">
+        Artboard: fotos = placeholder. En producción son las fotos reales de
+        cada unidad, con la misma proporción 4:3.
+      </p>
+    </main>
+  </body>
+</html>

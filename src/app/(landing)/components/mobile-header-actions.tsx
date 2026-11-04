@@ -136,7 +136,10 @@ export function MobileHeaderActions({
         <div
           ref={panelRef}
           id="mobile-panel"
-          className="border-border bg-background absolute inset-x-0 top-full z-50 border-b xl:hidden"
+          /* Anclado a la derecha (donde está el botón que lo abre) y con techo: en
+             mobile ocupa el ancho de la pantalla, pero al crecer la resolución no
+             se estira hasta el otro extremo del header. */
+          className="border-border bg-background absolute top-full right-0 z-50 w-full max-w-[22rem] border-b border-l xl:hidden"
         >
           {open === "search" ? (
             <div className="p-4">

@@ -23,11 +23,11 @@ export const identity: SiteIdentity = {
     whatsappPrompt: "¿Buscas vender o comprar tu auto?",
   },
   address: {
-    street: "General López 3543",
+    street: "Gral. López 3543",
     locality: "Santa Fe",
     region: "Santa Fe",
     country: "AR",
-    display: "General López 3543, Santa Fe",
+    display: "Gral. López 3543, Santa Fe",
   },
   geo: { latitude: -31.6552097, longitude: -60.7221098 },
   mapsUrl:

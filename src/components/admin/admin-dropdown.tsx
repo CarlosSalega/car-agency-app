@@ -24,27 +24,47 @@ interface AdminDropdownProps {
     email: string;
     role: "ADMIN" | "COLLABORATOR";
   };
+  /**
+   * `icon` (default) is the panel's square button. `text` is for the public
+   * footer, where an icon button next to the copyright would look like a control
+   * from another product: there the trigger is the same mono label as the
+   * "Acceso" link it replaces.
+   */
+  variant?: "icon" | "text";
 }
 
-export function AdminDropdown({ user }: AdminDropdownProps) {
+export function AdminDropdown({ user, variant = "icon" }: AdminDropdownProps) {
   const pathname = usePathname();
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
         render={
-          <Button
-            variant="outline"
-            size="icon"
-            aria-label="Menú de usuario"
-            className="hover:bg-background hover:text-foreground focus-visible:ring-0 focus-visible:ring-offset-0"
-          >
-            {user.role === "ADMIN" ? (
-              <ShieldCheck className="size-5" />
-            ) : (
-              <User className="size-5" />
-            )}
-          </Button>
+          variant === "text" ? (
+            <Button
+              variant="ghost"
+              aria-label="Menú de usuario"
+              className="text-muted-foreground hover:text-foreground h-auto gap-1.5 px-0 py-0 font-mono text-[10px] tracking-[0.14em] uppercase hover:bg-transparent"
+            >
+              {user.name ?? "Mi cuenta"}
+              <span aria-hidden="true" className="text-[8px]">
+                ▾
+              </span>
+            </Button>
+          ) : (
+            <Button
+              variant="outline"
+              size="icon"
+              aria-label="Menú de usuario"
+              className="hover:bg-background hover:text-foreground focus-visible:ring-0 focus-visible:ring-offset-0"
+            >
+              {user.role === "ADMIN" ? (
+                <ShieldCheck className="size-5" />
+              ) : (
+                <User className="size-5" />
+              )}
+            </Button>
+          )
         }
       />
 

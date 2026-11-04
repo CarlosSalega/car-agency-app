@@ -45,22 +45,14 @@ export function LatestArrivals({ cars, totalCars }: LatestArrivalsProps) {
       className="bg-background border-border scroll-mt-[88px] border-b py-20"
     >
       <div className="mx-auto w-full max-w-[1320px] px-7">
-        <div className="mb-8 grid items-end gap-6 md:grid-cols-[1fr_auto]">
-          <div>
-            <p className="text-muted-foreground mb-2 flex items-center gap-3 font-mono text-[11px] tracking-[0.16em] uppercase">
-              <s aria-hidden="true" className="bg-brand block h-px w-7" />
-              Últimos ingresos
-            </p>
-            <h2 className="text-[clamp(26px,3vw,38px)] leading-[1.05] font-bold tracking-[-0.02em]">
-              Lo que entró esta semana al salón
-            </h2>
-          </div>
-          <p className="text-muted-foreground max-w-[32ch] font-mono text-[11px] leading-relaxed tracking-[0.14em] uppercase md:text-right">
-            Ordenados por fecha de ingreso.
-            <br />
-            Publicamos el precio de lista: después se descuenta tu parte de
-            pago.
+        <div className="mb-8">
+          <p className="text-muted-foreground mb-2 flex items-center gap-3 font-mono text-[11px] tracking-[0.16em] uppercase">
+            <s aria-hidden="true" className="bg-brand block h-px w-7" />
+            Últimos ingresos
           </p>
+          <h2 className="text-[clamp(26px,3vw,38px)] leading-[1.05] font-bold tracking-[-0.02em]">
+            Lo que entró esta semana al salón
+          </h2>
         </div>
 
         <div className="border-border border-t">

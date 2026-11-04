@@ -1,0 +1,410 @@
+<!doctype html>
+<html lang="es-AR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>GL Autos · Loaders cuadrados</title>
+    <style>
+      /*
+        Cuatro loaders para reemplazar el círculo (`Loader2` + anillo `ping`) del
+        `src/app/loading.tsx`. Todos: radio 0, línea de 1px, marca `#fe0000`, fondo
+        `#121212`. Cada uno muestra su nombre y su costo en la columna derecha.
+      */
+      :root {
+        --bg: #121212;
+        --ground: #0b0b0b;
+        --card: #141414;
+        --surface: #1c1c1c;
+        --fg: #f5f5f5;
+        --body: #c4c7c8;
+        --mute: #a3a3a3;
+        --line: #2a2a2a;
+        --line-2: #3a3a3a;
+        --brand: #fe0000;
+        --sans: Afacad, ui-sans-serif, system-ui, sans-serif;
+        --mono: "Fira Code", ui-monospace, "SF Mono", Menlo, monospace;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--fg);
+        font-family: var(--sans);
+        -webkit-font-smoothing: antialiased;
+      }
+      main {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 40px 32px 72px;
+      }
+      h1 {
+        margin: 0 0 6px;
+        font-size: 30px;
+        letter-spacing: -0.03em;
+      }
+      .intro {
+        margin: 0 0 34px;
+        color: var(--mute);
+        font-size: 15px;
+        max-width: 68ch;
+        line-height: 1.6;
+      }
+      .row {
+        display: grid;
+        grid-template-columns: 220px 1fr;
+        gap: 0;
+        border-top: 1px solid var(--line-2);
+      }
+      .row:last-of-type {
+        border-bottom: 1px solid var(--line-2);
+      }
+      .stage {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 190px;
+        border-right: 1px solid var(--line);
+      }
+      .meta {
+        padding: 22px 26px;
+      }
+      .meta .k {
+        display: flex;
+        align-items: baseline;
+        gap: 10px;
+      }
+      .meta .n {
+        font-family: var(--mono);
+        font-size: 11px;
+        color: var(--brand);
+        letter-spacing: 0.1em;
+      }
+      .meta h2 {
+        margin: 0;
+        font-size: 19px;
+        letter-spacing: -0.01em;
+      }
+      .meta p {
+        margin: 8px 0 0;
+        color: var(--body);
+        font-size: 14px;
+        line-height: 1.6;
+        max-width: 58ch;
+      }
+      .meta .cost {
+        margin-top: 10px;
+        color: var(--mute);
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+      }
+      .caption {
+        color: var(--mute);
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        margin-top: 10px;
+        text-align: center;
+      }
+
+      /* ---------- A · el cuadrado que se llena ---------- */
+      .fill {
+        position: relative;
+        width: 56px;
+        height: 56px;
+        border: 1px solid var(--line-2);
+        overflow: hidden;
+      }
+      .fill i {
+        position: absolute;
+        inset: auto 0 0 0;
+        background: var(--fg);
+        animation: fill 1.6s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+      }
+      @keyframes fill {
+        0% {
+          height: 0;
+        }
+        70% {
+          height: 100%;
+        }
+        100% {
+          height: 100%;
+          opacity: 0;
+        }
+      }
+
+      /* ---------- B · grilla 3×3 ---------- */
+      .dots {
+        display: grid;
+        grid-template-columns: repeat(3, 10px);
+        gap: 6px;
+      }
+      .dots i {
+        width: 10px;
+        height: 10px;
+        background: var(--line-2);
+        animation: cell 1.5s ease-in-out infinite;
+      }
+      .dots i:nth-child(1) {
+        animation-delay: 0s;
+      }
+      .dots i:nth-child(2) {
+        animation-delay: 0.08s;
+      }
+      .dots i:nth-child(3) {
+        animation-delay: 0.16s;
+      }
+      .dots i:nth-child(4) {
+        animation-delay: 0.08s;
+      }
+      .dots i:nth-child(5) {
+        animation-delay: 0.16s;
+      }
+      .dots i:nth-child(6) {
+        animation-delay: 0.24s;
+      }
+      .dots i:nth-child(7) {
+        animation-delay: 0.16s;
+      }
+      .dots i:nth-child(8) {
+        animation-delay: 0.24s;
+      }
+      .dots i:nth-child(9) {
+        animation-delay: 0.32s;
+      }
+      @keyframes cell {
+        0%,
+        100% {
+          background: var(--line-2);
+        }
+        40% {
+          background: var(--brand);
+        }
+      }
+
+      /* ---------- C · persiana ---------- */
+      .shutter {
+        position: relative;
+        width: 56px;
+        height: 56px;
+        border: 1px solid var(--line-2);
+        overflow: hidden;
+        display: grid;
+        grid-template-rows: repeat(7, 1fr);
+      }
+      .shutter i {
+        border-bottom: 1px solid var(--surface);
+        animation: slat 1.4s ease-in-out infinite;
+      }
+      .shutter i:nth-child(2) {
+        animation-delay: 0.06s;
+      }
+      .shutter i:nth-child(3) {
+        animation-delay: 0.12s;
+      }
+      .shutter i:nth-child(4) {
+        animation-delay: 0.18s;
+      }
+      .shutter i:nth-child(5) {
+        animation-delay: 0.24s;
+      }
+      .shutter i:nth-child(6) {
+        animation-delay: 0.3s;
+      }
+      .shutter i:nth-child(7) {
+        animation-delay: 0.36s;
+      }
+      @keyframes slat {
+        0%,
+        100% {
+          background: transparent;
+        }
+        30% {
+          background: var(--brand);
+        }
+      }
+
+      /* ---------- D · esqueleto de la página ---------- */
+      .skel {
+        width: 300px;
+        display: grid;
+        gap: 8px;
+      }
+      .skel .bar {
+        height: 1px;
+        background: var(--line-2);
+      }
+      .skel .head {
+        height: 30px;
+        background: var(--surface);
+        animation: pulse 1.8s ease-in-out infinite;
+        width: 55%;
+      }
+      .skel .cards {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+        margin-top: 6px;
+      }
+      .skel .card {
+        height: 54px;
+        border: 1px solid var(--line);
+        background: var(--card);
+        animation: pulse 1.8s ease-in-out infinite;
+      }
+      .skel .card:nth-child(2) {
+        animation-delay: 0.15s;
+      }
+      .skel .card:nth-child(3) {
+        animation-delay: 0.3s;
+      }
+      @keyframes pulse {
+        0%,
+        100% {
+          background: var(--card);
+        }
+        50% {
+          background: var(--surface);
+        }
+      }
+
+      .label {
+        margin-top: 14px;
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--mute);
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .fill i,
+        .dots i,
+        .shutter i,
+        .skel .head,
+        .skel .card {
+          animation: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Loaders cuadrados</h1>
+      <p class="intro">
+        Cuatro reemplazos para el círculo actual (`Loader2` girando + anillo
+        <code>ping</code> a pantalla completa). Todos usan radio 0, línea de 1px
+        y el rojo de marca. El cuarto no es un loader: es la página en
+        esqueleto.
+      </p>
+
+      <div class="row">
+        <div class="stage">
+          <div>
+            <div class="fill"><i></i></div>
+            <p class="label">A</p>
+          </div>
+        </div>
+        <div class="meta">
+          <div class="k">
+            <span class="n">A</span>
+            <h2>El cuadrado que se llena</h2>
+          </div>
+          <p>
+            Un cuadrado de 56px con borde fino, y el rojo de marca subiendo
+            desde abajo en 1,6s, se llena y se reinicia. Sin texto, o con un
+            <code>CARGANDO</code> en mono debajo.
+          </p>
+          <p class="cost">
+            Costo: 1 elemento · ~10 líneas de CSS · el más parecido a un
+            indicador de progreso
+          </p>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="stage">
+          <div class="dots">
+            <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+          </div>
+        </div>
+        <div class="meta">
+          <div class="k">
+            <span class="n">B</span>
+            <h2>Grilla 3×3</h2>
+          </div>
+          <p>
+            Nueve cuadraditos de 10px que se encienden en diagonal, como una
+            matriz que arranca. Es el que más se parece al lenguaje del sitio
+            (grilla + línea), y el único que no se confunde con una barra de
+            progreso.
+          </p>
+          <p class="cost">
+            Costo: 9 elementos + 9 delays · ~18 líneas · el más “diseñado”
+          </p>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="stage">
+          <div>
+            <div class="shutter">
+              <i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+            </div>
+            <p class="label">C</p>
+          </div>
+        </div>
+        <div class="meta">
+          <div class="k">
+            <span class="n">C</span>
+            <h2>Persiana</h2>
+          </div>
+          <p>
+            El mismo cuadrado, dividido en siete listones; el rojo los recorre
+            de arriba a abajo y vuelve. Lee como algo mecánico, de taller, más
+            que de software.
+          </p>
+          <p class="cost">
+            Costo: 7 elementos + delays · ~22 líneas · el más “automotor”
+          </p>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="stage">
+          <div class="skel">
+            <div class="bar"></div>
+            <div class="head"></div>
+            <div class="bar"></div>
+            <div class="cards">
+              <div class="card"></div>
+              <div class="card"></div>
+              <div class="card"></div>
+            </div>
+            <div class="bar"></div>
+          </div>
+        </div>
+        <div class="meta">
+          <div class="k">
+            <span class="n">D</span>
+            <h2>Esqueleto de la página</h2>
+          </div>
+          <p>
+            No es un loader: es la página que viene, en gris, con las líneas en
+            su lugar. Es lo que hace que una navegación se sienta instantánea,
+            porque no hay salto de layout cuando llega el contenido.
+          </p>
+          <p class="cost">
+            Costo: uno por ruta (landing, catálogo, ficha) · ~40 líneas cada uno
+            · mejor UX, más trabajo
+          </p>
+        </div>
+      </div>
+    </main>
+  </body>
+</html>

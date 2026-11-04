@@ -37,6 +37,8 @@ const CLIENT_MARKERS = [
   "glautos",
   "5493425777646",
   "General López 3543",
+  // La forma abreviada es la que se publica hoy; la larga queda por si vuelve.
+  "Gral. López 3543",
   "gl.autos.sf",
 ];
 

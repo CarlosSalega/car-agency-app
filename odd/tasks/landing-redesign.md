@@ -296,3 +296,74 @@ committed on its own, so the owner can review and change direction between secti
   no tenía a dónde ir. Arreglado: el destino se borra **después** de scrollear, y si la sección todavía
   no está en el DOM se reintenta por hasta ~60 frames (≈1s). Además `router.push("/", { scroll: false })`
   para que la restauración al tope de Next no pise el scroll propio.
+
+- **L33 (T9, filtros como chips):** "me gustaria modificar los filtros, que sean chips/badge en la parte superior
+  de la grid" + "crea una nueva rama e implementalo". Implementado en `feat/catalogo-chips`:
+  - `src/lib/catalog/filter-url.ts` es **toda** la lógica de la barra y es puro: `withParam`, `toggleFacet`,
+    `clearFilters`, `activeFilters`. 13 tests. **El test-first encontró un bug real**: `withParam` borraba
+    la clave recién seteada (llamaba a `without(params, key)` después de `params.set`), así que elegir un
+    chip devolvía `/catalogo` sin filtro.
+  - `CatalogFilterBar` es un **server component hecho de links y un `<form method="get">`**: cero estado
+    cliente, la URL es el estado, y cada vista filtrada es compartible y funciona sin JS.
+  - Chips por faceta (Tipo / Combustible / Caja) con un valor por faceta; `Marca` como menú `<details>`
+    (son ~10); `Modelo` aparece **sólo si hay marca elegida**; año y precio en `Más filtros` (necesitan
+    dos campos, no son chips); y `Ordenar` (recientes / precio asc-desc / menor km).
+  - Al cambiar de marca se limpia el modelo, y cualquier cambio resetea `page` (los dos casos están en tests).
+  - `sort` entra en `CarListFilters` y `buildOrderBy` lo mapea a Prisma; un valor desconocido cae en
+    "recientes" en vez de romper.
+  - **SEO**: `generateMetadata` pone `robots: index:false, follow:true` en cualquier vista filtrada, y la
+    canónica sigue apuntando a `/catalogo`.
+  - Borrados: `search-filters.tsx` y `mobile-filters-sheet.tsx`.
+    **Desviación consciente del artboard**: en mobile los grupos de chips **envuelven en 2-3 filas** en vez
+    de scrollear de costado con barra fija al pie. La barra fija necesita verificarse en un navegador y no
+    la puedo mirar; el wrap funciona y es accesible. Si se quiere el scroll horizontal + barra fija, es un
+    cambio chico a verificar del lado del owner.
+
+- **L34 (el body se arrastraba de costado en mobile):** "solamente deberia permitir esa parte deslizar hacia la
+  derecha y no toda la pagina". Causa: los grupos de chips eran hijos de un `flex-wrap` pero cada grupo no
+  podía encogerse por debajo de su contenido (`whitespace-nowrap`), así que la fila era más ancha que la
+  pantalla y el desborde llegaba al `body`. Ahora los facets viven en **su propio scroller**
+  (`overflow-x-auto`, `snap-x`, `shrink-0` + `snap-start` en cada grupo, scrollbar oculta, márgenes negativos
+  para sangrar hasta el borde), y desde `md` vuelven a fluir y envolver (`md:overflow-visible md:flex-wrap`).
+  Las acciones (Marca, Más filtros, Limpiar) salen del scroller: en mobile van en su propia fila y quedan
+  siempre alcanzables; en desktop vuelven al extremo derecho con `md:ml-auto`.
+
+- **L35 (padding de la franja de chips):** "los filtros no respetan el padding left y estan muy pegados al header,
+  necesita un padding Y". El sangrado del scroller (`-mx-7 px-7`, puesto para que la fila llegara al borde)
+  se comía el padding de la página en mobile y dejaba el label TIPO contra el borde. Se quitó el sangrado: el
+  scroller vive dentro del padding del contenedor, así los chips quedan alineados con las cards. Y la franja
+  pasa de `py-3.5` a **`py-5`** para despegarla del header sticky.
+
+- **L36 (los menús de filtro en mobile):** "en mobile no se adaptan bien, el unico que si lo hace es el de Ordenar,
+  ademas no se cierran si haces click fuera". Dos causas distintas:
+  1. **Ancho fijo con `right-0`**: `Más filtros` medía `w-80` (320px) y `Marca` `w-56`; anclados a la derecha de su
+     summary en una pantalla de 320, el panel se salía por la izquierda y quedaba cortado. `Ordenar` (`w-48`) era
+     el único que entraba, por eso "sólo ese se adaptaba".
+  2. **`<details>` no cierra con click afuera ni con Escape.**
+     Se creó `FilterMenu` (cliente): envuelve el `<details>`, agrega cierre por `pointerdown` fuera, Escape (devolviendo
+     el foco al summary) y cierre al elegir una opción; y el panel pasa a `inset-x-0` en mobile (ancho de la fila) y a
+     `md:inset-x-auto md:right-0 md:w-*` en desktop. La fila de acciones y la de resultado son `relative`: son el anclaje
+     en mobile. Sin JS el `<details>` sigue abriendo y cerrando con el summary.
+
+- **L37 (footer con sesión):** "cuando haya sesion activa, en el footer se cambiará el link de 'Acceso' por un admin
+  dropdown". `AdminDropdown` gana `variant?: "icon" | "text"`: el ícono sigue siendo el del panel y el footer usa un
+  trigger de texto (el nombre en mono, con caret) que hereda el estilo del link que reemplaza. `Footer` recibe
+  `session?: FooterSession | null` **como prop y no la lee adentro**: el componente también se renderiza desde
+  `PublicQueryError`, que es cliente, y un `getSession()` ahí adentro lo volvería componente de servidor y rompería
+  ese árbol. Las tres páginas públicas (landing, catálogo, ficha) resuelven la sesión en el servidor y la pasan.
+  **Consecuencia**: la landing vuelve a ser dinámica (lee cookies), como era cuando montaba `NavbarServer`.
+
+- **L38 (loading cuadrado, opción A):** "modifica el loading general de la pagina, ahora es un circulo, podemos hacer un
+  cuadrado" → eligió **A** (el cuadrado que se llena), con una corrección: "que no sea color brand, ya que es rojo y
+  puede causar confusion". Implementado como `SquareLoader` compartido:
+  - relleno con **`bg-foreground`**, no con marca: el rojo es el color de acción y de error, y un bloque rojo creciendo
+    se lee como alerta.
+  - keyframes en `globals.css` (`square-loader-fill`, 1,6s, `cubic-bezier(.65,0,.35,1)`), y con
+    `prefers-reduced-motion` el cuadrado queda fijo al 55%.
+  - `role="status"` + `aria-live="polite"` y el texto para lectores de pantalla; el admin lo muestra visible.
+  - **Se fue el overlay `fixed inset-0` con `backdrop-blur`**: bloquear y difuminar toda la página por una navegación
+    de pocos cientos de milisegundos hace que la espera se sienta más larga. Ahora es un contenedor en flujo con
+    `min-h-screen`.
+  - `src/app/loading.tsx` y `AdminLoadingFallback` usan el mismo componente.
+    **Quedan dos círculos** fuera de alcance: el ícono de carga de los toasts (`sonner`) y el spinner del botón de
+    subida de imágenes en el panel.

@@ -43,16 +43,13 @@ export function Hero({ totalCars }: HeroProps) {
         />
 
         <div className="pointer-events-none absolute inset-x-0 bottom-0 z-20 bg-gradient-to-t from-black/95 from-45% to-transparent p-5">
-          {/* El caption es del equipo, no de una unidad: el precio vive en la
-              sección de ingresos, que es donde se compara. */}
-          <div className="text-muted-foreground flex flex-col gap-1 font-mono text-[11px] tracking-[0.16em] uppercase sm:flex-row sm:items-baseline sm:justify-between sm:gap-4">
+          {/* El caption es del equipo; la dirección vive en el kicker de abajo.
+              Antes los dos la decían y en mobile se leían una debajo de la otra. */}
+          <div className="text-muted-foreground font-mono text-[11px] tracking-[0.16em] uppercase">
             <span className="whitespace-nowrap">
               <b className="text-foreground font-medium">
                 El equipo de {identity.name}
               </b>
-            </span>
-            <span className="whitespace-nowrap">
-              {identity.address.display}
             </span>
           </div>
         </div>
@@ -60,9 +57,17 @@ export function Hero({ totalCars }: HeroProps) {
 
       {/* La información */}
       <div className="flex flex-col justify-center px-7 py-12 xl:px-14">
-        <p className="text-muted-foreground mb-5 flex items-center gap-3 font-mono text-[11px] tracking-[0.16em] uppercase">
-          <s aria-hidden="true" className="bg-brand block h-px w-7 text-sm" />
-          {identity.address.locality} · {identity.address.street}
+        {/* En 320 la dirección se partía en dos líneas: 25 caracteres en mono con
+            0.16em de tracking no entran. Se achica el tracking y el cuerpo, y la
+            línea roja se acorta sólo en mobile para devolverle el ancho. */}
+        <p className="text-muted-foreground mb-5 flex items-center gap-2 font-mono text-[10px] tracking-[0.08em] uppercase sm:gap-3 sm:text-[11px] sm:tracking-[0.16em]">
+          <s
+            aria-hidden="true"
+            className="bg-brand block h-px w-4 shrink-0 sm:w-7"
+          />
+          <span className="whitespace-nowrap">
+            {identity.address.locality} · {identity.address.street}
+          </span>
         </p>
 
         <h1 className="text-[clamp(34px,3.9vw,62px)] leading-[0.96] font-black tracking-[-0.035em] text-balance">
@@ -85,7 +90,7 @@ export function Hero({ totalCars }: HeroProps) {
             href="/catalogo"
             className="bg-primary text-primary-foreground hover:bg-primary/90 flex h-11 w-full items-center justify-center px-5 font-mono text-[11px] font-bold tracking-[0.16em] uppercase transition-colors"
           >
-            Ver {totalCars === 1 ? "la unidad" : `las ${totalCars} unidades`}
+            Mirá nuestro stock
           </Link>
           {/* El segundo CTA arranca la operación en vez de proponer una visita:
               "tasá mi usado" es lo que el cliente quiere resolver. */}
@@ -97,7 +102,7 @@ export function Hero({ totalCars }: HeroProps) {
             rel="noopener noreferrer"
             className="border-line-strong hover:bg-accent flex h-11 w-full items-center justify-center border px-5 font-mono text-[11px] tracking-[0.16em] uppercase transition-colors"
           >
-            Tasar mi usado
+            Quiero tasar mi usado
           </a>
         </div>
 
