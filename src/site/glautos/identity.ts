@@ -60,7 +60,6 @@ export const assets: SiteAssets = {
   mark: { src: "/logo-mark.png", width: 42, height: 18 },
   hero: { src: "/hero.webp", width: 1440, height: 1920 },
   preview: { src: "/preview.webp", width: 1200, height: 630 },
-  previewSquare: { src: "/preview.webp", width: 1200, height: 1200 },
   favicon: "/favicon.ico",
   appleIcon: "/apple-touch-icon.png",
 };

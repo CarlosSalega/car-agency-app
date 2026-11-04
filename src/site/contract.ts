@@ -100,10 +100,12 @@ export interface SiteAssets {
    * content, so it ships with the client and not from the database.
    */
   hero: { src: string; width: number; height: number };
-  /** Social preview image. */
+  /**
+   * Social preview, 1200x630 (1.905:1). The declared size must be the real one:
+   * WhatsApp and Facebook read `og:image:width/height` and a mismatch shows the
+   * card cropped or letterboxed.
+   */
   preview: { src: string; width: number; height: number };
-  /** Square social preview, used by the platforms that crop. */
-  previewSquare: { src: string; width: number; height: number };
   favicon: string;
   appleIcon: string;
 }

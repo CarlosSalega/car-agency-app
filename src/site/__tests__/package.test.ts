@@ -68,10 +68,7 @@ describe("the GL Autos package is internally consistent", () => {
   });
 
   it("ships assets with the dimensions the metadata will claim", () => {
-    for (const asset of [
-      glautos.assets.preview,
-      glautos.assets.previewSquare,
-    ]) {
+    for (const asset of [glautos.assets.preview]) {
       expect(asset.width).toBeGreaterThan(0);
       expect(asset.height).toBeGreaterThan(0);
       expect(asset.src.startsWith("/")).toBe(true);
