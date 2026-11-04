@@ -352,3 +352,18 @@ committed on its own, so the owner can review and change direction between secti
   `PublicQueryError`, que es cliente, y un `getSession()` ahí adentro lo volvería componente de servidor y rompería
   ese árbol. Las tres páginas públicas (landing, catálogo, ficha) resuelven la sesión en el servidor y la pasan.
   **Consecuencia**: la landing vuelve a ser dinámica (lee cookies), como era cuando montaba `NavbarServer`.
+
+- **L38 (loading cuadrado, opción A):** "modifica el loading general de la pagina, ahora es un circulo, podemos hacer un
+  cuadrado" → eligió **A** (el cuadrado que se llena), con una corrección: "que no sea color brand, ya que es rojo y
+  puede causar confusion". Implementado como `SquareLoader` compartido:
+  - relleno con **`bg-foreground`**, no con marca: el rojo es el color de acción y de error, y un bloque rojo creciendo
+    se lee como alerta.
+  - keyframes en `globals.css` (`square-loader-fill`, 1,6s, `cubic-bezier(.65,0,.35,1)`), y con
+    `prefers-reduced-motion` el cuadrado queda fijo al 55%.
+  - `role="status"` + `aria-live="polite"` y el texto para lectores de pantalla; el admin lo muestra visible.
+  - **Se fue el overlay `fixed inset-0` con `backdrop-blur`**: bloquear y difuminar toda la página por una navegación
+    de pocos cientos de milisegundos hace que la espera se sienta más larga. Ahora es un contenedor en flujo con
+    `min-h-screen`.
+  - `src/app/loading.tsx` y `AdminLoadingFallback` usan el mismo componente.
+    **Quedan dos círculos** fuera de alcance: el ícono de carga de los toasts (`sonner`) y el spinner del botón de
+    subida de imágenes en el panel.

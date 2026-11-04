@@ -1,19 +1,22 @@
-import { Loader2Icon } from "lucide-react";
+import { SquareLoader } from "@/components/ui/square-loader";
 
 interface AdminLoadingFallbackProps {
   label?: string;
 }
 
+/**
+ * The panel's loading state, with the same square as the public site so the two
+ * do not speak different languages. The label is visible here: inside the panel the
+ * wait happens between two screens of the same tool, and naming it helps.
+ */
 export function AdminLoadingFallback({
-  label = "Cargando...",
+  label = "Cargando…",
 }: AdminLoadingFallbackProps) {
   return (
     <div className="bg-background min-h-screen">
-      {/* The offset tracks the admin shell's slim bar, which is `h-16`. The
-          previous `6rem` assumed the old full-width `h-24` header. */}
-      <div className="container mx-auto flex min-h-[calc(100vh-4rem)] items-center justify-center gap-4 px-4 py-6">
-        <Loader2Icon className="text-muted-foreground size-6 animate-spin" />
-        <p className="text-muted-foreground text-base font-medium">{label}</p>
+      {/* The offset tracks the admin shell's slim bar, which is `h-16`. */}
+      <div className="container mx-auto flex min-h-[calc(100vh-4rem)] items-center justify-center px-4 py-6">
+        <SquareLoader label={label} showLabel size="sm" />
       </div>
     </div>
   );

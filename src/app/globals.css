@@ -31,6 +31,42 @@
   }
 }
 
+/*
+ * The page loader: a square that fills from the bottom with the foreground colour.
+ * Not the brand red: that is the action and error colour, and a red block growing
+ * on screen reads as a warning.
+ *
+ * It replaced a spinning circle plus a `ping` ring on a blurred full-screen
+ * overlay — two animations and a blocked page for what is a navigation that
+ * usually lasts a few hundred milliseconds. The fill is indeterminate on purpose
+ * (the app cannot know how long a query will take), so it loops instead of
+ * pretending to be a percentage.
+ */
+@keyframes square-loader-fill {
+  0% {
+    height: 0;
+  }
+  70% {
+    height: 100%;
+  }
+  100% {
+    height: 100%;
+    opacity: 0;
+  }
+}
+
+.square-loader__fill {
+  animation: square-loader-fill 1.6s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+}
+
+/* For whoever asks the system for less motion: the square stays half filled. */
+@media (prefers-reduced-motion: reduce) {
+  .square-loader__fill {
+    animation: none;
+    height: 55%;
+  }
+}
+
 @keyframes pulse-ring {
   0% {
     transform: scale(0.95);
