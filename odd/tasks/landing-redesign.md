@@ -333,3 +333,14 @@ committed on its own, so the owner can review and change direction between secti
   se comía el padding de la página en mobile y dejaba el label TIPO contra el borde. Se quitó el sangrado: el
   scroller vive dentro del padding del contenedor, así los chips quedan alineados con las cards. Y la franja
   pasa de `py-3.5` a **`py-5`** para despegarla del header sticky.
+
+- **L36 (los menús de filtro en mobile):** "en mobile no se adaptan bien, el unico que si lo hace es el de Ordenar,
+  ademas no se cierran si haces click fuera". Dos causas distintas:
+  1. **Ancho fijo con `right-0`**: `Más filtros` medía `w-80` (320px) y `Marca` `w-56`; anclados a la derecha de su
+     summary en una pantalla de 320, el panel se salía por la izquierda y quedaba cortado. `Ordenar` (`w-48`) era
+     el único que entraba, por eso "sólo ese se adaptaba".
+  2. **`<details>` no cierra con click afuera ni con Escape.**
+     Se creó `FilterMenu` (cliente): envuelve el `<details>`, agrega cierre por `pointerdown` fuera, Escape (devolviendo
+     el foco al summary) y cierre al elegir una opción; y el panel pasa a `inset-x-0` en mobile (ancho de la fila) y a
+     `md:inset-x-auto md:right-0 md:w-*` en desktop. La fila de acciones y la de resultado son `relative`: son el anclaje
+     en mobile. Sin JS el `<details>` sigue abriendo y cerrando con el summary.

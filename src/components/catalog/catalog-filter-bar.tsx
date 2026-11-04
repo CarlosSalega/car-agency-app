@@ -13,6 +13,7 @@ import {
 } from "@/lib/catalog/filter-url";
 
 import { FilterChip, FilterGroup } from "./filter-chip";
+import { FilterMenu } from "./filter-menu";
 
 /**
  * The catalog's filter bar: the facets as chips over the results.
@@ -137,135 +138,135 @@ export function CatalogFilterBar({
             </FilterGroup>
           </div>
 
-          <div className="flex items-center gap-2 md:ml-auto">
+          <div className="relative flex items-center gap-2 md:ml-auto">
             {/* Marca: menú porque son muchas y no entran como chips. */}
-            <details className="group relative">
-              <summary className="border-line-strong text-subtle-foreground hover:border-foreground hover:text-foreground flex cursor-pointer list-none items-center gap-2 border px-2.5 py-1.5 font-mono text-[11px] tracking-[0.04em] transition-colors [&::-webkit-details-marker]:hidden">
-                {currentBrand ? currentBrand.name : "Marca: todas"}
-                <span aria-hidden="true" className="text-[9px]">
-                  ▾
-                </span>
-              </summary>
-              <div className="border-line-strong bg-card absolute top-[calc(100%+6px)] right-0 z-30 max-h-72 w-56 overflow-y-auto border">
+            <FilterMenu
+              summary={
+                <>
+                  {currentBrand ? currentBrand.name : "Marca: todas"}
+                  <span aria-hidden="true" className="text-[9px]">
+                    ▾
+                  </span>
+                </>
+              }
+              panelClassName="border-line-strong bg-card absolute inset-x-0 top-[calc(100%+6px)] z-30 max-h-72 overflow-y-auto border md:inset-x-auto md:right-0 md:w-56"
+            >
+              <Link
+                href={toggleFacet(params, "brand", "")}
+                className="text-subtle-foreground hover:bg-accent hover:text-foreground border-border block border-b px-3 py-2 font-mono text-[11px] tracking-[0.04em] last:border-b-0"
+              >
+                Todas las marcas
+              </Link>
+              {brands.map((item) => (
                 <Link
-                  href={toggleFacet(params, "brand", "")}
-                  className="text-subtle-foreground hover:bg-accent hover:text-foreground border-border block border-b px-3 py-2 font-mono text-[11px] tracking-[0.04em] last:border-b-0"
+                  key={item.id}
+                  href={toggleFacet(params, "brand", item.id)}
+                  aria-current={brand === item.id ? "true" : undefined}
+                  className={`hover:bg-accent hover:text-foreground border-border block border-b px-3 py-2 font-mono text-[11px] tracking-[0.04em] last:border-b-0 ${
+                    brand === item.id ? "text-brand" : "text-subtle-foreground"
+                  }`}
                 >
-                  Todas las marcas
+                  {item.name}
                 </Link>
-                {brands.map((item) => (
-                  <Link
-                    key={item.id}
-                    href={toggleFacet(params, "brand", item.id)}
-                    aria-current={brand === item.id ? "true" : undefined}
-                    className={`hover:bg-accent hover:text-foreground border-border block border-b px-3 py-2 font-mono text-[11px] tracking-[0.04em] last:border-b-0 ${
-                      brand === item.id
-                        ? "text-brand"
-                        : "text-subtle-foreground"
-                    }`}
-                  >
-                    {item.name}
-                  </Link>
-                ))}
-              </div>
-            </details>
+              ))}
+            </FilterMenu>
 
             {/* Más filtros: los rangos, que necesitan dos campos. */}
-            <details className="group relative">
-              <summary className="border-line-strong text-subtle-foreground hover:border-foreground hover:text-foreground flex cursor-pointer list-none items-center gap-2 border border-dashed px-2.5 py-1.5 font-mono text-[11px] tracking-[0.04em] transition-colors [&::-webkit-details-marker]:hidden">
-                Más filtros
-                <span aria-hidden="true" className="text-[9px]">
-                  ⚙
-                </span>
-              </summary>
-              <div className="border-line-strong bg-card absolute top-[calc(100%+6px)] right-0 z-30 w-80 border p-4">
-                <form
-                  action="/catalogo"
-                  method="get"
-                  className="grid gap-3 sm:grid-cols-2"
-                >
-                  {/* Los filtros activos viajan en campos ocultos: un GET form pisa
+            <FilterMenu
+              summary={
+                <>
+                  Más filtros
+                  <span aria-hidden="true" className="text-[9px]">
+                    ⚙
+                  </span>
+                </>
+              }
+              summaryClassName="border-line-strong text-subtle-foreground hover:border-foreground hover:text-foreground flex cursor-pointer list-none items-center gap-2 border border-dashed px-2.5 py-1.5 font-mono text-[11px] tracking-[0.04em] transition-colors [&::-webkit-details-marker]:hidden"
+              panelClassName="border-line-strong bg-card absolute inset-x-0 top-[calc(100%+6px)] z-30 border p-4 md:inset-x-auto md:right-0 md:w-80"
+            >
+              <form
+                action="/catalogo"
+                method="get"
+                className="grid gap-3 sm:grid-cols-2"
+              >
+                {/* Los filtros activos viajan en campos ocultos: un GET form pisa
                     la query, así que lo que no se muestra se pierde. */}
-                  {[...params.entries()]
-                    .filter(
-                      ([key]) =>
-                        ![
-                          "minYear",
-                          "maxYear",
-                          "minPrice",
-                          "maxPrice",
-                        ].includes(key),
-                    )
-                    .map(([key, value]) => (
-                      <input key={key} type="hidden" name={key} value={value} />
-                    ))}
+                {[...params.entries()]
+                  .filter(
+                    ([key]) =>
+                      !["minYear", "maxYear", "minPrice", "maxPrice"].includes(
+                        key,
+                      ),
+                  )
+                  .map(([key, value]) => (
+                    <input key={key} type="hidden" name={key} value={value} />
+                  ))}
 
-                  <label className="grid gap-1.5">
-                    <span className="text-muted-foreground font-mono text-[10px] tracking-[0.14em] uppercase">
-                      Año desde
-                    </span>
-                    <input
-                      name="minYear"
-                      inputMode="numeric"
-                      defaultValue={params.get("minYear") ?? ""}
-                      placeholder="2019"
-                      className="border-line-strong bg-background text-foreground focus:border-brand h-10 w-full border px-2.5 font-mono text-[13px] focus:outline-none"
-                    />
-                  </label>
-                  <label className="grid gap-1.5">
-                    <span className="text-muted-foreground font-mono text-[10px] tracking-[0.14em] uppercase">
-                      Año hasta
-                    </span>
-                    <input
-                      name="maxYear"
-                      inputMode="numeric"
-                      defaultValue={params.get("maxYear") ?? ""}
-                      placeholder="2025"
-                      className="border-line-strong bg-background text-foreground focus:border-brand h-10 w-full border px-2.5 font-mono text-[13px] focus:outline-none"
-                    />
-                  </label>
-                  <label className="grid gap-1.5">
-                    <span className="text-muted-foreground font-mono text-[10px] tracking-[0.14em] uppercase">
-                      Precio desde
-                    </span>
-                    <input
-                      name="minPrice"
-                      inputMode="numeric"
-                      defaultValue={params.get("minPrice") ?? ""}
-                      placeholder="15000000"
-                      className="border-line-strong bg-background text-foreground focus:border-brand h-10 w-full border px-2.5 font-mono text-[13px] focus:outline-none"
-                    />
-                  </label>
-                  <label className="grid gap-1.5">
-                    <span className="text-muted-foreground font-mono text-[10px] tracking-[0.14em] uppercase">
-                      Precio hasta
-                    </span>
-                    <input
-                      name="maxPrice"
-                      inputMode="numeric"
-                      defaultValue={params.get("maxPrice") ?? ""}
-                      placeholder="60000000"
-                      className="border-line-strong bg-background text-foreground focus:border-brand h-10 w-full border px-2.5 font-mono text-[13px] focus:outline-none"
-                    />
-                  </label>
+                <label className="grid gap-1.5">
+                  <span className="text-muted-foreground font-mono text-[10px] tracking-[0.14em] uppercase">
+                    Año desde
+                  </span>
+                  <input
+                    name="minYear"
+                    inputMode="numeric"
+                    defaultValue={params.get("minYear") ?? ""}
+                    placeholder="2019"
+                    className="border-line-strong bg-background text-foreground focus:border-brand h-10 w-full border px-2.5 font-mono text-[13px] focus:outline-none"
+                  />
+                </label>
+                <label className="grid gap-1.5">
+                  <span className="text-muted-foreground font-mono text-[10px] tracking-[0.14em] uppercase">
+                    Año hasta
+                  </span>
+                  <input
+                    name="maxYear"
+                    inputMode="numeric"
+                    defaultValue={params.get("maxYear") ?? ""}
+                    placeholder="2025"
+                    className="border-line-strong bg-background text-foreground focus:border-brand h-10 w-full border px-2.5 font-mono text-[13px] focus:outline-none"
+                  />
+                </label>
+                <label className="grid gap-1.5">
+                  <span className="text-muted-foreground font-mono text-[10px] tracking-[0.14em] uppercase">
+                    Precio desde
+                  </span>
+                  <input
+                    name="minPrice"
+                    inputMode="numeric"
+                    defaultValue={params.get("minPrice") ?? ""}
+                    placeholder="15000000"
+                    className="border-line-strong bg-background text-foreground focus:border-brand h-10 w-full border px-2.5 font-mono text-[13px] focus:outline-none"
+                  />
+                </label>
+                <label className="grid gap-1.5">
+                  <span className="text-muted-foreground font-mono text-[10px] tracking-[0.14em] uppercase">
+                    Precio hasta
+                  </span>
+                  <input
+                    name="maxPrice"
+                    inputMode="numeric"
+                    defaultValue={params.get("maxPrice") ?? ""}
+                    placeholder="60000000"
+                    className="border-line-strong bg-background text-foreground focus:border-brand h-10 w-full border px-2.5 font-mono text-[13px] focus:outline-none"
+                  />
+                </label>
 
-                  <div className="border-border col-span-2 mt-1 flex items-center justify-between gap-3 border-t pt-3">
-                    <Link
-                      href={clearFilters(params)}
-                      className="text-muted-foreground hover:text-foreground font-mono text-[10px] tracking-[0.14em] uppercase"
-                    >
-                      Limpiar
-                    </Link>
-                    <button
-                      type="submit"
-                      className="bg-primary text-primary-foreground hover:bg-primary/90 h-10 shrink-0 cursor-pointer px-4 font-mono text-[10px] font-bold tracking-[0.16em] uppercase"
-                    >
-                      Aplicar
-                    </button>
-                  </div>
-                </form>
-              </div>
-            </details>
+                <div className="border-border col-span-2 mt-1 flex items-center justify-between gap-3 border-t pt-3">
+                  <Link
+                    href={clearFilters(params)}
+                    className="text-muted-foreground hover:text-foreground font-mono text-[10px] tracking-[0.14em] uppercase"
+                  >
+                    Limpiar
+                  </Link>
+                  <button
+                    type="submit"
+                    className="bg-primary text-primary-foreground hover:bg-primary/90 h-10 shrink-0 cursor-pointer px-4 font-mono text-[10px] font-bold tracking-[0.16em] uppercase"
+                  >
+                    Aplicar
+                  </button>
+                </div>
+              </form>
+            </FilterMenu>
 
             {applied.length > 0 ? (
               <Link
@@ -331,7 +332,7 @@ export function CatalogFilterBar({
 
       {/* Resultado y orden */}
       <div className="border-border border-t">
-        <div className="mx-auto flex w-full max-w-[1320px] items-center justify-between gap-4 px-7 py-3">
+        <div className="relative mx-auto flex w-full max-w-[1320px] items-center justify-between gap-4 px-7 py-3">
           <p
             role="status"
             aria-live="polite"
@@ -344,33 +345,36 @@ export function CatalogFilterBar({
                 : `${total} vehículos`}
           </p>
 
-          <details className="relative">
-            <summary className="border-line-strong text-subtle-foreground hover:border-foreground hover:text-foreground flex cursor-pointer list-none items-center gap-2 border px-2.5 py-1.5 font-mono text-[11px] tracking-[0.04em] transition-colors [&::-webkit-details-marker]:hidden">
-              <span className="text-muted-foreground">Ordenar:</span>
-              {SORT_OPTIONS.find((o) => o.value === sort)?.label ?? "Recientes"}
-              <span aria-hidden="true" className="text-[9px]">
-                ▾
-              </span>
-            </summary>
-            <div className="border-line-strong bg-card absolute top-[calc(100%+6px)] right-0 z-30 w-48 border">
-              {SORT_OPTIONS.map((option) => (
-                <Link
-                  key={option.value || "recent"}
-                  href={withParam(params, "sort", option.value)}
-                  aria-current={
-                    (sort || "") === option.value ? "true" : undefined
-                  }
-                  className={`hover:bg-accent hover:text-foreground border-border block border-b px-3 py-2 font-mono text-[11px] tracking-[0.04em] last:border-b-0 ${
-                    (sort || "") === option.value
-                      ? "text-brand"
-                      : "text-subtle-foreground"
-                  }`}
-                >
-                  {option.label}
-                </Link>
-              ))}
-            </div>
-          </details>
+          <FilterMenu
+            summary={
+              <>
+                <span className="text-muted-foreground">Ordenar:</span>
+                {SORT_OPTIONS.find((o) => o.value === sort)?.label ??
+                  "Recientes"}
+                <span aria-hidden="true" className="text-[9px]">
+                  ▾
+                </span>
+              </>
+            }
+            panelClassName="border-line-strong bg-card absolute inset-x-0 top-[calc(100%+6px)] z-30 border md:inset-x-auto md:right-0 md:w-48"
+          >
+            {SORT_OPTIONS.map((option) => (
+              <Link
+                key={option.value || "recent"}
+                href={withParam(params, "sort", option.value)}
+                aria-current={
+                  (sort || "") === option.value ? "true" : undefined
+                }
+                className={`hover:bg-accent hover:text-foreground border-border block border-b px-3 py-2 font-mono text-[11px] tracking-[0.04em] last:border-b-0 ${
+                  (sort || "") === option.value
+                    ? "text-brand"
+                    : "text-subtle-foreground"
+                }`}
+              >
+                {option.label}
+              </Link>
+            ))}
+          </FilterMenu>
         </div>
       </div>
     </div>
