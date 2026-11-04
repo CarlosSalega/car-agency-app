@@ -9,6 +9,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 import { Badge } from "@/components/ui/badge";
 import { getCarBadge } from "@/components/status-badges";
+import { activeSite } from "@/site/active";
+
+import { ShareCar } from "./share-car";
 import { PAYMENT_METHOD_OPTIONS } from "@/lib/constants/enum-options";
 import { carTypeLabels, fuelLabels } from "@/lib/constants/constants";
 
@@ -73,9 +76,19 @@ export function CarDetailSpecs({ car }: CarDetailSpecsProps) {
             </h1>
           </div>
 
-          <Badge className={`${badge.className} rounded-none`}>
-            {badge.label}
-          </Badge>
+          {/* Compartir vive acá: junto al estado y el título, que es lo que se
+              manda, y lejos de la foto, que ya responde al click del lightbox. */}
+          <div className="flex items-center justify-between gap-4">
+            <Badge className={`${badge.className} rounded-none`}>
+              {badge.label}
+            </Badge>
+
+            <ShareCar
+              title={car.title}
+              url={`${activeSite.url}/autos/${car.slug}`}
+              siteName={activeSite.identity.name}
+            />
+          </div>
 
           <div className="border-border border-t border-b py-4">
             <p className="text-muted-foreground mt-1 text-sm">Entrega Mínima</p>
