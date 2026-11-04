@@ -3,7 +3,9 @@ import type { NextRequest } from "next/server";
 
 import { NextResponse } from "next/server";
 
-const PUBLIC_PATHS = ["/", "/autos", "/contacto"] as const;
+const PUBLIC_PATHS = ["/", "/catalogo", "/autos"] as const;
+/** Prefijos públicos: la ficha del auto sigue viviendo en `/autos/[slug]`. */
+const PUBLIC_PREFIXES = ["/autos/"] as const;
 
 const CACHE_HEADERS = {
   IMAGES: "public, max-age=31536000, immutable, stale-while-revalidate=86400",
@@ -11,8 +13,9 @@ const CACHE_HEADERS = {
 } as const;
 
 function isPublicRoute(pathname: string): boolean {
-  return PUBLIC_PATHS.some(
-    (publicPath) => pathname === publicPath || pathname.startsWith("/autos/"),
+  return (
+    PUBLIC_PATHS.includes(pathname as (typeof PUBLIC_PATHS)[number]) ||
+    PUBLIC_PREFIXES.some((prefix) => pathname.startsWith(prefix))
   );
 }
 

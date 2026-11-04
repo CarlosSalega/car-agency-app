@@ -1,0 +1,27 @@
+{
+  "title": "Landing GL Autos · rediseño sin radios",
+  "brief": "Rediseño completo de la landing pública y de /catalogo para una concesionaria multimarcas de Santa Fe. Consigna: esquinas rectas en toda la superficie pública, borde de 1px en tarjetas y elementos, misma paleta con variaciones menores. El buscador vive en el header y está visible en todos los breakpoints. El argumento de venta es el negocio armado: parte de pago (auto, moto, camioneta, utilitario), +Autos con BNA, crédito prendario y llave por llave, porque en el rubro casi nadie paga la unidad entera. Landing única con header, hero, últimos ingresos en slider, por qué elegirnos, formas de pago, reseñas en slider y contacto; /catalogo queda como única página aparte.",
+  "artboards": [
+    {
+      "file": "01-ficha-tecnica.html",
+      "title": "Ficha técnica",
+      "tradeoff": "Identidad fuerte y densidad de datos con grilla visible: se lee como la ficha que cuelga de cada unidad. Más frío y menos emocional que una foto grande.",
+      "width": 1440,
+      "height": 3200
+    },
+    {
+      "file": "02-vidriera.html",
+      "title": "Vidriera (hero partido, resto en una columna)",
+      "tradeoff": "La primera pantalla se parte en dos —la unidad a sangre a la izquierda, la información a la derecha— y de ahí para abajo la página es una sola columna a todo el ancho. Máximo impacto en el primer scroll, y el resto se lee como un documento. El hero ocupa una pantalla completa, así que el stock aparece recién al segundo scroll.",
+      "width": 1440,
+      "height": 2600
+    },
+    {
+      "file": "03-pizarra-stock.html",
+      "title": "Pizarra de stock",
+      "tradeoff": "Lo más comercial: todo el stock junto, chico y en orden, con precio a la derecha. Encuentra rápido quien ya sabe qué busca; menos relato de marca.",
+      "width": 1440,
+      "height": 2600
+    }
+  ]
+}

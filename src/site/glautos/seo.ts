@@ -26,15 +26,5 @@ export const seo: SiteSeo = {
       description:
         "Explorá el catálogo de GL Autos: autos usados y 0km en Santa Fe con revisión mecánica garantizada y financiación a medida. ¡Encontrá el tuyo hoy!",
     },
-    contact: {
-      title: "Contacto en Santa Fe: escribinos | GL Autos",
-      description:
-        "Contactá a GL Autos en General López 3543, Santa Fe: WhatsApp, teléfono e Instagram. Atención personalizada para comprar o vender tu auto.",
-    },
-    sell: {
-      title: "Vendé tu auto en 48 horas en Santa Fe | GL Autos",
-      description:
-        "Vendé tu auto en Santa Fe con GL Autos: tasación inmediata, transferencia segura en 48 horas hábiles y pago rápido. ¡Envianos tus datos por WhatsApp!",
-    },
   },
 };

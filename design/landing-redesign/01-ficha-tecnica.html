@@ -1,0 +1,1541 @@
+<!doctype html>
+<html lang="es-AR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>GL Autos · Lote en Santa Fe</title>
+    <style>
+      /*
+        01 — FICHA TÉCNICA
+        Dirección: "page-is-the-object" (tasteskill v2). La página es la ficha que
+        cuelga del parabrisas de cada unidad del salón: grilla estricta, línea de
+        1px, datos en mono, el rojo como sello y nunca como relleno grande.
+
+        Reglas del brief: radio 0 en toda la superficie pública; borde de 1px
+        donde hay que separar; sin sombras (la jerarquía es línea + superficie).
+        Los tokens son los del proyecto (design/system.md); las familias se
+        declaran con su stack porque un artboard no carga fuentes externas.
+      */
+      :root {
+        --bg: #121212;
+        --ground: #0c0c0c;
+        --panel: #141414;
+        --surface: #1c1c1c;
+        --hover: #242424;
+        --fg: #f5f5f5;
+        --body: #c4c7c8;
+        --mute: #a3a3a3;
+        --line: #2a2a2a;
+        --line-strong: #3a3a3a;
+        --brand: #fe0000;
+        --ok: #4ade80;
+        --warn: #fcd34d;
+        --sans: Afacad, ui-sans-serif, system-ui, sans-serif;
+        --serif: Adamina, ui-serif, Georgia, serif;
+        --mono: "Fira Code", ui-monospace, "SF Mono", Menlo, monospace;
+        --r: 0px;
+        --maxw: 1320px;
+        --gut: 24px;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--fg);
+        font-family: var(--sans);
+        -webkit-font-smoothing: antialiased;
+        overflow-x: hidden;
+      }
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+      :focus-visible {
+        outline: 2px solid var(--brand);
+        outline-offset: 3px;
+      }
+      .wrap {
+        max-width: var(--maxw);
+        margin: 0 auto;
+        padding: 0 var(--gut);
+      }
+      .mono {
+        font-family: var(--mono);
+        font-size: 11px;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+      }
+      .mute {
+        color: var(--mute);
+      }
+      .brand {
+        color: var(--brand);
+      }
+      /* ---------- header ---------- */
+      .top {
+        position: sticky;
+        top: 0;
+        z-index: 40;
+        background: color-mix(in srgb, var(--bg) 94%, transparent);
+        backdrop-filter: blur(8px);
+        border-bottom: 1px solid var(--line);
+      }
+      .top__in {
+        display: flex;
+        align-items: center;
+        gap: 18px;
+        min-height: 62px;
+        flex-wrap: wrap;
+        padding: 9px 0;
+      }
+      .word {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: 900;
+        font-size: 17px;
+        letter-spacing: 0.3em;
+        text-transform: uppercase;
+        white-space: nowrap;
+      }
+      .word i {
+        width: 9px;
+        height: 9px;
+        background: var(--brand);
+        display: block;
+      }
+      .nav {
+        display: flex;
+        gap: 26px;
+        margin-left: auto;
+      }
+      .nav a {
+        font-family: var(--mono);
+        font-size: 11px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--mute);
+        padding: 6px 0;
+        border-bottom: 1px solid transparent;
+      }
+      .nav a:hover {
+        color: var(--fg);
+        border-bottom-color: var(--brand);
+      }
+      .top__cta {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        padding-left: 24px;
+        border-left: 1px solid var(--line);
+      }
+      .tel {
+        font-family: var(--mono);
+        font-size: 12px;
+        letter-spacing: 0.06em;
+        white-space: nowrap;
+      }
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        height: 42px;
+        padding: 0 18px;
+        border-radius: var(--r);
+        border: 1px solid var(--line-strong);
+        background: transparent;
+        color: var(--fg);
+        font-family: var(--mono);
+        font-size: 11px;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        cursor: pointer;
+      }
+      .btn:hover {
+        background: var(--hover);
+      }
+      .btn--fill {
+        background: var(--fg);
+        color: var(--bg);
+        border-color: var(--fg);
+        font-weight: 700;
+      }
+      .btn--fill:hover {
+        background: var(--body);
+      }
+      .btn--brand {
+        background: var(--brand);
+        color: #000;
+        border-color: var(--brand);
+        font-weight: 700;
+      }
+      .btn--brand:hover {
+        background: #d90000;
+      }
+      /* ---------- hero ---------- */
+      .hero {
+        display: grid;
+        grid-template-columns: 1.15fr 0.85fr;
+        border-bottom: 1px solid var(--line);
+      }
+      .hero__l {
+        padding: 72px 48px 64px var(--gut);
+        max-width: 760px;
+        margin-left: auto;
+        width: 100%;
+        border-right: 1px solid var(--line);
+      }
+      .hero__r {
+        background: var(--ground);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: 48px 40px;
+      }
+      .eyebrow {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        color: var(--mute);
+        margin-bottom: 26px;
+      }
+      .eyebrow s {
+        width: 34px;
+        height: 1px;
+        background: var(--brand);
+      }
+      h1 {
+        margin: 0;
+        font-size: clamp(38px, 5.2vw, 72px);
+        line-height: 0.94;
+        letter-spacing: -0.035em;
+        font-weight: 900;
+        text-wrap: balance;
+      }
+      h1 em {
+        font-style: normal;
+        color: var(--brand);
+      }
+      .lede {
+        margin: 24px 0 0;
+        max-width: 46ch;
+        color: var(--body);
+        font-size: 17px;
+        line-height: 1.55;
+      }
+      .spec {
+        margin: 40px 0 0;
+        border-top: 1px solid var(--line);
+      }
+      .spec__row {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 16px;
+        padding: 13px 0;
+        border-bottom: 1px solid var(--line);
+        align-items: baseline;
+      }
+      .spec__row dt {
+        color: var(--mute);
+        font-family: var(--mono);
+        font-size: 11px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+      }
+      .spec__row dd {
+        margin: 0;
+        font-family: var(--mono);
+        font-size: 15px;
+        color: var(--fg);
+      }
+      .spec__row dd b {
+        color: var(--brand);
+        font-weight: 500;
+      }
+      .hero__actions {
+        display: flex;
+        gap: 12px;
+        margin-top: 32px;
+        flex-wrap: wrap;
+      }
+      /* lámina del auto: en producción es la foto real de la unidad */
+      .plate {
+        border: 1px solid var(--line-strong);
+        background: var(--panel);
+        position: relative;
+        overflow: hidden;
+      }
+      .plate svg.blueprint {
+        display: block;
+        width: 100%;
+        height: auto;
+        color: #333;
+      }
+      .plate__car {
+        position: absolute;
+        inset: 0;
+        display: grid;
+        place-items: center;
+        color: #e9e9e9;
+      }
+      .plate__car svg {
+        width: 82%;
+        height: auto;
+      }
+      .plate__cap {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 10px 14px;
+        border-top: 1px solid var(--line-strong);
+        background: var(--panel);
+        color: var(--mute);
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+      }
+      .plate__cap b {
+        color: var(--fg);
+        font-weight: 500;
+      }
+      /* ---------- tira de stock ---------- */
+      .strip {
+        border-bottom: 1px solid var(--line);
+        background: var(--ground);
+      }
+      .strip__in {
+        display: flex;
+        gap: 0;
+        overflow-x: auto;
+        scrollbar-width: none;
+      }
+      .strip__in::-webkit-scrollbar {
+        display: none;
+      }
+      .strip__cell {
+        display: flex;
+        align-items: baseline;
+        gap: 10px;
+        padding: 15px 26px;
+        border-right: 1px solid var(--line);
+        white-space: nowrap;
+      }
+      .strip__cell:first-child {
+        padding-left: 0;
+      }
+      .strip__cell b {
+        font-family: var(--mono);
+        font-size: 13px;
+        font-weight: 500;
+      }
+      .dot {
+        width: 6px;
+        height: 6px;
+        background: var(--ok);
+        display: inline-block;
+        margin-right: 8px;
+        transform: translateY(-1px);
+      }
+      /* ---------- secciones ---------- */
+      section {
+        padding: 88px 0;
+        border-bottom: 1px solid var(--line);
+      }
+      .head {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        align-items: end;
+        gap: 24px;
+        margin-bottom: 36px;
+      }
+      .head h2 {
+        margin: 8px 0 0;
+        font-size: clamp(26px, 3vw, 38px);
+        letter-spacing: -0.02em;
+        line-height: 1.05;
+      }
+      .head p {
+        margin: 0;
+        color: var(--mute);
+        font-family: var(--mono);
+        font-size: 11px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        text-align: right;
+        max-width: 30ch;
+        line-height: 1.7;
+      }
+      /* slider de ingresos */
+      .rail {
+        display: grid;
+        grid-auto-flow: column;
+        grid-auto-columns: minmax(300px, 1fr);
+        gap: 1px;
+        background: var(--line);
+        border: 1px solid var(--line);
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        scrollbar-width: thin;
+        scrollbar-color: var(--line-strong) transparent;
+      }
+      .unit {
+        background: var(--panel);
+        scroll-snap-align: start;
+        display: flex;
+        flex-direction: column;
+        min-height: 320px;
+      }
+      .unit__media {
+        border-bottom: 1px solid var(--line);
+        padding: 26px 20px;
+        background: var(--ground);
+        color: #dcdcdc;
+      }
+      .unit__media svg {
+        width: 100%;
+        height: auto;
+      }
+      .unit__b {
+        padding: 16px 20px 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        flex: 1;
+      }
+      .unit__top {
+        display: flex;
+        justify-content: space-between;
+        color: var(--mute);
+      }
+      .unit__t {
+        font-size: 18px;
+        font-weight: 700;
+        letter-spacing: -0.01em;
+        line-height: 1.15;
+      }
+      .unit__d {
+        color: var(--mute);
+        font-family: var(--mono);
+        font-size: 11px;
+        letter-spacing: 0.06em;
+      }
+      .unit__foot {
+        margin-top: auto;
+        padding-top: 14px;
+        border-top: 1px solid var(--line);
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+      }
+      .price {
+        font-family: var(--mono);
+        font-size: 17px;
+      }
+      .go {
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--mute);
+      }
+      .unit:hover .go {
+        color: var(--brand);
+      }
+      .railnav {
+        display: flex;
+        gap: 8px;
+        justify-content: flex-end;
+        margin-top: 16px;
+      }
+      .railnav button {
+        width: 42px;
+        height: 38px;
+        border-radius: var(--r);
+        border: 1px solid var(--line-strong);
+        background: transparent;
+        color: var(--fg);
+        cursor: pointer;
+        font-family: var(--mono);
+        font-size: 13px;
+      }
+      .railnav button:hover {
+        background: var(--hover);
+        border-color: var(--brand);
+      }
+      /* por qué elegirnos: filas numeradas, no tarjetas con icono */
+      .why {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        border-top: 1px solid var(--line);
+      }
+      .why article {
+        display: grid;
+        grid-template-columns: 56px 1fr;
+        gap: 20px;
+        padding: 28px 28px 28px 0;
+        border-bottom: 1px solid var(--line);
+      }
+      .why article:nth-child(odd) {
+        border-right: 1px solid var(--line);
+        padding-right: 36px;
+      }
+      .why article:nth-child(even) {
+        padding-left: 36px;
+      }
+      .why .n {
+        font-family: var(--mono);
+        font-size: 12px;
+        color: var(--brand);
+        letter-spacing: 0.1em;
+        padding-top: 4px;
+      }
+      .why h3 {
+        margin: 0 0 8px;
+        font-size: 20px;
+        letter-spacing: -0.01em;
+      }
+      .why p {
+        margin: 0;
+        color: var(--body);
+        font-size: 15px;
+        line-height: 1.6;
+        max-width: 44ch;
+      }
+      /* reseñas */
+      .rev {
+        display: grid;
+        grid-template-columns: 1.25fr 0.75fr;
+        gap: 0;
+        border: 1px solid var(--line);
+      }
+      .rev__main {
+        padding: 40px;
+        border-right: 1px solid var(--line);
+        background: var(--panel);
+        display: flex;
+        flex-direction: column;
+        gap: 22px;
+        min-height: 300px;
+      }
+      .stars {
+        color: var(--warn);
+        letter-spacing: 0.28em;
+        font-size: 13px;
+      }
+      .rev blockquote {
+        margin: 0;
+        font-family: var(--serif);
+        font-size: clamp(20px, 2.1vw, 27px);
+        line-height: 1.45;
+        color: #eceae6;
+        transition: opacity 0.2s ease-out;
+      }
+      .rev__who {
+        margin-top: auto;
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 16px;
+        padding-top: 18px;
+        border-top: 1px solid var(--line);
+      }
+      .rev__who b {
+        font-size: 15px;
+      }
+      .rev__side {
+        padding: 22px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        background: var(--ground);
+      }
+      .rev__count {
+        display: flex;
+        justify-content: space-between;
+        border-bottom: 1px solid var(--line);
+        padding-bottom: 12px;
+        margin-bottom: 4px;
+      }
+      .rev__btn {
+        text-align: left;
+        background: transparent;
+        border: 1px solid transparent;
+        border-bottom: 1px solid var(--line);
+        color: var(--mute);
+        padding: 12px 10px;
+        font-family: var(--sans);
+        font-size: 13px;
+        cursor: pointer;
+        border-radius: var(--r);
+      }
+      .rev__btn[aria-current="true"] {
+        color: var(--fg);
+        border-color: var(--brand);
+        border-bottom-color: var(--brand);
+        background: var(--surface);
+      }
+      .rev__btn:hover {
+        color: var(--fg);
+      }
+      /* contacto */
+      .contact {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0;
+        border: 1px solid var(--line);
+      }
+      .contact__l {
+        padding: 40px;
+        border-right: 1px solid var(--line);
+      }
+      .contact__l h2 {
+        margin: 10px 0 22px;
+        font-size: clamp(26px, 3vw, 36px);
+        letter-spacing: -0.02em;
+        line-height: 1.05;
+      }
+      .contact__l address {
+        font-style: normal;
+        font-size: 16px;
+        line-height: 1.6;
+        color: var(--body);
+      }
+      .contact__l address b {
+        color: var(--fg);
+      }
+      .hours {
+        margin-top: 26px;
+        border-top: 1px solid var(--line);
+      }
+      .hours div {
+        display: flex;
+        justify-content: space-between;
+        padding: 11px 0;
+        border-bottom: 1px solid var(--line);
+        font-family: var(--mono);
+        font-size: 12px;
+      }
+      .hours div span:first-child {
+        color: var(--mute);
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+      }
+      .contact__r {
+        background: var(--ground);
+        position: relative;
+        min-height: 380px;
+      }
+      .contact__r svg {
+        width: 100%;
+        height: 100%;
+        display: block;
+        color: #2b2b2b;
+      }
+      .pin {
+        position: absolute;
+        inset: 0;
+        display: grid;
+        place-items: center;
+      }
+      .pin div {
+        border: 1px solid var(--line-strong);
+        background: var(--panel);
+        padding: 12px 16px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .pin i {
+        width: 8px;
+        height: 8px;
+        background: var(--brand);
+        display: block;
+      }
+      /* footer */
+      footer {
+        padding: 48px 0 64px;
+      }
+      .foot {
+        display: grid;
+        grid-template-columns: 1.4fr 1fr 1fr;
+        gap: 40px;
+        padding-bottom: 32px;
+        border-bottom: 1px solid var(--line);
+      }
+      .foot h4 {
+        margin: 0 0 14px;
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: var(--mute);
+      }
+      .foot ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: grid;
+        gap: 9px;
+        font-size: 14px;
+        color: var(--body);
+      }
+      .foot ul a:hover {
+        color: var(--fg);
+      }
+      .legal {
+        display: flex;
+        justify-content: space-between;
+        gap: 16px;
+        padding-top: 22px;
+        color: var(--mute);
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+      /* ---------- buscador del header: siempre visible ---------- */
+      .search {
+        display: flex;
+        align-items: center;
+        margin-left: auto;
+        flex: 1 1 240px;
+        max-width: 380px;
+        min-width: 190px;
+        border: 1px solid var(--line-strong);
+        background: var(--ground);
+        border-radius: var(--r);
+      }
+      .search:focus-within {
+        border-color: var(--brand);
+      }
+      .search input {
+        flex: 1;
+        min-width: 0;
+        height: 38px;
+        padding: 0 12px;
+        border: 0;
+        background: transparent;
+        color: var(--fg);
+        font-family: var(--sans);
+        font-size: 14px;
+        border-radius: var(--r);
+      }
+      .search input::placeholder {
+        color: var(--mute);
+      }
+      .search input:focus {
+        outline: none;
+      }
+      .search button {
+        height: 38px;
+        padding: 0 14px;
+        border: 0;
+        border-left: 1px solid var(--line-strong);
+        background: var(--surface);
+        color: var(--fg);
+        cursor: pointer;
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        border-radius: var(--r);
+      }
+      .search button:hover {
+        background: var(--hover);
+        color: var(--brand);
+      }
+      /* ---------- formas de pago ---------- */
+      .pay {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        border-top: 1px solid var(--line);
+      }
+      .pay article {
+        padding: 26px 22px 26px 0;
+        border-right: 1px solid var(--line);
+        padding-right: 22px;
+      }
+      .pay article:last-child {
+        border-right: 0;
+        padding-right: 0;
+      }
+      .pay .k {
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--brand);
+      }
+      .pay h3 {
+        margin: 10px 0 8px;
+        font-size: 17px;
+        letter-spacing: -0.01em;
+      }
+      .pay p {
+        margin: 0;
+        color: var(--body);
+        font-size: 14px;
+        line-height: 1.6;
+      }
+      .pay__note {
+        border-top: 1px solid var(--line);
+        padding-top: 14px;
+        color: var(--mute);
+        font-size: 12px;
+        line-height: 1.6;
+        margin: 18px 0 0;
+      }
+      @media (max-width: 1180px) {
+        .nav {
+          display: none;
+        }
+        .search {
+          max-width: none;
+        }
+      }
+      @media (max-width: 980px) {
+        .hero {
+          grid-template-columns: 1fr;
+        }
+        .top__in {
+          gap: 10px;
+          padding: 9px 0;
+        }
+        .top__cta {
+          padding-left: 0;
+          border-left: 0;
+          margin-left: auto;
+        }
+        .search {
+          order: 3;
+          flex-basis: 100%;
+          max-width: none;
+          margin-left: 0;
+        }
+        .tel {
+          display: none;
+        }
+        .pay,
+        .pay article {
+          grid-template-columns: 1fr;
+        }
+        .pay article {
+          border-right: 0;
+          border-bottom: 1px solid var(--line);
+          padding-right: 0;
+        }
+        .hero__l {
+          padding: 48px var(--gut);
+          border-right: 0;
+          border-bottom: 1px solid var(--line);
+        }
+        .hero__r {
+          padding: 32px var(--gut);
+        }
+        .why,
+        .rev,
+        .contact,
+        .foot {
+          grid-template-columns: 1fr;
+        }
+        .why article:nth-child(odd) {
+          border-right: 0;
+          padding-right: 0;
+        }
+        .why article:nth-child(even) {
+          padding-left: 0;
+        }
+        .rev__main,
+        .contact__l {
+          border-right: 0;
+          border-bottom: 1px solid var(--line);
+        }
+        .nav {
+          display: none;
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        html {
+          scroll-behavior: auto;
+        }
+        * {
+          transition: none !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- silueta técnica reutilizable: en producción es la foto de la unidad -->
+    <svg width="0" height="0" style="position: absolute" aria-hidden="true">
+      <symbol id="car" viewBox="0 0 340 110">
+        <path
+          d="M12 78 L20 62 q5-8 16-9 l52-4 q14-16 34-18 l84-1 q22 2 38 19 l58 4 q14 2 18 11 l4 14 Z"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+        />
+        <path
+          d="M92 49 q12-13 28-15 l70-1 q18 1 30 16 Z"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.5"
+        />
+        <circle
+          cx="86"
+          cy="78"
+          r="17"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+        />
+        <circle
+          cx="86"
+          cy="78"
+          r="6"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.5"
+        />
+        <circle
+          cx="262"
+          cy="78"
+          r="17"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+        />
+        <circle
+          cx="262"
+          cy="78"
+          r="6"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.5"
+        />
+        <path
+          d="M12 86 h316"
+          stroke="currentColor"
+          stroke-width="1"
+          stroke-dasharray="2 6"
+        />
+      </symbol>
+    </svg>
+
+    <header class="top">
+      <div class="wrap top__in">
+        <a class="word" href="#top"><i></i>GL Autos</a>
+        <nav class="nav" aria-label="Secciones">
+          <a href="#ingresos">Últimos ingresos</a>
+          <a href="#porque">Por qué elegirnos</a>
+          <a href="#pago">Formas de pago</a>
+          <a href="#resenas">Reseñas</a>
+          <a href="#contacto">Contacto</a>
+        </nav>
+        <form class="search" role="search" action="/catalogo">
+          <input
+            type="search"
+            name="q"
+            placeholder="Marca, modelo o versión"
+            aria-label="Buscar en el catálogo"
+          />
+          <button type="submit">Buscar</button>
+        </form>
+        <div class="top__cta">
+          <a class="tel mono" href="tel:+5493425777646">+54 9 342 577 7646</a>
+          <a class="btn btn--brand" href="https://wa.me/5493425777646"
+            >WhatsApp</a
+          >
+        </div>
+      </div>
+    </header>
+
+    <main id="top">
+      <div class="hero">
+        <div class="hero__l">
+          <p class="eyebrow mono"><s></s>Santa Fe · General López 3543</p>
+          <h1>Vos traés lo que tenés. <em>El negocio lo armamos acá.</em></h1>
+          <p class="lede">
+            Usados y 0 km con la verificación al día. Entregás tu auto, moto o
+            camioneta como parte de pago y financiamos la diferencia: banco,
+            prendario o las dos cosas.
+          </p>
+
+          <dl class="spec">
+            <div class="spec__row">
+              <dt>Autos disponibles</dt>
+              <dd><b>18</b> en el salón</dd>
+            </div>
+            <div class="spec__row">
+              <dt>Entrega</dt>
+              <dd>en 24 a 48 h, con papeles</dd>
+            </div>
+            <div class="spec__row">
+              <dt>Financiación</dt>
+              <dd>hasta 60 cuotas, en pesos</dd>
+            </div>
+            <div class="spec__row">
+              <dt>Parte de pago</dt>
+              <dd>autos, motos y utilitarios</dd>
+            </div>
+          </dl>
+
+          <div class="hero__actions">
+            <a class="btn btn--fill" href="/catalogo">Ver las 18 unidades</a>
+            <a class="btn" href="#contacto">Coordinar una visita</a>
+          </div>
+        </div>
+
+        <div class="hero__r">
+          <figure class="plate" style="margin: 0">
+            <svg class="blueprint" viewBox="0 0 480 340" aria-hidden="true">
+              <defs>
+                <pattern
+                  id="g"
+                  width="24"
+                  height="24"
+                  patternUnits="userSpaceOnUse"
+                >
+                  <path
+                    d="M24 0H0V24"
+                    fill="none"
+                    stroke="#242424"
+                    stroke-width="1"
+                  />
+                </pattern>
+              </defs>
+              <rect width="480" height="340" fill="url(#g)" />
+            </svg>
+            <div class="plate__car">
+              <svg role="img" aria-label="Silueta de una SUV">
+                <use href="#car" />
+              </svg>
+            </div>
+            <figcaption class="plate__cap">
+              <span>Último ingreso · <b>Taos 2025</b></span>
+              <span>0 km · <b>$39.500.000</b></span>
+            </figcaption>
+          </figure>
+        </div>
+      </div>
+
+      <div class="strip">
+        <div class="wrap strip__in">
+          <div class="strip__cell mono">
+            <span><span class="dot"></span>Stock activo</span>
+            <b>18 unidades</b>
+          </div>
+          <div class="strip__cell mono">
+            <span class="mute">Nuevos esta semana</span><b>3</b>
+          </div>
+          <div class="strip__cell mono">
+            <span class="mute">Google</span><b>4.9 · 249 reseñas</b>
+          </div>
+          <div class="strip__cell mono">
+            <span class="mute">Actualizado</span><b>hoy 08:40</b>
+          </div>
+          <div class="strip__cell mono">
+            <span class="mute">Local</span><b>General López 3543</b>
+          </div>
+        </div>
+      </div>
+
+      <section id="ingresos">
+        <div class="wrap">
+          <div class="head">
+            <div>
+              <p class="eyebrow mono"><s></s>Recién llegados</p>
+              <h2>Últimos ingresos al salón</h2>
+            </div>
+            <p>
+              Ordenados por fecha de ingreso.<br />El precio publicado es el de
+              lista: el saldo se arma con parte de pago y financiación.
+            </p>
+          </div>
+
+          <div
+            class="rail"
+            id="rail"
+            tabindex="0"
+            aria-label="Últimos ingresos, desplazable"
+          >
+            <article class="unit">
+              <div class="unit__media">
+                <svg role="img" aria-label="SUV"><use href="#car" /></svg>
+              </div>
+              <div class="unit__b">
+                <p class="unit__top mono">
+                  <span>Volkswagen</span><span>0 km</span>
+                </p>
+                <p class="unit__t">Taos Highline 1.4 TSI</p>
+                <p class="unit__d">2025 · SUV · Automática</p>
+                <div class="unit__foot">
+                  <span class="price">$39.500.000</span>
+                  <span class="go">Ver la unidad →</span>
+                </div>
+              </div>
+            </article>
+
+            <article class="unit">
+              <div class="unit__media">
+                <svg role="img" aria-label="Pickup"><use href="#car" /></svg>
+              </div>
+              <div class="unit__b">
+                <p class="unit__top mono">
+                  <span>Volkswagen</span><span>0 km</span>
+                </p>
+                <p class="unit__t">Amarok V6 Highline</p>
+                <p class="unit__d">2025 · Pickup · 4x4</p>
+                <div class="unit__foot">
+                  <span class="price">$62.000.000</span>
+                  <span class="go">Ver la unidad →</span>
+                </div>
+              </div>
+            </article>
+
+            <article class="unit">
+              <div class="unit__media">
+                <svg role="img" aria-label="SUV"><use href="#car" /></svg>
+              </div>
+              <div class="unit__b">
+                <p class="unit__top mono">
+                  <span>Chevrolet</span><span>0 km</span>
+                </p>
+                <p class="unit__t">Tracker Premier</p>
+                <p class="unit__d">2025 · SUV · Automática</p>
+                <div class="unit__foot">
+                  <span class="price">$39.900.000</span>
+                  <span class="go">Ver la unidad →</span>
+                </div>
+              </div>
+            </article>
+
+            <article class="unit">
+              <div class="unit__media">
+                <svg role="img" aria-label="Pickup"><use href="#car" /></svg>
+              </div>
+              <div class="unit__b">
+                <p class="unit__top mono">
+                  <span>Toyota</span><span>58.000 km</span>
+                </p>
+                <p class="unit__t">Hilux SRX 2.8</p>
+                <p class="unit__d">2022 · Pickup · 4x4</p>
+                <div class="unit__foot">
+                  <span class="price">$52.000.000</span>
+                  <span class="go">Ver la unidad →</span>
+                </div>
+              </div>
+            </article>
+
+            <article class="unit">
+              <div class="unit__media">
+                <svg role="img" aria-label="Sedán"><use href="#car" /></svg>
+              </div>
+              <div class="unit__b">
+                <p class="unit__top mono">
+                  <span>Fiat</span><span>38.000 km</span>
+                </p>
+                <p class="unit__t">Cronos Precision</p>
+                <p class="unit__d">2022 · Sedán · CVT</p>
+                <div class="unit__foot">
+                  <span class="price">$21.500.000</span>
+                  <span class="go">Ver la unidad →</span>
+                </div>
+              </div>
+            </article>
+
+            <article class="unit">
+              <div class="unit__media">
+                <svg role="img" aria-label="Hatchback"><use href="#car" /></svg>
+              </div>
+              <div class="unit__b">
+                <p class="unit__top mono">
+                  <span>Toyota</span><span>45.000 km</span>
+                </p>
+                <p class="unit__t">Yaris XLS</p>
+                <p class="unit__d">2021 · Hatchback · CVT</p>
+                <div class="unit__foot">
+                  <span class="price">$20.500.000</span>
+                  <span class="go">Ver la unidad →</span>
+                </div>
+              </div>
+            </article>
+          </div>
+
+          <div class="railnav">
+            <button
+              type="button"
+              id="prev"
+              aria-label="Ver unidades anteriores"
+            >
+              ←
+            </button>
+            <button type="button" id="next" aria-label="Ver más unidades">
+              →
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <section id="porque">
+        <div class="wrap">
+          <div class="head">
+            <div>
+              <p class="eyebrow mono"><s></s>Por qué elegirnos</p>
+              <h2>Cuatro cosas que hacemos distinto</h2>
+            </div>
+            <p>
+              No son promesas: son las cuatro reglas con las que trabajamos.
+            </p>
+          </div>
+
+          <div class="why">
+            <article>
+              <span class="n">01</span>
+              <div>
+                <h3>Verificación policial y mecánica al día</h3>
+                <p>
+                  Verificación del automotor, informe de dominio y revisión
+                  mecánica antes de publicar. Lo que no pasa, se corrige o no
+                  entra al salón.
+                </p>
+              </div>
+            </article>
+            <article>
+              <span class="n">02</span>
+              <div>
+                <h3>El precio es el punto de partida</h3>
+                <p>
+                  Publicamos el valor de lista y después armamos la diferencia:
+                  lo que vale tu vehículo como parte de pago más lo que se
+                  financia. Los gastos de transferencia se explican antes de
+                  firmar.
+                </p>
+              </div>
+            </article>
+            <article>
+              <span class="n">03</span>
+              <div>
+                <h3>Tasación el mismo día</h3>
+                <p>
+                  Traés el vehículo, lo revisamos y te damos el valor de toma
+                  ahí mismo. Si preferís venderlo vos y no entregarlo, también
+                  lo compramos: <a class="brand" href="/ventas">ver cómo</a>.
+                </p>
+              </div>
+            </article>
+            <article>
+              <span class="n">04</span>
+              <div>
+                <h3>Papeles y entrega desde 24 h</h3>
+                <p>
+                  Transferencia, verificación y entrega coordinadas por
+                  nosotros. La mayoría de las unidades salen en un día hábil.
+                </p>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section id="pago">
+        <div class="wrap">
+          <div class="head">
+            <div>
+              <p class="eyebrow mono"><s></s>Formas de pago</p>
+              <h2>Decinos qué tenés y qué querés. Armamos el negocio.</h2>
+            </div>
+            <p>
+              Casi nadie paga el auto entero: se entrega uno y se financia la
+              diferencia.
+            </p>
+          </div>
+
+          <div class="pay">
+            <article>
+              <span class="k">Parte de pago</span>
+              <h3>Entregás tu vehículo</h3>
+              <p>
+                Auto, moto, camioneta o utilitario. Lo tasamos en el salón y ese
+                valor se descuenta del precio.
+              </p>
+            </article>
+            <article>
+              <span class="k">Banco Nación</span>
+              <h3>+Autos con BNA</h3>
+              <p>
+                Préstamo personal para comprar el auto: hasta $100.000.000, de
+                12 a 60 cuotas, sin prenda y sin necesidad de ser cliente. Te
+                acompañamos con el trámite en el salón.
+              </p>
+            </article>
+            <article>
+              <span class="k">Prendario</span>
+              <h3>Crédito con el auto en garantía</h3>
+              <p>
+                Tasa fija en pesos y hasta 60 meses. Se financia el saldo
+                después de la parte de pago, con bancos adheridos.
+              </p>
+            </article>
+            <article>
+              <span class="k">Llave por llave</span>
+              <h3>Si tu usado cubre el valor</h3>
+              <p>
+                Entregás y te llevás, sin financiación. Coordinamos
+                transferencia y verificación de las dos unidades.
+              </p>
+            </article>
+          </div>
+          <p class="pay__note">
+            Las financiaciones están sujetas a evaluación crediticia del banco.
+            Montos, plazos y tasas los define cada entidad; te los confirmamos
+            antes de avanzar.
+          </p>
+        </div>
+      </section>
+
+      <section id="resenas">
+        <div class="wrap">
+          <div class="head">
+            <div>
+              <p class="eyebrow mono"><s></s>Reseñas verificadas de Google</p>
+              <h2>Lo que dicen los que ya se fueron con el auto</h2>
+            </div>
+            <p>
+              4.9 / 5 · 249 reseñas<br />Seleccionadas y publicadas por el
+              local.
+            </p>
+          </div>
+
+          <div class="rev">
+            <div class="rev__main">
+              <p class="stars" aria-label="5 de 5 estrellas">★★★★★</p>
+              <blockquote id="quote">
+                “Gracias Facundo por la amabilidad y atención a los detalles que
+                hizo fuese una hermosa experiencia. Gracias al equipo de la
+                concesionaria por el respeto y la sonrisas.”
+              </blockquote>
+              <div class="rev__who">
+                <b id="who">Norma Soñez</b>
+                <span class="mono mute" id="when">hace 4 meses</span>
+              </div>
+            </div>
+            <div class="rev__side">
+              <div class="rev__count mono">
+                <span class="mute">Reseñas en el sitio</span
+                ><span id="pos">1 / 6</span>
+              </div>
+              <button
+                class="rev__btn"
+                type="button"
+                aria-current="true"
+                data-i="0"
+              >
+                Norma Soñez · 5★
+              </button>
+              <button class="rev__btn" type="button" data-i="1">
+                Diego Pucheta · 5★
+              </button>
+              <button class="rev__btn" type="button" data-i="2">
+                Marisa Moreno · 5★
+              </button>
+              <button class="rev__btn" type="button" data-i="3">
+                Elena Cristaldi · 5★
+              </button>
+              <button class="rev__btn" type="button" data-i="4">
+                Dario Ledesma · 5★
+              </button>
+              <a
+                class="btn"
+                style="justify-content: center; margin-top: auto"
+                href="https://www.google.com/maps"
+                >Dejar reseña en Google</a
+              >
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="contacto">
+        <div class="wrap">
+          <div class="contact">
+            <div class="contact__l">
+              <p class="eyebrow mono"><s></s>El salón</p>
+              <h2>Pasá por el salón. Están todas ahí.</h2>
+              <address>
+                <b>General López 3543</b><br />Santa Fe, Argentina<br />
+                <a class="mono brand" href="tel:+5493425777646"
+                  >+54 9 342 577 7646</a
+                >
+              </address>
+
+              <div class="hours">
+                <div>
+                  <span>Lun a Vie</span><span>8:30–12:30 · 16:00–20:00</span>
+                </div>
+                <div><span>Sábado</span><span>9:00–12:30</span></div>
+                <div><span>Domingo</span><span class="mute">cerrado</span></div>
+              </div>
+
+              <div class="hero__actions">
+                <a class="btn btn--brand" href="https://wa.me/5493425777646"
+                  >Escribir por WhatsApp</a
+                >
+                <a class="btn" href="https://maps.google.com">Cómo llegar</a>
+              </div>
+            </div>
+            <div class="contact__r">
+              <svg viewBox="0 0 600 420" aria-hidden="true">
+                <defs>
+                  <pattern
+                    id="map"
+                    width="40"
+                    height="40"
+                    patternUnits="userSpaceOnUse"
+                  >
+                    <path
+                      d="M40 0H0V40"
+                      fill="none"
+                      stroke="#242424"
+                      stroke-width="1"
+                    />
+                  </pattern>
+                </defs>
+                <rect width="600" height="420" fill="url(#map)" />
+                <path d="M0 260 H600" stroke="#333" stroke-width="14" />
+                <path d="M300 0 V420" stroke="#333" stroke-width="10" />
+                <path
+                  d="M0 260 H600"
+                  stroke="#4a4a4a"
+                  stroke-width="1"
+                  stroke-dasharray="10 12"
+                />
+              </svg>
+              <div class="pin">
+                <div>
+                  <i></i>
+                  <span class="mono">GL Autos · aquí</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="wrap">
+        <div class="foot">
+          <div>
+            <a class="word" href="#top"><i></i>GL Autos</a>
+            <p
+              class="mute"
+              style="
+                max-width: 34ch;
+                font-size: 14px;
+                line-height: 1.6;
+                margin: 14px 0 0;
+              "
+            >
+              Concesionaria multimarcas de usados y 0 km en Santa Fe. Parte de
+              pago, financiación y transferencia en el mismo lugar.
+            </p>
+          </div>
+          <div>
+            <h4>Sitio</h4>
+            <ul>
+              <li><a href="/catalogo">Catálogo</a></li>
+              <li><a href="#porque">Por qué elegirnos</a></li>
+              <li><a href="#pago">Formas de pago</a></li>
+              <li><a href="#resenas">Reseñas</a></li>
+              <li><a href="/ventas">Vendé tu auto</a></li>
+            </ul>
+          </div>
+          <div>
+            <h4>Contacto</h4>
+            <ul>
+              <li>General López 3543, Santa Fe</li>
+              <li><a href="tel:+5493425777646">+54 9 342 577 7646</a></li>
+              <li>
+                <a href="https://instagram.com/gl.autos.sf">@gl.autos.sf</a>
+              </li>
+              <li>Lun a Vie 8:30–12:30 y 16–20</li>
+            </ul>
+          </div>
+        </div>
+        <p class="legal">
+          <span>© 2026 GL Autos · Derechos reservados</span>
+          <span>Datos de contacto y reseñas · Santa Fe, AR</span>
+        </p>
+      </div>
+    </footer>
+
+    <script>
+      // Slider de ingresos: scroll por página, sin librerías.
+      const rail = document.getElementById("rail");
+      const step = () => rail.clientWidth * 0.9;
+      document.getElementById("next").addEventListener("click", () => {
+        rail.scrollBy({ left: step(), behavior: "smooth" });
+      });
+      document.getElementById("prev").addEventListener("click", () => {
+        rail.scrollBy({ left: -step(), behavior: "smooth" });
+      });
+
+      // Reseñas: contenido real del sitio, un registro por click.
+      const reviews = [
+        [
+          "Norma Soñez",
+          "hace 4 meses",
+          "“Gracias Facundo por la amabilidad y atención a los detalles que hizo fuese una hermosa experiencia. Gracias al equipo de la concesionaria por el respeto y la sonrisas.”",
+        ],
+        [
+          "Diego Pucheta",
+          "hace 3 semanas",
+          "“Excelente la atención, el asesoramiento de Lionel que me dio mucha confianza en todo, y los detalles. Volvería a comprar.”",
+        ],
+        [
+          "Marisa Moreno",
+          "hace 1 mes",
+          "“Excelente atención desde el día 1, muy predispuestos los chicos para asesorarnos y aconsejarnos. Muy agradecidos por su agilidad para la entrega.”",
+        ],
+        [
+          "Elena Cristaldi",
+          "hace 3 meses",
+          "“No solo en la atención, si no en el asesoramiento, la rapidez y facilitar la papelería y la entrega. Muy recomendable.”",
+        ],
+        [
+          "Dario Ledesma",
+          "hace 4 meses",
+          "“Excelente atención desde el primer momento. Buen asesoramiento y acompañamiento. Hoy disfruto de mi 0km.”",
+        ],
+      ];
+      const quote = document.getElementById("quote");
+      const who = document.getElementById("who");
+      const when = document.getElementById("when");
+      const pos = document.getElementById("pos");
+      const buttons = [...document.querySelectorAll(".rev__btn")];
+      buttons.forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const i = Number(btn.dataset.i);
+          const [name, date, text] = reviews[i];
+          quote.style.opacity = "0";
+          setTimeout(() => {
+            quote.textContent = text;
+            who.textContent = name;
+            when.textContent = date;
+            pos.textContent = i + 1 + " / 6";
+            quote.style.opacity = "1";
+          }, 120);
+          buttons.forEach((b) =>
+            b.setAttribute("aria-current", String(b === btn)),
+          );
+        });
+      });
+    </script>
+  </body>
+</html>

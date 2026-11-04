@@ -8,7 +8,6 @@ import { Badge } from "@/components/ui/badge";
 
 import MobileFiltersSheet from "@/components/mobile-filters-sheet";
 import { SearchFilters } from "@/components/search-filters";
-import { SearchComponent } from "@/components/search/search-component";
 import { getBrandsWithModels } from "@/lib/queries/brands";
 import {
   type CarListFilters,
@@ -16,14 +15,14 @@ import {
   getPublicCarsList,
 } from "@/lib/queries/cars";
 import Footer from "../(landing)/components/Footer";
-import { NavbarServer } from "../(landing)/components/NavbarServer";
+import { SiteHeader } from "../(landing)/components/SiteHeader";
 
 export const revalidate = 300;
 
 export const metadata: Metadata = buildPageMetadata(
   activeSite,
   "catalog",
-  "/autos",
+  "/catalogo",
 );
 function buildFilters(params: {
   [key: string]: string | string[] | undefined;
@@ -43,11 +42,18 @@ function buildFilters(params: {
   if (params.maxYear) filters.maxYear = Number(params.maxYear);
   if (params.minPrice) filters.minPrice = Number(params.minPrice);
   if (params.maxPrice) filters.maxPrice = Number(params.maxPrice);
-  if (params.search) filters.search = params.search as string;
+  // El buscador del header manda `q`; los filtros del panel mandan `search`.
+  // Los dos alimentan el mismo `where`, así que un link viejo sigue funcionando.
+  const search = params.q ?? params.search;
+  if (typeof search === "string" && search.trim()) {
+    filters.search = search.trim();
+  }
   return filters;
 }
 
-export default async function AutosPage({ searchParams }: PageProps<"/autos">) {
+export default async function CatalogoPage({
+  searchParams,
+}: PageProps<"/catalogo">) {
   const params = await searchParams;
   const page = Number(params.page) || 1;
   const limit = 12;
@@ -77,33 +83,35 @@ export default async function AutosPage({ searchParams }: PageProps<"/autos">) {
 
   return (
     <div className="bg-background min-h-screen">
-      <div className="pt-24">
-        <NavbarServer />
-        <SearchComponent />
-        <div className="grid gap-x-8 gap-y-4 px-4 py-8 md:px-8 lg:grid-cols-[320px_1fr]">
-          <div
-            role="status"
-            aria-live="polite"
-            className="lg:col-start-2 lg:row-start-1"
+      {/* El header es el mismo de la home y es `sticky`, no `fixed`: no necesita
+          el `pt-24` que compensaba al navbar anterior. */}
+      <SiteHeader />
+      <div className="grid gap-x-8 gap-y-4 px-4 py-8 md:px-8 lg:grid-cols-[320px_1fr]">
+        <div
+          role="status"
+          aria-live="polite"
+          className="lg:col-start-2 lg:row-start-1"
+        >
+          <Badge
+            variant="outline"
+            className="border-brand text-brand rounded-none"
           >
-            <Badge variant="outline" className="border-brand text-brand">
-              {total === 0
-                ? "No se encontraron vehículos"
-                : total === 1
-                  ? "1 vehículo encontrado"
-                  : `Mostrando ${total} vehículos`}
-            </Badge>
-          </div>
-          <div className="hidden lg:col-start-1 lg:row-start-2 lg:block">
-            <SearchFilters brands={brands} />
-          </div>
-          <div className="flex min-w-0 flex-col lg:col-start-2 lg:row-start-2">
-            <CarGrid
-              cars={cars}
-              emptyAction={{ href: "/autos", label: "Limpiar filtros" }}
-              pagination={{ currentPage: page, totalPages, baseUrl }}
-            />
-          </div>
+            {total === 0
+              ? "No se encontraron vehículos"
+              : total === 1
+                ? "1 vehículo encontrado"
+                : `Mostrando ${total} vehículos`}
+          </Badge>
+        </div>
+        <div className="hidden lg:col-start-1 lg:row-start-2 lg:block">
+          <SearchFilters brands={brands} />
+        </div>
+        <div className="flex min-w-0 flex-col lg:col-start-2 lg:row-start-2">
+          <CarGrid
+            cars={cars}
+            emptyAction={{ href: "/catalogo", label: "Limpiar filtros" }}
+            pagination={{ currentPage: page, totalPages, baseUrl }}
+          />
         </div>
       </div>
       <MobileFiltersSheet brands={brands} />

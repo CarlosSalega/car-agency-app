@@ -59,13 +59,13 @@ export function MobileFiltersSheet({ brands }: { brands: BrandForFilters[] }) {
             render={
               <Button
                 variant="default"
-                className="bg-secondary text-brand hover:bg-secondary/90 relative rounded-full p-3 shadow-lg"
+                className="bg-secondary text-brand hover:bg-secondary/90 border-border relative rounded-none border p-3"
                 aria-label={`Abrir filtros${activeFilters ? `, ${activeFilters} aplicados` : ""}`}
               >
                 <FilterIcon className="size-5" />
 
                 {activeFilters > 0 && (
-                  <span className="bg-destructive text-destructive-foreground absolute -top-1 -right-1 inline-flex h-5 w-5 animate-pulse items-center justify-center rounded-full text-xs">
+                  <span className="bg-destructive text-destructive-foreground absolute -top-1 -right-1 inline-flex h-5 w-5 items-center justify-center rounded-none text-xs">
                     {activeFilters}
                   </span>
                 )}
@@ -77,7 +77,7 @@ export function MobileFiltersSheet({ brands }: { brands: BrandForFilters[] }) {
 
           <SheetContent
             side="top"
-            className="mx-auto max-h-dvh w-full max-w-md overflow-y-auto rounded-lg [&>button]:hidden"
+            className="mx-auto max-h-dvh w-full max-w-md overflow-y-auto rounded-none [&>button]:hidden"
           >
             <SheetHeader className="p-0">
               <SheetTitle className="sr-only">Filtros de búsqueda</SheetTitle>

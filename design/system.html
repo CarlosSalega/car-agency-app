@@ -1,0 +1,528 @@
+<!doctype html>
+<html lang="es-AR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>GL Autos · Design system</title>
+    <style>
+      /* Tokens leídos del proyecto (design/system.md). Los artboards no cargan
+         fuentes externas, así que las familias se declaran con su stack real. */
+      :root {
+        --background: #121212;
+        --card: #141414;
+        --popover: #1c1c1c;
+        --secondary: #1c1c1c;
+        --accent: #242424;
+        --foreground: #f5f5f5;
+        --subtle-foreground: #c4c7c8;
+        --muted-foreground: #a3a3a3;
+        --brand: #fe0000;
+        --brand-foreground: #000000;
+        --primary: #f5f5f5;
+        --primary-foreground: #121212;
+        --border: #2a2a2a;
+        --input: #3d3d3d;
+        --success: #4ade80;
+        --warning: #fcd34d;
+        --info: #60a5fa;
+        --destructive: #ff5c5c;
+        --radius: 0.5rem;
+        --shadow-sm: 0 0.2rem 0.5rem 0 rgb(0 0 0 / 0.2);
+        --font-sans: Afacad, ui-sans-serif, sans-serif, system-ui;
+        --font-serif: Adamina, ui-serif, serif;
+        --font-mono: Fira Code, ui-monospace, monospace;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        width: 1440px;
+        background: var(--background);
+        color: var(--foreground);
+        font-family: var(--font-sans);
+        -webkit-font-smoothing: antialiased;
+      }
+      main {
+        padding: 56px 64px 96px;
+      }
+      header.board {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        border-bottom: 1px solid var(--border);
+        padding-bottom: 20px;
+        margin-bottom: 56px;
+      }
+      .wordmark {
+        font-size: 22px;
+        font-weight: 900;
+        letter-spacing: 0.32em;
+        text-transform: uppercase;
+      }
+      .wordmark span {
+        color: var(--brand);
+      }
+      .meta {
+        font-family: var(--font-mono);
+        font-size: 11px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--muted-foreground);
+      }
+      h2.group {
+        font-size: 11px;
+        font-family: var(--font-mono);
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        color: var(--brand);
+        margin: 0 0 20px;
+      }
+      section.group {
+        margin-bottom: 64px;
+      }
+      /* swatches */
+      .swatches {
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+        gap: 1px;
+        background: var(--border);
+        border: 1px solid var(--border);
+      }
+      .swatch {
+        background: var(--card);
+        padding: 0;
+      }
+      .swatch .chip {
+        height: 84px;
+      }
+      .swatch dl {
+        margin: 0;
+        padding: 12px 14px 16px;
+        font-family: var(--font-mono);
+        font-size: 11px;
+        line-height: 1.6;
+      }
+      .swatch dt {
+        color: var(--foreground);
+        letter-spacing: 0.04em;
+      }
+      .swatch dd {
+        margin: 0;
+        color: var(--muted-foreground);
+      }
+      /* type */
+      .type {
+        border: 1px solid var(--border);
+      }
+      .type .row {
+        display: grid;
+        grid-template-columns: 220px 1fr;
+        align-items: baseline;
+        gap: 24px;
+        padding: 18px 20px;
+        border-bottom: 1px solid var(--border);
+      }
+      .type .row:last-child {
+        border-bottom: 0;
+      }
+      .type .label {
+        font-family: var(--font-mono);
+        font-size: 11px;
+        color: var(--muted-foreground);
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+      }
+      .display {
+        font-size: 64px;
+        font-weight: 900;
+        letter-spacing: -0.03em;
+        line-height: 0.95;
+      }
+      .h1 {
+        font-size: 44px;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+      }
+      .h2 {
+        font-size: 28px;
+        font-weight: 700;
+      }
+      .body {
+        font-size: 16px;
+        color: var(--subtle-foreground);
+        max-width: 62ch;
+      }
+      .quote {
+        font-family: var(--font-serif);
+        font-size: 26px;
+        line-height: 1.35;
+      }
+      .mono-data {
+        font-family: var(--font-mono);
+        font-size: 13px;
+        letter-spacing: 0.04em;
+      }
+      /* spacing + radius + shadow */
+      .bars {
+        display: flex;
+        align-items: flex-end;
+        gap: 12px;
+        border: 1px solid var(--border);
+        padding: 20px;
+      }
+      .bars div {
+        background: var(--accent);
+        border: 1px solid var(--border);
+        border-bottom: 2px solid var(--brand);
+        width: 24px;
+      }
+      .radius-row {
+        display: flex;
+        gap: 16px;
+      }
+      .radius-row figure {
+        margin: 0;
+        flex: 1;
+        border: 1px solid var(--border);
+        background: var(--card);
+        height: 96px;
+        display: grid;
+        place-items: center;
+        font-family: var(--font-mono);
+        font-size: 11px;
+        color: var(--muted-foreground);
+      }
+      .r8 {
+        border-radius: var(--radius);
+      }
+      .r0 {
+        border-radius: 0;
+        outline: 1px solid var(--brand);
+        outline-offset: -1px;
+      }
+      .shadow-demo {
+        box-shadow: var(--shadow-sm);
+      }
+      /* components */
+      .components {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1px;
+        background: var(--border);
+        border: 1px solid var(--border);
+      }
+      .components > div {
+        background: var(--background);
+        padding: 28px;
+      }
+      .btn {
+        font-family: var(--font-sans);
+        font-size: 12px;
+        font-weight: 800;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        padding: 0 28px;
+        height: 52px;
+        border: 1px solid transparent;
+        cursor: pointer;
+      }
+      .btn-primary {
+        background: var(--primary);
+        color: var(--primary-foreground);
+      }
+      .btn-ghost {
+        background: transparent;
+        color: var(--foreground);
+        border-color: var(--border);
+      }
+      .btn-brand {
+        background: var(--brand);
+        color: var(--brand-foreground);
+      }
+      .field {
+        display: block;
+        width: 100%;
+        background: var(--background);
+        border: 1px solid var(--input);
+        color: var(--foreground);
+        font-family: var(--font-sans);
+        font-size: 15px;
+        padding: 14px 16px;
+        border-radius: var(--radius);
+      }
+      .card-demo {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 20px;
+      }
+      .badges {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+      .badge {
+        font-family: var(--font-mono);
+        font-size: 10px;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        padding: 5px 9px;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        color: var(--muted-foreground);
+      }
+      .badge-live {
+        color: var(--success);
+        border-color: color-mix(in srgb, var(--success) 40%, transparent);
+      }
+      .badge-brand {
+        color: var(--brand);
+        border-color: color-mix(in srgb, var(--brand) 45%, transparent);
+      }
+      table.spec {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 14px;
+      }
+      table.spec th,
+      table.spec td {
+        text-align: left;
+        padding: 10px 0;
+        border-bottom: 1px solid var(--border);
+      }
+      table.spec td:last-child {
+        text-align: right;
+        font-family: var(--font-mono);
+      }
+      :focus-visible {
+        outline: 2px solid var(--brand);
+        outline-offset: 2px;
+      }
+      .note {
+        font-family: var(--font-mono);
+        font-size: 11px;
+        color: var(--muted-foreground);
+        margin-top: 10px;
+        letter-spacing: 0.03em;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <header class="board">
+        <p class="wordmark">G<span>L</span> Autos</p>
+        <p class="meta">Design system · tokens del proyecto · 2026-11-02</p>
+      </header>
+
+      <section class="group">
+        <h2 class="group">Color · superficies y texto</h2>
+        <div class="swatches">
+          <div class="swatch">
+            <div class="chip" style="background: var(--background)"></div>
+            <dl>
+              <dt>--background</dt>
+              <dd>#121212</dd>
+            </dl>
+          </div>
+          <div class="swatch">
+            <div class="chip" style="background: var(--card)"></div>
+            <dl>
+              <dt>--card</dt>
+              <dd>#141414</dd>
+            </dl>
+          </div>
+          <div class="swatch">
+            <div class="chip" style="background: var(--accent)"></div>
+            <dl>
+              <dt>--accent</dt>
+              <dd>#242424</dd>
+            </dl>
+          </div>
+          <div class="swatch">
+            <div class="chip" style="background: var(--border)"></div>
+            <dl>
+              <dt>--border</dt>
+              <dd>#2a2a2a</dd>
+            </dl>
+          </div>
+          <div class="swatch">
+            <div class="chip" style="background: var(--muted-foreground)"></div>
+            <dl>
+              <dt>--muted-fg</dt>
+              <dd>#a3a3a3</dd>
+            </dl>
+          </div>
+          <div class="swatch">
+            <div class="chip" style="background: var(--foreground)"></div>
+            <dl>
+              <dt>--foreground</dt>
+              <dd>#f5f5f5</dd>
+            </dl>
+          </div>
+        </div>
+        <div class="swatches" style="margin-top: 1px">
+          <div class="swatch">
+            <div class="chip" style="background: var(--brand)"></div>
+            <dl>
+              <dt>--brand</dt>
+              <dd>#fe0000 · 4.65:1</dd>
+            </dl>
+          </div>
+          <div class="swatch">
+            <div class="chip" style="background: var(--primary)"></div>
+            <dl>
+              <dt>--primary</dt>
+              <dd>#f5f5f5 · 17.2:1</dd>
+            </dl>
+          </div>
+          <div class="swatch">
+            <div class="chip" style="background: var(--success)"></div>
+            <dl>
+              <dt>--success</dt>
+              <dd>#4ade80</dd>
+            </dl>
+          </div>
+          <div class="swatch">
+            <div class="chip" style="background: var(--warning)"></div>
+            <dl>
+              <dt>--warning</dt>
+              <dd>#fcd34d</dd>
+            </dl>
+          </div>
+          <div class="swatch">
+            <div class="chip" style="background: var(--info)"></div>
+            <dl>
+              <dt>--info</dt>
+              <dd>#60a5fa</dd>
+            </dl>
+          </div>
+          <div class="swatch">
+            <div class="chip" style="background: var(--destructive)"></div>
+            <dl>
+              <dt>--destructive</dt>
+              <dd>#ff5c5c</dd>
+            </dl>
+          </div>
+        </div>
+      </section>
+
+      <section class="group">
+        <h2 class="group">Tipografía · Afacad / Adamina / Fira Code</h2>
+        <div class="type">
+          <div class="row">
+            <span class="label">display · 64/0.95 · 900</span>
+            <span class="display">El auto que buscás</span>
+          </div>
+          <div class="row">
+            <span class="label">h1 · 44 · 800</span>
+            <span class="h1">18 unidades en el lote</span>
+          </div>
+          <div class="row">
+            <span class="label">h2 · 28 · 700</span>
+            <span class="h2">Por qué elegirnos</span>
+          </div>
+          <div class="row">
+            <span class="label">body · 16 · subtle</span>
+            <span class="body"
+              >Cada unidad pasa por peritaje mecánico antes de publicarse. Si
+              algo no cierra, no entra al lote.</span
+            >
+          </div>
+          <div class="row">
+            <span class="label">quote · serif 26</span>
+            <span class="quote"
+              >“Facu nos atendió de diez; fuimos por un usado y nos llevamos un
+              0km.”</span
+            >
+          </div>
+          <div class="row">
+            <span class="label">dato · mono 13</span>
+            <span class="mono-data">$39.500.000 · 2025 · 0 km · ARS</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="group">
+        <h2 class="group">Espaciado, radio y sombra</h2>
+        <div class="bars">
+          <div style="height: 4px"></div>
+          <div style="height: 8px"></div>
+          <div style="height: 12px"></div>
+          <div style="height: 16px"></div>
+          <div style="height: 24px"></div>
+          <div style="height: 32px"></div>
+          <div style="height: 48px"></div>
+          <div style="height: 64px"></div>
+          <div style="height: 96px"></div>
+          <div style="height: 128px"></div>
+        </div>
+        <div class="radius-row" style="margin-top: 16px">
+          <figure class="r8">--radius 0.5rem (panel)</figure>
+          <figure class="r0">radio 0 (rediseño público)</figure>
+          <figure class="shadow-demo">--shadow-sm (panel)</figure>
+        </div>
+      </section>
+
+      <section class="group">
+        <h2 class="group">Componentes</h2>
+        <div class="components">
+          <div>
+            <p class="note">acciones</p>
+            <p
+              style="
+                display: flex;
+                gap: 12px;
+                flex-wrap: wrap;
+                margin: 16px 0 0;
+              "
+            >
+              <button class="btn btn-primary">Ver catálogo</button>
+              <button class="btn btn-ghost">Consultar stock</button>
+              <button class="btn btn-brand">WhatsApp</button>
+            </p>
+          </div>
+          <div>
+            <p class="note">campo</p>
+            <input
+              class="field"
+              placeholder="Tu teléfono"
+              aria-label="Tu teléfono"
+            />
+          </div>
+          <div>
+            <p class="note">tarjeta</p>
+            <div class="card-demo">
+              <p class="mono-data" style="color: var(--muted-foreground)">
+                VOLKSWAGEN · TAOS
+              </p>
+              <p style="font-size: 20px; font-weight: 700; margin: 6px 0 10px">
+                Highline 1.4 TSI
+              </p>
+              <p class="mono-data">2025 · 0 km · $39.500.000</p>
+            </div>
+          </div>
+          <div>
+            <p class="note">estados</p>
+            <p class="badges">
+              <span class="badge badge-live">Disponible</span>
+              <span class="badge badge-brand">Reservado</span>
+              <span class="badge">0 km</span>
+              <span class="badge">Usado</span>
+            </p>
+            <table class="spec" style="margin-top: 18px">
+              <tr>
+                <th>Unidades</th>
+                <td>18</td>
+              </tr>
+              <tr>
+                <th>Entrega</th>
+                <td>24 h</td>
+              </tr>
+            </table>
+          </div>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

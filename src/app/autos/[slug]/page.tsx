@@ -11,7 +11,7 @@ import { getPublicCarBySlug, getPublicCarSlugs } from "@/lib/queries";
 import { activeSite } from "@/site/active";
 
 import Footer from "@/app/(landing)/components/Footer";
-import { NavbarServer } from "@/app/(landing)/components/NavbarServer";
+import { SiteHeader } from "@/app/(landing)/components/SiteHeader";
 import { MetaPixelViewContent } from "@/components/ui/meta-pixel-view-content";
 import { LeadForm } from "@/components/leads";
 import { buildCarJsonLd } from "@/lib/cars/json-ld";
@@ -184,9 +184,12 @@ export default async function CarDetailPage({
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(carJsonLd) }}
       />
-      <NavbarServer />
+      <SiteHeader />
 
-      <div className="container mx-auto px-4 py-32">
+      {/* Los inputs del formulario y el botón de WhatsApp son primitivas
+          compartidas con el panel, así que acá se apagan por selector descendiente
+          y no editando el componente: la superficie pública es de esquinas rectas. */}
+      <div className="container mx-auto px-4 pt-8 pb-16 [&_a]:rounded-none [&_button]:rounded-none [&_input]:rounded-none [&_select]:rounded-none [&_textarea]:rounded-none">
         <div className="mb-12 grid gap-8 lg:grid-cols-2">
           <CarDetailGallery id={car.id} images={images} title={car.title} />
           <CarDetailSpecs car={car} />

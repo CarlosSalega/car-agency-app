@@ -15,7 +15,7 @@ import type { SiteAssets, SiteIdentity } from "../contract";
 export const identity: SiteIdentity = {
   name: "GL Autos",
   description: "Vení y encontrá el auto de tus sueños.",
-  dealerDescription: "Concesionario multimarcas de usados seleccionados y 0km",
+  dealerDescription: "Concesionaria multimarcas de usados seleccionados y 0 km",
   contact: {
     phoneRaw: "+5493425777646",
     phoneDisplay: "+54 9 342 577 7646",
@@ -58,6 +58,7 @@ export const identity: SiteIdentity = {
 export const assets: SiteAssets = {
   wordmark: { src: "/logo-wordmark.png", width: 179, height: 19 },
   mark: { src: "/logo-mark.png", width: 42, height: 18 },
+  hero: { src: "/hero.webp", width: 1440, height: 1920 },
   preview: { src: "/preview.webp", width: 1200, height: 630 },
   previewSquare: { src: "/preview.webp", width: 1200, height: 1200 },
   favicon: "/favicon.ico",

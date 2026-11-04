@@ -153,7 +153,7 @@ export function SearchFilters({
 
     const query = params.toString();
     startTransition(() => {
-      router.push(query ? `/autos/?${query}` : "/autos");
+      router.push(query ? `/catalogo/?${query}` : "/catalogo");
     });
     onApply?.();
   };
@@ -173,12 +173,12 @@ export function SearchFilters({
     if (search) params.set("search", search);
 
     const query = params.toString();
-    router.push(query ? `/autos/?${query}` : "/autos");
+    router.push(query ? `/catalogo/?${query}` : "/catalogo");
     onApply?.();
   };
 
   return (
-    <div className="bg-card space-y-6 rounded-lg p-6 shadow-lg/30">
+    <div className="bg-card border-border space-y-6 rounded-none border p-6">
       <div className="space-y-3">
         <div className="flex items-center justify-between gap-2">
           <h3 className="text-lg font-semibold">Filtros de búsqueda</h3>

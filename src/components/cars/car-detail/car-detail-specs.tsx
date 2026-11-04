@@ -61,7 +61,7 @@ export function CarDetailSpecs({ car }: CarDetailSpecsProps) {
     method;
 
   return (
-    <Card className="bg-accent rounded-lg border-0 py-6 shadow-xl/20">
+    <Card className="bg-accent rounded-none py-6 shadow-none">
       <CardHeader>
         <CardTitle>Ficha Técnica</CardTitle>
       </CardHeader>

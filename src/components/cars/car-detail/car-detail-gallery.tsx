@@ -323,7 +323,7 @@ export function CarDetailGallery({ images, title }: CarDetailGalleryProps) {
     <div className="space-y-4">
       {/* Main image trigger */}
       <div
-        className="relative aspect-4/3 cursor-zoom-in overflow-hidden rounded-lg"
+        className="group relative aspect-4/3 cursor-zoom-in overflow-hidden rounded-none"
         onClick={() => setLightboxOpen(true)}
       >
         <CarImage
@@ -339,7 +339,7 @@ export function CarDetailGallery({ images, title }: CarDetailGalleryProps) {
           <>
             <Button
               size="icon"
-              className="absolute top-1/2 left-2 -translate-y-1/2"
+              className="absolute top-1/2 left-2 hidden -translate-y-1/2 rounded-none transition-opacity duration-200 ease-out focus-visible:opacity-100 md:flex md:opacity-0 md:group-hover:opacity-100 md:motion-reduce:transition-none"
               onClick={(clickEvent) => {
                 clickEvent.stopPropagation();
                 prev();
@@ -349,7 +349,7 @@ export function CarDetailGallery({ images, title }: CarDetailGalleryProps) {
             </Button>
             <Button
               size="icon"
-              className="absolute top-1/2 right-2 -translate-y-1/2"
+              className="absolute top-1/2 right-2 hidden -translate-y-1/2 rounded-none transition-opacity duration-200 ease-out focus-visible:opacity-100 md:flex md:opacity-0 md:group-hover:opacity-100 md:motion-reduce:transition-none"
               onClick={(clickEvent) => {
                 clickEvent.stopPropagation();
                 next();
@@ -371,7 +371,7 @@ export function CarDetailGallery({ images, title }: CarDetailGalleryProps) {
               <button
                 key={`${imageKey}-${index}`}
                 onClick={() => setCurrentIndex(index)}
-                className={`relative aspect-4/3 overflow-hidden rounded-lg ring-1 transition ${
+                className={`relative aspect-4/3 overflow-hidden rounded-none ring-1 transition ${
                   index === currentIndex
                     ? "ring-brand"
                     : "ring-muted hover:ring-muted-foreground/40"
@@ -462,7 +462,7 @@ export function CarDetailGallery({ images, title }: CarDetailGalleryProps) {
               <Button
                 size="icon"
                 onClick={() => setLightboxOpen(false)}
-                className="absolute top-4 right-4 z-10 size-9"
+                className="absolute top-4 right-4 z-10 size-9 rounded-none"
                 aria-label="Cerrar"
               >
                 <X className="size-5" />
@@ -519,7 +519,7 @@ export function CarDetailGallery({ images, title }: CarDetailGalleryProps) {
                   <Button
                     size="icon"
                     onClick={prev}
-                    className={`absolute top-1/2 left-3 size-11 -translate-y-1/2 transition-opacity ${
+                    className={`absolute top-1/2 left-3 size-11 -translate-y-1/2 rounded-none transition-opacity ${
                       isZoomed ? "pointer-events-none opacity-0" : "opacity-100"
                     }`}
                     aria-label="Anterior"
@@ -529,7 +529,7 @@ export function CarDetailGallery({ images, title }: CarDetailGalleryProps) {
                   <Button
                     size="icon"
                     onClick={next}
-                    className={`absolute top-1/2 right-3 size-11 -translate-y-1/2 transition-opacity ${
+                    className={`absolute top-1/2 right-3 size-11 -translate-y-1/2 rounded-none transition-opacity ${
                       isZoomed ? "pointer-events-none opacity-0" : "opacity-100"
                     }`}
                     aria-label="Siguiente"
