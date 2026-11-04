@@ -1,0 +1,21 @@
+{
+  "title": "Catálogo GL Autos · filtros como chips",
+  "brief": "Rediseño de los filtros de /catalogo: la barra lateral de siete selects desaparece y los facets pasan a una franja de chips sobre la grilla de cards, que se mantiene igual. Un filtro por faceta, con los chips activos marcados en su lugar y un «Más filtros» para año y precio. La URL sigue siendo el estado, así que cada chip es un link.",
+  "feature": "odd/tasks/landing-redesign.md",
+  "artboards": [
+    {
+      "file": "01-catalogo-chips.html",
+      "title": "Catálogo con chips (escritorio, con «Más filtros» abierto)",
+      "tradeoff": "Todo el filtrado a la vista y a un toque, sin panel lateral que robe 320px a la grilla. La franja ocupa una fila alta: con muchos facets puede crecer a dos líneas.",
+      "width": 1440,
+      "height": 1500
+    },
+    {
+      "file": "02-catalogo-mobile.html",
+      "title": "Catálogo mobile (chips con scroll + barra fija)",
+      "tradeoff": "En 390px los grupos de chips se deslizan de costado y el contador con «Más filtros» queda fijo abajo, al alcance del pulgar. Se pierde la vista simultánea de todos los facets.",
+      "width": 390,
+      "height": 1000
+    }
+  ]
+}
