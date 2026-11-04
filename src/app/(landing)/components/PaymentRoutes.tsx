@@ -50,11 +50,8 @@ export function PaymentRoutes() {
             Formas de pago
           </p>
           <h2 className="text-[clamp(26px,3vw,34px)] leading-[1.05] font-bold tracking-[-0.02em]">
-            Decinos qué tenés y qué querés. Vemos cómo se paga.
-          </h2>
-          <p className="text-muted-foreground mt-4 font-mono text-[11px] leading-relaxed tracking-[0.14em] uppercase">
             Casi nadie paga la unidad entera.
-          </p>
+          </h2>
         </div>
 
         <div>
