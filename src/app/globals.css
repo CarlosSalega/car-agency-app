@@ -305,6 +305,17 @@
   * {
     @apply border-border outline-ring/50;
   }
+  /*
+   * Reserva el ancho de la barra de scroll **siempre**.
+   *
+   * Sin esto, cuando una pantalla no necesita scroll (el `loading.tsx`, que mide
+   * exactamente una pantalla) la barra desaparece, el ancho útil crece ~15px y todo
+   * el layout se corre de costado: el header se mueve al empezar y al terminar la
+   * carga. Con el gutter reservado, el ancho no depende de si hay barra.
+   */
+  html {
+    scrollbar-gutter: stable;
+  }
   body {
     @apply bg-background text-foreground;
     letter-spacing: var(--tracking-normal);
