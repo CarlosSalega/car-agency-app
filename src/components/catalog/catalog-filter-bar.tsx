@@ -70,200 +70,212 @@ export function CatalogFilterBar({
 
   return (
     <div className="border-line-strong bg-ground border-y">
-      <div className="mx-auto flex w-full max-w-[1320px] flex-wrap items-center gap-x-7 gap-y-3 px-7 py-3.5">
-        <FilterGroup label="Tipo">
-          <FilterChip
-            label="Todos"
-            facet="type"
-            value=""
-            active={!active}
-            params={params}
-          />
-          {CAR_TYPE_OPTIONS.map((option) => (
-            <FilterChip
-              key={option.value}
-              label={option.label}
-              facet="type"
-              value={option.value}
-              active={active === option.value}
-              params={params}
-            />
-          ))}
-        </FilterGroup>
-
-        <FilterGroup label="Combustible">
-          <FilterChip
-            label="Todos"
-            facet="fuel"
-            value=""
-            active={!fuel}
-            params={params}
-          />
-          {FUEL_TYPE_OPTIONS.map((option) => (
-            <FilterChip
-              key={option.value}
-              label={option.label}
-              facet="fuel"
-              value={option.value}
-              active={fuel === option.value}
-              params={params}
-            />
-          ))}
-        </FilterGroup>
-
-        <FilterGroup label="Caja">
-          <FilterChip
-            label="Todas"
-            facet="transmission"
-            value=""
-            active={!transmission}
-            params={params}
-          />
-          {TRANSMISSION_OPTIONS.map((option) => (
-            <FilterChip
-              key={option.value}
-              label={option.label}
-              facet="transmission"
-              value={option.value}
-              active={transmission === option.value}
-              params={params}
-            />
-          ))}
-        </FilterGroup>
-
-        <div className="ml-auto flex items-center gap-2">
-          {/* Marca: menú porque son muchas y no entran como chips. */}
-          <details className="group relative">
-            <summary className="border-line-strong text-subtle-foreground hover:border-foreground hover:text-foreground flex cursor-pointer list-none items-center gap-2 border px-2.5 py-1.5 font-mono text-[11px] tracking-[0.04em] transition-colors [&::-webkit-details-marker]:hidden">
-              {currentBrand ? currentBrand.name : "Marca: todas"}
-              <span aria-hidden="true" className="text-[9px]">
-                ▾
-              </span>
-            </summary>
-            <div className="border-line-strong bg-card absolute top-[calc(100%+6px)] right-0 z-30 max-h-72 w-56 overflow-y-auto border">
-              <Link
-                href={toggleFacet(params, "brand", "")}
-                className="text-subtle-foreground hover:bg-accent hover:text-foreground border-border block border-b px-3 py-2 font-mono text-[11px] tracking-[0.04em] last:border-b-0"
-              >
-                Todas las marcas
-              </Link>
-              {brands.map((item) => (
-                <Link
-                  key={item.id}
-                  href={toggleFacet(params, "brand", item.id)}
-                  aria-current={brand === item.id ? "true" : undefined}
-                  className={`hover:bg-accent hover:text-foreground border-border block border-b px-3 py-2 font-mono text-[11px] tracking-[0.04em] last:border-b-0 ${
-                    brand === item.id ? "text-brand" : "text-subtle-foreground"
-                  }`}
-                >
-                  {item.name}
-                </Link>
+      <div className="mx-auto w-full max-w-[1320px] px-7 py-3.5">
+        <div className="flex flex-col gap-3 md:flex-row md:flex-wrap md:items-center md:gap-x-7">
+          {/* Los facets son lo único que se desliza: en mobile es un scroller con
+              su propio ancho, y por eso el body deja de arrastrarse de costado. En
+              desktop vuelven a fluir y a envolver. */}
+          <div className="-mx-7 flex snap-x items-center gap-7 overflow-x-auto px-7 pb-1 [scrollbar-width:none] md:mx-0 md:flex-wrap md:overflow-visible md:px-0 md:pb-0 [&::-webkit-scrollbar]:hidden">
+            <FilterGroup label="Tipo">
+              <FilterChip
+                label="Todos"
+                facet="type"
+                value=""
+                active={!active}
+                params={params}
+              />
+              {CAR_TYPE_OPTIONS.map((option) => (
+                <FilterChip
+                  key={option.value}
+                  label={option.label}
+                  facet="type"
+                  value={option.value}
+                  active={active === option.value}
+                  params={params}
+                />
               ))}
-            </div>
-          </details>
+            </FilterGroup>
 
-          {/* Más filtros: los rangos, que necesitan dos campos. */}
-          <details className="group relative">
-            <summary className="border-line-strong text-subtle-foreground hover:border-foreground hover:text-foreground flex cursor-pointer list-none items-center gap-2 border border-dashed px-2.5 py-1.5 font-mono text-[11px] tracking-[0.04em] transition-colors [&::-webkit-details-marker]:hidden">
-              Más filtros
-              <span aria-hidden="true" className="text-[9px]">
-                ⚙
-              </span>
-            </summary>
-            <div className="border-line-strong bg-card absolute top-[calc(100%+6px)] right-0 z-30 w-80 border p-4">
-              <form
-                action="/catalogo"
-                method="get"
-                className="grid gap-3 sm:grid-cols-2"
-              >
-                {/* Los filtros activos viajan en campos ocultos: un GET form pisa
-                    la query, así que lo que no se muestra se pierde. */}
-                {[...params.entries()]
-                  .filter(
-                    ([key]) =>
-                      !["minYear", "maxYear", "minPrice", "maxPrice"].includes(
-                        key,
-                      ),
-                  )
-                  .map(([key, value]) => (
-                    <input key={key} type="hidden" name={key} value={value} />
-                  ))}
+            <FilterGroup label="Combustible">
+              <FilterChip
+                label="Todos"
+                facet="fuel"
+                value=""
+                active={!fuel}
+                params={params}
+              />
+              {FUEL_TYPE_OPTIONS.map((option) => (
+                <FilterChip
+                  key={option.value}
+                  label={option.label}
+                  facet="fuel"
+                  value={option.value}
+                  active={fuel === option.value}
+                  params={params}
+                />
+              ))}
+            </FilterGroup>
 
-                <label className="grid gap-1.5">
-                  <span className="text-muted-foreground font-mono text-[10px] tracking-[0.14em] uppercase">
-                    Año desde
-                  </span>
-                  <input
-                    name="minYear"
-                    inputMode="numeric"
-                    defaultValue={params.get("minYear") ?? ""}
-                    placeholder="2019"
-                    className="border-line-strong bg-background text-foreground focus:border-brand h-10 w-full border px-2.5 font-mono text-[13px] focus:outline-none"
-                  />
-                </label>
-                <label className="grid gap-1.5">
-                  <span className="text-muted-foreground font-mono text-[10px] tracking-[0.14em] uppercase">
-                    Año hasta
-                  </span>
-                  <input
-                    name="maxYear"
-                    inputMode="numeric"
-                    defaultValue={params.get("maxYear") ?? ""}
-                    placeholder="2025"
-                    className="border-line-strong bg-background text-foreground focus:border-brand h-10 w-full border px-2.5 font-mono text-[13px] focus:outline-none"
-                  />
-                </label>
-                <label className="grid gap-1.5">
-                  <span className="text-muted-foreground font-mono text-[10px] tracking-[0.14em] uppercase">
-                    Precio desde
-                  </span>
-                  <input
-                    name="minPrice"
-                    inputMode="numeric"
-                    defaultValue={params.get("minPrice") ?? ""}
-                    placeholder="15000000"
-                    className="border-line-strong bg-background text-foreground focus:border-brand h-10 w-full border px-2.5 font-mono text-[13px] focus:outline-none"
-                  />
-                </label>
-                <label className="grid gap-1.5">
-                  <span className="text-muted-foreground font-mono text-[10px] tracking-[0.14em] uppercase">
-                    Precio hasta
-                  </span>
-                  <input
-                    name="maxPrice"
-                    inputMode="numeric"
-                    defaultValue={params.get("maxPrice") ?? ""}
-                    placeholder="60000000"
-                    className="border-line-strong bg-background text-foreground focus:border-brand h-10 w-full border px-2.5 font-mono text-[13px] focus:outline-none"
-                  />
-                </label>
+            <FilterGroup label="Caja">
+              <FilterChip
+                label="Todas"
+                facet="transmission"
+                value=""
+                active={!transmission}
+                params={params}
+              />
+              {TRANSMISSION_OPTIONS.map((option) => (
+                <FilterChip
+                  key={option.value}
+                  label={option.label}
+                  facet="transmission"
+                  value={option.value}
+                  active={transmission === option.value}
+                  params={params}
+                />
+              ))}
+            </FilterGroup>
+          </div>
 
-                <div className="border-border col-span-2 mt-1 flex items-center justify-between gap-3 border-t pt-3">
+          <div className="flex items-center gap-2 md:ml-auto">
+            {/* Marca: menú porque son muchas y no entran como chips. */}
+            <details className="group relative">
+              <summary className="border-line-strong text-subtle-foreground hover:border-foreground hover:text-foreground flex cursor-pointer list-none items-center gap-2 border px-2.5 py-1.5 font-mono text-[11px] tracking-[0.04em] transition-colors [&::-webkit-details-marker]:hidden">
+                {currentBrand ? currentBrand.name : "Marca: todas"}
+                <span aria-hidden="true" className="text-[9px]">
+                  ▾
+                </span>
+              </summary>
+              <div className="border-line-strong bg-card absolute top-[calc(100%+6px)] right-0 z-30 max-h-72 w-56 overflow-y-auto border">
+                <Link
+                  href={toggleFacet(params, "brand", "")}
+                  className="text-subtle-foreground hover:bg-accent hover:text-foreground border-border block border-b px-3 py-2 font-mono text-[11px] tracking-[0.04em] last:border-b-0"
+                >
+                  Todas las marcas
+                </Link>
+                {brands.map((item) => (
                   <Link
-                    href={clearFilters(params)}
-                    className="text-muted-foreground hover:text-foreground font-mono text-[10px] tracking-[0.14em] uppercase"
+                    key={item.id}
+                    href={toggleFacet(params, "brand", item.id)}
+                    aria-current={brand === item.id ? "true" : undefined}
+                    className={`hover:bg-accent hover:text-foreground border-border block border-b px-3 py-2 font-mono text-[11px] tracking-[0.04em] last:border-b-0 ${
+                      brand === item.id
+                        ? "text-brand"
+                        : "text-subtle-foreground"
+                    }`}
                   >
-                    Limpiar
+                    {item.name}
                   </Link>
-                  <button
-                    type="submit"
-                    className="bg-primary text-primary-foreground hover:bg-primary/90 h-10 shrink-0 cursor-pointer px-4 font-mono text-[10px] font-bold tracking-[0.16em] uppercase"
-                  >
-                    Aplicar
-                  </button>
-                </div>
-              </form>
-            </div>
-          </details>
+                ))}
+              </div>
+            </details>
 
-          {applied.length > 0 ? (
-            <Link
-              href={clearFilters(params)}
-              className="text-brand font-mono text-[10px] tracking-[0.16em] uppercase hover:underline"
-            >
-              Limpiar
-            </Link>
-          ) : null}
+            {/* Más filtros: los rangos, que necesitan dos campos. */}
+            <details className="group relative">
+              <summary className="border-line-strong text-subtle-foreground hover:border-foreground hover:text-foreground flex cursor-pointer list-none items-center gap-2 border border-dashed px-2.5 py-1.5 font-mono text-[11px] tracking-[0.04em] transition-colors [&::-webkit-details-marker]:hidden">
+                Más filtros
+                <span aria-hidden="true" className="text-[9px]">
+                  ⚙
+                </span>
+              </summary>
+              <div className="border-line-strong bg-card absolute top-[calc(100%+6px)] right-0 z-30 w-80 border p-4">
+                <form
+                  action="/catalogo"
+                  method="get"
+                  className="grid gap-3 sm:grid-cols-2"
+                >
+                  {/* Los filtros activos viajan en campos ocultos: un GET form pisa
+                    la query, así que lo que no se muestra se pierde. */}
+                  {[...params.entries()]
+                    .filter(
+                      ([key]) =>
+                        ![
+                          "minYear",
+                          "maxYear",
+                          "minPrice",
+                          "maxPrice",
+                        ].includes(key),
+                    )
+                    .map(([key, value]) => (
+                      <input key={key} type="hidden" name={key} value={value} />
+                    ))}
+
+                  <label className="grid gap-1.5">
+                    <span className="text-muted-foreground font-mono text-[10px] tracking-[0.14em] uppercase">
+                      Año desde
+                    </span>
+                    <input
+                      name="minYear"
+                      inputMode="numeric"
+                      defaultValue={params.get("minYear") ?? ""}
+                      placeholder="2019"
+                      className="border-line-strong bg-background text-foreground focus:border-brand h-10 w-full border px-2.5 font-mono text-[13px] focus:outline-none"
+                    />
+                  </label>
+                  <label className="grid gap-1.5">
+                    <span className="text-muted-foreground font-mono text-[10px] tracking-[0.14em] uppercase">
+                      Año hasta
+                    </span>
+                    <input
+                      name="maxYear"
+                      inputMode="numeric"
+                      defaultValue={params.get("maxYear") ?? ""}
+                      placeholder="2025"
+                      className="border-line-strong bg-background text-foreground focus:border-brand h-10 w-full border px-2.5 font-mono text-[13px] focus:outline-none"
+                    />
+                  </label>
+                  <label className="grid gap-1.5">
+                    <span className="text-muted-foreground font-mono text-[10px] tracking-[0.14em] uppercase">
+                      Precio desde
+                    </span>
+                    <input
+                      name="minPrice"
+                      inputMode="numeric"
+                      defaultValue={params.get("minPrice") ?? ""}
+                      placeholder="15000000"
+                      className="border-line-strong bg-background text-foreground focus:border-brand h-10 w-full border px-2.5 font-mono text-[13px] focus:outline-none"
+                    />
+                  </label>
+                  <label className="grid gap-1.5">
+                    <span className="text-muted-foreground font-mono text-[10px] tracking-[0.14em] uppercase">
+                      Precio hasta
+                    </span>
+                    <input
+                      name="maxPrice"
+                      inputMode="numeric"
+                      defaultValue={params.get("maxPrice") ?? ""}
+                      placeholder="60000000"
+                      className="border-line-strong bg-background text-foreground focus:border-brand h-10 w-full border px-2.5 font-mono text-[13px] focus:outline-none"
+                    />
+                  </label>
+
+                  <div className="border-border col-span-2 mt-1 flex items-center justify-between gap-3 border-t pt-3">
+                    <Link
+                      href={clearFilters(params)}
+                      className="text-muted-foreground hover:text-foreground font-mono text-[10px] tracking-[0.14em] uppercase"
+                    >
+                      Limpiar
+                    </Link>
+                    <button
+                      type="submit"
+                      className="bg-primary text-primary-foreground hover:bg-primary/90 h-10 shrink-0 cursor-pointer px-4 font-mono text-[10px] font-bold tracking-[0.16em] uppercase"
+                    >
+                      Aplicar
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </details>
+
+            {applied.length > 0 ? (
+              <Link
+                href={clearFilters(params)}
+                className="text-brand font-mono text-[10px] tracking-[0.16em] uppercase hover:underline"
+              >
+                Limpiar
+              </Link>
+            ) : null}
+          </div>
         </div>
       </div>
 

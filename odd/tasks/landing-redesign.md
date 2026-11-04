@@ -318,3 +318,12 @@ committed on its own, so the owner can review and change direction between secti
     de scrollear de costado con barra fija al pie. La barra fija necesita verificarse en un navegador y no
     la puedo mirar; el wrap funciona y es accesible. Si se quiere el scroll horizontal + barra fija, es un
     cambio chico a verificar del lado del owner.
+
+- **L34 (el body se arrastraba de costado en mobile):** "solamente deberia permitir esa parte deslizar hacia la
+  derecha y no toda la pagina". Causa: los grupos de chips eran hijos de un `flex-wrap` pero cada grupo no
+  podía encogerse por debajo de su contenido (`whitespace-nowrap`), así que la fila era más ancha que la
+  pantalla y el desborde llegaba al `body`. Ahora los facets viven en **su propio scroller**
+  (`overflow-x-auto`, `snap-x`, `shrink-0` + `snap-start` en cada grupo, scrollbar oculta, márgenes negativos
+  para sangrar hasta el borde), y desde `md` vuelven a fluir y envolver (`md:overflow-visible md:flex-wrap`).
+  Las acciones (Marca, Más filtros, Limpiar) salen del scroller: en mobile van en su propia fila y quedan
+  siempre alcanzables; en desktop vuelven al extremo derecho con `md:ml-auto`.

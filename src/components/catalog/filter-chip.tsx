@@ -56,7 +56,7 @@ export function FilterGroup({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex items-center gap-3">
+    <div className="flex shrink-0 snap-start items-center gap-3 md:shrink">
       <span className="text-muted-foreground shrink-0 font-mono text-[10px] tracking-[0.16em] uppercase">
         {label}
       </span>
