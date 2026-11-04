@@ -90,7 +90,7 @@ export function Hero({ totalCars }: HeroProps) {
             href="/catalogo"
             className="bg-primary text-primary-foreground hover:bg-primary/90 flex h-11 w-full items-center justify-center px-5 font-mono text-[11px] font-bold tracking-[0.16em] uppercase transition-colors"
           >
-            Ver {totalCars === 1 ? "la unidad" : `las ${totalCars} unidades`}
+            Mirá nuestro stock
           </Link>
           {/* El segundo CTA arranca la operación en vez de proponer una visita:
               "tasá mi usado" es lo que el cliente quiere resolver. */}
@@ -102,7 +102,7 @@ export function Hero({ totalCars }: HeroProps) {
             rel="noopener noreferrer"
             className="border-line-strong hover:bg-accent flex h-11 w-full items-center justify-center border px-5 font-mono text-[11px] tracking-[0.16em] uppercase transition-colors"
           >
-            Tasar mi usado
+            Quiero tasar mi usado
           </a>
         </div>
 
