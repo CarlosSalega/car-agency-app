@@ -70,12 +70,12 @@ export function CatalogFilterBar({
 
   return (
     <div className="border-line-strong bg-ground border-y">
-      <div className="mx-auto w-full max-w-[1320px] px-7 py-3.5">
+      <div className="mx-auto w-full max-w-[1320px] px-7 py-5">
         <div className="flex flex-col gap-3 md:flex-row md:flex-wrap md:items-center md:gap-x-7">
           {/* Los facets son lo único que se desliza: en mobile es un scroller con
               su propio ancho, y por eso el body deja de arrastrarse de costado. En
               desktop vuelven a fluir y a envolver. */}
-          <div className="-mx-7 flex snap-x items-center gap-7 overflow-x-auto px-7 pb-1 [scrollbar-width:none] md:mx-0 md:flex-wrap md:overflow-visible md:px-0 md:pb-0 [&::-webkit-scrollbar]:hidden">
+          <div className="flex snap-x items-center gap-7 overflow-x-auto [scrollbar-width:none] md:flex-wrap md:overflow-visible [&::-webkit-scrollbar]:hidden">
             <FilterGroup label="Tipo">
               <FilterChip
                 label="Todos"

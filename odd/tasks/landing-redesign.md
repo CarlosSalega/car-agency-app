@@ -327,3 +327,9 @@ committed on its own, so the owner can review and change direction between secti
   para sangrar hasta el borde), y desde `md` vuelven a fluir y envolver (`md:overflow-visible md:flex-wrap`).
   Las acciones (Marca, Más filtros, Limpiar) salen del scroller: en mobile van en su propia fila y quedan
   siempre alcanzables; en desktop vuelven al extremo derecho con `md:ml-auto`.
+
+- **L35 (padding de la franja de chips):** "los filtros no respetan el padding left y estan muy pegados al header,
+  necesita un padding Y". El sangrado del scroller (`-mx-7 px-7`, puesto para que la fila llegara al borde)
+  se comía el padding de la página en mobile y dejaba el label TIPO contra el borde. Se quitó el sangrado: el
+  scroller vive dentro del padding del contenedor, así los chips quedan alineados con las cards. Y la franja
+  pasa de `py-3.5` a **`py-5`** para despegarla del header sticky.
