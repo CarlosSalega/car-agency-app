@@ -57,9 +57,17 @@ export function Hero({ totalCars }: HeroProps) {
 
       {/* La información */}
       <div className="flex flex-col justify-center px-7 py-12 xl:px-14">
-        <p className="text-muted-foreground mb-5 flex items-center gap-3 font-mono text-[11px] tracking-[0.16em] uppercase">
-          <s aria-hidden="true" className="bg-brand block h-px w-7 text-sm" />
-          {identity.address.locality} · {identity.address.street}
+        {/* En 320 la dirección se partía en dos líneas: 25 caracteres en mono con
+            0.16em de tracking no entran. Se achica el tracking y el cuerpo, y la
+            línea roja se acorta sólo en mobile para devolverle el ancho. */}
+        <p className="text-muted-foreground mb-5 flex items-center gap-2 font-mono text-[10px] tracking-[0.08em] uppercase sm:gap-3 sm:text-[11px] sm:tracking-[0.16em]">
+          <s
+            aria-hidden="true"
+            className="bg-brand block h-px w-4 shrink-0 sm:w-7"
+          />
+          <span className="whitespace-nowrap">
+            {identity.address.locality} · {identity.address.street}
+          </span>
         </p>
 
         <h1 className="text-[clamp(34px,3.9vw,62px)] leading-[0.96] font-black tracking-[-0.035em] text-balance">
