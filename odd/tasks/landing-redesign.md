@@ -296,3 +296,25 @@ committed on its own, so the owner can review and change direction between secti
   no tenía a dónde ir. Arreglado: el destino se borra **después** de scrollear, y si la sección todavía
   no está en el DOM se reintenta por hasta ~60 frames (≈1s). Además `router.push("/", { scroll: false })`
   para que la restauración al tope de Next no pise el scroll propio.
+
+- **L33 (T9, filtros como chips):** "me gustaria modificar los filtros, que sean chips/badge en la parte superior
+  de la grid" + "crea una nueva rama e implementalo". Implementado en `feat/catalogo-chips`:
+  - `src/lib/catalog/filter-url.ts` es **toda** la lógica de la barra y es puro: `withParam`, `toggleFacet`,
+    `clearFilters`, `activeFilters`. 13 tests. **El test-first encontró un bug real**: `withParam` borraba
+    la clave recién seteada (llamaba a `without(params, key)` después de `params.set`), así que elegir un
+    chip devolvía `/catalogo` sin filtro.
+  - `CatalogFilterBar` es un **server component hecho de links y un `<form method="get">`**: cero estado
+    cliente, la URL es el estado, y cada vista filtrada es compartible y funciona sin JS.
+  - Chips por faceta (Tipo / Combustible / Caja) con un valor por faceta; `Marca` como menú `<details>`
+    (son ~10); `Modelo` aparece **sólo si hay marca elegida**; año y precio en `Más filtros` (necesitan
+    dos campos, no son chips); y `Ordenar` (recientes / precio asc-desc / menor km).
+  - Al cambiar de marca se limpia el modelo, y cualquier cambio resetea `page` (los dos casos están en tests).
+  - `sort` entra en `CarListFilters` y `buildOrderBy` lo mapea a Prisma; un valor desconocido cae en
+    "recientes" en vez de romper.
+  - **SEO**: `generateMetadata` pone `robots: index:false, follow:true` en cualquier vista filtrada, y la
+    canónica sigue apuntando a `/catalogo`.
+  - Borrados: `search-filters.tsx` y `mobile-filters-sheet.tsx`.
+    **Desviación consciente del artboard**: en mobile los grupos de chips **envuelven en 2-3 filas** en vez
+    de scrollear de costado con barra fija al pie. La barra fija necesita verificarse en un navegador y no
+    la puedo mirar; el wrap funciona y es accesible. Si se quiere el scroll horizontal + barra fija, es un
+    cambio chico a verificar del lado del owner.

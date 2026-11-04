@@ -20,7 +20,29 @@ export type CarListFilters = {
   minPrice?: number;
   maxPrice?: number;
   search?: string;
+  /** Display order. Absent means newest first, which is the catalog's default. */
+  sort?: string;
 };
+
+/**
+ * The order the visitor picked, mapped to Prisma.
+ *
+ * An unknown value falls back to newest first instead of throwing: a hand-typed
+ * `?sort=loquesea` is a URL, not an error page. Every tie breaks by newest, so the
+ * list is stable across requests (and the cache key already includes `sort`).
+ */
+function buildOrderBy(sort?: string): Prisma.CarOrderByWithRelationInput[] {
+  switch (sort) {
+    case "precio-asc":
+      return [{ price: "asc" }, { createdAt: "desc" }];
+    case "precio-desc":
+      return [{ price: "desc" }, { createdAt: "desc" }];
+    case "km-asc":
+      return [{ kilometers: "asc" }, { createdAt: "desc" }];
+    default:
+      return [{ createdAt: "desc" }];
+  }
+}
 
 export function buildWhere(filters: CarListFilters): Prisma.CarWhereInput {
   const where: Prisma.CarWhereInput = {
@@ -69,7 +91,7 @@ export async function getPublicCarsList(
         prisma.car.findMany({
           where: buildWhere(f),
           include: { brand: true, model: true },
-          orderBy: { createdAt: "desc" },
+          orderBy: buildOrderBy(f.sort),
           skip: s,
           take: t,
         }),
