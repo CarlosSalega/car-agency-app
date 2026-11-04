@@ -43,16 +43,13 @@ export function Hero({ totalCars }: HeroProps) {
         />
 
         <div className="pointer-events-none absolute inset-x-0 bottom-0 z-20 bg-gradient-to-t from-black/95 from-45% to-transparent p-5">
-          {/* El caption es del equipo, no de una unidad: el precio vive en la
-              sección de ingresos, que es donde se compara. */}
-          <div className="text-muted-foreground flex flex-col gap-1 font-mono text-[11px] tracking-[0.16em] uppercase sm:flex-row sm:items-baseline sm:justify-between sm:gap-4">
+          {/* El caption es del equipo; la dirección vive en el kicker de abajo.
+              Antes los dos la decían y en mobile se leían una debajo de la otra. */}
+          <div className="text-muted-foreground font-mono text-[11px] tracking-[0.16em] uppercase">
             <span className="whitespace-nowrap">
               <b className="text-foreground font-medium">
                 El equipo de {identity.name}
               </b>
-            </span>
-            <span className="whitespace-nowrap">
-              {identity.address.display}
             </span>
           </div>
         </div>
