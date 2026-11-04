@@ -12,6 +12,7 @@ import {
   getPublicCarsList,
 } from "@/lib/queries/cars";
 import Footer from "../(landing)/components/Footer";
+import { WhatsAppFloatButton } from "../(landing)/components/ui/WhatsAppFloatButton";
 import { SiteHeader } from "../(landing)/components/SiteHeader";
 
 export const revalidate = 300;
@@ -116,6 +117,7 @@ export default async function CatalogoPage({
       </div>
 
       <Footer />
+      <WhatsAppFloatButton />
     </div>
   );
 }
