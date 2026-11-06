@@ -13,7 +13,7 @@ import { ReviewsQuote } from "./reviews/reviews-quote";
  *
  * 1. **Only published rows, and nothing at all when there are none.** A heading
  *    that promises proof and then renders an empty box is worse than no section.
- * 2. **The Google numbers are Google's and stay plain text.** 4.9/249 is not our
+ * 2. **The Google numbers are Google's and stay plain text.** 5.0/6 is not our
  *    aggregate; the `aggregateRating` Google reads comes from the published rows
  *    in the landing JSON-LD. Turning this badge into structured data is exactly
  *    what got it removed before.

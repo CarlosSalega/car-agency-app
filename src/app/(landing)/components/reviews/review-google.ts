@@ -7,8 +7,8 @@
  * the same six reviews. Typing 4.9/249 into the markup is what the roadmap
  * removed, and it does not come back through this file.
  */
-export const GOOGLE_OVERALL_RATING = 4.9;
-export const GOOGLE_TOTAL_REVIEWS = 249;
+export const GOOGLE_OVERALL_RATING = 5.0;
+export const GOOGLE_TOTAL_REVIEWS = 6;
 
 /**
  * Where "Dejá tu reseña en Google" points.
