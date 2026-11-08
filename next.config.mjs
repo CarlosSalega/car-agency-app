@@ -2,6 +2,13 @@
 
 const nextConfig = {
   /**
+   * `image-uploads` is consumed as TypeScript source: its `exports` map points
+   * at `.ts` files and it ships no build output, so Next has to transpile it
+   * like first-party code. Without this the import fails to parse.
+   */
+  transpilePackages: ["image-uploads"],
+
+  /**
    * The catalog moved from `/autos` to `/catalogo`. The list redirects so old
    * links and indexed URLs keep working; the car detail does NOT move, because
    * `/autos/[slug]` is what search engines have indexed and what people share.
