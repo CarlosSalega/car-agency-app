@@ -162,3 +162,14 @@ expect.any(AbortSignal)` en las dos aserciones de payload completo. `git diff -U
   (`next dev`/`build` no corrieron); `file:../../modules/image-uploads` **no es desplegable** (falta pasar
   a git dependency fijada a commit o a registry); el trabajo está **sin commitear**; la suite de contrato
   viva sigue sin correr por falta de credenciales (`.env` bloqueado por política).
+- **L12** (verificación en runtime, `next dev` en el puerto 3000) — con tres requests sin sesión, que
+  prueban lo que ningún test unitario probaba: que Next resuelve y transpila el paquete TypeScript fuente.
+  - `POST /api/upload` → `401 {"error":"No autorizado"}`
+  - `DELETE /api/upload` → `401 {"error":"No autorizado"}`
+  - `GET /api/images/no-existe-esta-clave.webp` → `404 {"error":"Imagen no encontrada"}`
+
+  Los tres cuerpos provienen del `ES_MESSAGES` del módulo, así que `transpilePackages` funciona, las dos
+  rutas resuelven a las factories nuevas y los guards corren en orden (autenticación antes que todo). El
+  404 del proxy prueba que se llegó al upstream; **no** prueba que el cloud name sea correcto, porque una
+  URL con cloud inválido también responde 404. Queda sin verificar por el padre la subida autenticada
+  real: el usuario reporta que la subida funciona, pero no observé el `{success,key,url}` de esa subida.
