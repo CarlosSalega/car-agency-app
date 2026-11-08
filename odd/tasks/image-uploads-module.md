@@ -173,3 +173,17 @@ expect.any(AbortSignal)` en las dos aserciones de payload completo. `git diff -U
   404 del proxy prueba que se llegó al upstream; **no** prueba que el cloud name sea correcto, porque una
   URL con cloud inválido también responde 404. Queda sin verificar por el padre la subida autenticada
   real: el usuario reporta que la subida funciona, pero no observé el `{success,key,url}` de esa subida.
+
+- **L13** (verificación de punta a punta) — el usuario se logueó, creó un vehículo y subió imágenes. El
+  padre lo verificó por fuera, sin sesión, contra el catálogo público:
+  - el home sirve `https://res.cloudinary.com/dnluxqiah/image/upload/w_300,h_225,c_fill,f_auto,q_auto,dpr_auto/car-agency-app/titctbi7xrdxqwwfqrqh`
+  - `GET` del original → `200 image/jpeg` 161 KB; de esa variante thumbnail → `200` 12 KB; clave de
+    control inexistente → `404` (el control es lo que descarta un CDN que responda 200 a todo)
+  - el `public_id` aleatorio `titctbi7xrdxqwwfqrqh` contrasta con los 20-hex del seed determinístico
+    (sha1), lo que identifica la subida nueva
+
+  Conclusiones: el provider autenticó y subió; la key volvió a la app y se persistió con el folder del
+  composition root; el shim de `resolveImageUrl` sustituye el cloud name, aplica las variantes del módulo
+  y quita la extensión, idéntico al original; `NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME` es correcto. Sigue sin
+  verificar la forma del original almacenado (`quality`/`fetch_format`), visible sólo en la consola de
+  Cloudinary.
