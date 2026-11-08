@@ -1,4 +1,4 @@
-import { createImageProxyHandler } from "image-uploads/next";
+import { createImageProxyHandler } from "@/modules/image-uploads/next";
 import type { NextRequest } from "next/server";
 
 import { CACHE_REVALIDATE } from "@/lib/cache";

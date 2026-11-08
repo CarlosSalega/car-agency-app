@@ -1,4 +1,4 @@
-import { createImageUrlResolver } from "image-uploads";
+import { createImageUrlResolver } from "@/modules/image-uploads";
 
 import { FALLBACK_IMAGE } from "@/lib/constants";
 

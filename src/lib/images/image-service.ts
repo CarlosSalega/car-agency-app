@@ -1,4 +1,4 @@
-import { createImageService } from "image-uploads";
+import { createImageService } from "@/modules/image-uploads";
 
 import { imageProvider } from "./provider";
 

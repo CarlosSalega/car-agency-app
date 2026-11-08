@@ -1,6 +1,6 @@
-import type { Logger } from "image-uploads";
-import { createBetterAuthActorResolver } from "image-uploads/better-auth";
-import { createUploadHandler } from "image-uploads/next";
+import type { Logger } from "@/modules/image-uploads";
+import { createBetterAuthActorResolver } from "@/modules/image-uploads/adapters/better-auth";
+import { createUploadHandler } from "@/modules/image-uploads/next";
 
 import { getSession } from "@/lib/auth";
 import { prisma } from "@/lib/db";

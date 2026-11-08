@@ -1,8 +1,8 @@
 import {
   DEFAULT_CLOUDINARY_UPLOAD_DEFAULTS,
   buildCloudinaryUploadOptions,
-} from "image-uploads/cloudinary";
-import type { CloudinaryUploadDefaults } from "image-uploads/cloudinary";
+} from "@/modules/image-uploads/providers/cloudinary";
+import type { CloudinaryUploadDefaults } from "@/modules/image-uploads/providers/cloudinary";
 
 import { activeSite } from "@/site/active";
 

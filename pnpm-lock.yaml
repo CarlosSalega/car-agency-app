@@ -53,9 +53,6 @@ importers:
       date-fns:
         specifier: 3.6.0
         version: 3.6.0
-      image-uploads:
-        specifier: file:../../modules/image-uploads
-        version: file:../../modules/image-uploads(cloudinary@2.8.0)
       lucide-react:
         specifier: 0.563.0
         version: 0.563.0(react@19.2.8)
@@ -2810,14 +2807,6 @@ packages:
   ignore@7.0.10:
     resolution: {integrity: sha512-HpbUakT7xp5miBUywCHf36ZEuAJNklBJDDsGpUIjMzOSmM8ELSfA9Sa/QDPeNeqeoN31u+UTCkL4klCOVvRm4Q==}
     engines: {node: '>= 4'}
-
-  image-uploads@file:../../modules/image-uploads:
-    resolution: {directory: ../../modules/image-uploads, type: directory}
-    peerDependencies:
-      cloudinary: '>=2.0.0'
-    peerDependenciesMeta:
-      cloudinary:
-        optional: true
 
   immer@11.2.9:
     resolution: {integrity: sha512-IQ4UEtXjZjyefyWjtLEDXUSrF6T2hwjKPi6BIJl3bY/2XXW24d6cNGdXJSBOA/+KNnuiXkZY6DR0C3efolhitA==}
@@ -6640,10 +6629,6 @@ snapshots:
   ignore@5.3.2: {}
 
   ignore@7.0.10: {}
-
-  image-uploads@file:../../modules/image-uploads(cloudinary@2.8.0):
-    optionalDependencies:
-      cloudinary: 2.8.0
 
   immer@11.2.9: {}
 

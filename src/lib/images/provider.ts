@@ -1,9 +1,9 @@
-import { resolveProvider } from "image-uploads";
-import type { ImageProvider } from "image-uploads";
+import { resolveProvider } from "@/modules/image-uploads";
+import type { ImageProvider } from "@/modules/image-uploads";
 import {
   cloudinaryConfigFromEnv,
   createCloudinaryProvider,
-} from "image-uploads/cloudinary";
+} from "@/modules/image-uploads/providers/cloudinary";
 
 import { CLOUDINARY_UPLOAD_DEFAULTS } from "./cloudinary-config";
 
