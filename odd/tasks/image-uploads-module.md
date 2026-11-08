@@ -187,3 +187,21 @@ expect.any(AbortSignal)` en las dos aserciones de payload completo. `git diff -U
   y quita la extensión, idéntico al original; `NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME` es correcto. Sigue sin
   verificar la forma del original almacenado (`quality`/`fetch_format`), visible sólo en la consola de
   Cloudinary.
+
+- **L14** (cambio de arquitectura, decidido por el usuario) — corrige la dirección de L10/L11: el módulo
+  no debía ser una dependencia externa sino **parte del codebase**, portable por copia, con la app como
+  única fuente.
+  - Hecho: `src/modules/image-uploads/` (31 archivos, aplanado sin `src/` interno, sin `package.json` a
+    propósito), 578 tests + 2 skipped, `tsc` limpio, eslint del módulo limpio.
+  - Revertida toda la plomería: dependencia `file:`, su entrada en el lockfile, `transpilePackages` y la
+    excepción `LOCAL_SPEC` del test de pinning — la regla vuelve a no tener excepciones.
+  - `environmentMatchGlobs: [["src/modules/**", "node"]]` en vitest: jsdom rompía
+    `File.arrayBuffer()` (35 fallas). Está deprecado en vitest 3 y se resolverá al actualizarlo.
+  - `tests/boundaries.test.ts` nuevo: falla si algo dentro del módulo importa `@/…`, `@generated/…` o un
+    bare specifier que no sea `cloudinary`/`node:*`. Probado en rojo inyectando `@/site/active`. Es la
+    versión mecánica de la regla que el código original violaba.
+  - Al entrar al árbol el módulo heredó el ESLint de la app y apareció un parámetro muerto en un test
+    heredado (el módulo no tenía lint propio). Corregido: el repo vuelve a 32 problemas, todos
+    preexistentes.
+  - Pendiente: borrar el repo `CarlosSalega/image-uploads` (el token de `gh` no tiene scope `delete_repo`)
+    y la carpeta `Dev/modules/image-uploads`, una vez verificada esta mudanza.
