@@ -39,34 +39,3 @@ export function formatPrice(price: number, currency: string = "ARS") {
 export function formatKm(km: number) {
   return new Intl.NumberFormat("es-AR").format(km);
 }
-
-export function getPublicIdFromUrl(url: string): string {
-  if (!url || !url.includes("res.cloudinary.com")) {
-    return "placeholder";
-  }
-
-  try {
-    const urlObject = new URL(url);
-    const pathParts = urlObject.pathname.split("/").filter(Boolean);
-
-    const uploadIndex = pathParts.indexOf("upload");
-    if (uploadIndex === -1 || uploadIndex >= pathParts.length - 1) {
-      return "placeholder";
-    }
-
-    let publicIdPath = pathParts.slice(uploadIndex + 1).join("/");
-
-    if (publicIdPath.startsWith("v")) {
-      const versionMatch = publicIdPath.match(/^v\d+\/(.+)$/);
-      if (versionMatch) {
-        publicIdPath = versionMatch[1];
-      }
-    }
-
-    const publicId = publicIdPath.replace(/\.[^.]+$/, "");
-
-    return publicId || "placeholder";
-  } catch {
-    return "placeholder";
-  }
-}

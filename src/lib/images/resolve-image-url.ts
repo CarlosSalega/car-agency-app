@@ -8,7 +8,7 @@ import { FALLBACK_IMAGE } from "@/lib/constants";
  * extraction and are byte-identical, so every URL this app has ever emitted
  * stays valid.
  */
-export type ImageVariant = "thumbnail" | "card" | "detail" | "fullscreen";
+type ImageVariant = "thumbnail" | "card" | "detail" | "fullscreen";
 
 /**
  * The resolver is built once, from configuration that is constant for the

@@ -3,7 +3,6 @@ import { generateSlugBase } from "@/lib/cars/slug";
 import { prisma } from "@/lib/db";
 import {
   buildDeterministicPublicId,
-  assertCloudinaryConfigured,
   assertCloudinaryAccessible,
   configureCloudinary,
   getPlaceholderPath,
@@ -68,7 +67,6 @@ function printImageSummary(summary: ImageSummary): void {
 async function main(): Promise<void> {
   try {
     console.log("🌱 Iniciando seed...");
-    assertCloudinaryConfigured();
     configureCloudinary();
     await assertCloudinaryAccessible();
 
