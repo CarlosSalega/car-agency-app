@@ -1,29 +1,16 @@
-import { ImageProvider } from "./image-provider.interface";
-import { CloudinaryProvider } from "./providers/cloudinary.provider";
+import { createImageService } from "image-uploads";
 
-function getProvider(): ImageProvider {
-  const provider = process.env.IMAGE_PROVIDER ?? "cloudinary";
+import { imageProvider } from "./provider";
 
-  if (provider === "cloudinary") {
-    return new CloudinaryProvider();
-  }
-
-  throw new Error(`Proveedor de imagen no soportado: ${provider}`);
-}
-
-export const ImageService = {
-  async upload(file: File) {
-    const provider = getProvider();
-    return provider.upload(file);
-  },
-
-  async delete(key: string) {
-    const provider = getProvider();
-    return provider.delete(key);
-  },
-
-  async deleteMany(keys: string[]) {
-    const provider = getProvider();
-    return provider.deleteMany(keys);
-  },
-};
+/**
+ * The upload/delete/deleteMany façade the app's importers and routes call.
+ *
+ * The implementation is the module's service over the shared provider, so the
+ * public surface is unchanged while the pipeline (size/type guards, bounded
+ * batch deletes, errors carrying codes) belongs to `image-uploads`.
+ *
+ * `imageProvider` is a lazy handle, not a built instance: each of the three
+ * methods reaches `getImageProvider()` when it runs, so importing this file
+ * (any route that deletes an image) never reads Cloudinary credentials.
+ */
+export const ImageService = createImageService(imageProvider);
