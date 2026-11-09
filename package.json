@@ -20,7 +20,8 @@
     "db:seed": "tsx prisma/seed.ts",
     "db:seed:reviews": "tsx prisma/seed-reviews.ts",
     "db:studio": "prisma studio",
-    "remove-comments": "node src/scripts/remove-comments.mjs && pnpm format"
+    "remove-comments": "node src/scripts/remove-comments.mjs && pnpm format",
+    "sweep:orphans": "tsx scripts/sweep-orphan-images.ts"
   },
   "lint-staged": {
     "*.{js,mjs,cjs,ts,tsx,jsx,css,md,mdx,html,json,jsonc,yml,yaml,graphql}": [
