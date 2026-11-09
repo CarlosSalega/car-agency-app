@@ -147,6 +147,46 @@ Known limits, documented rather than hidden:
 importing Next.js APIs, and do not rename it without keeping the `@/modules/image-uploads/next` entry
 point — that would break every consumer.
 
+## Maturity: what is proven and what is not
+
+Assessed once the migration was merged. Read this before assuming the module is finished.
+
+| Area                | State             | Missing                                                                     |
+| ------------------- | ----------------- | --------------------------------------------------------------------------- |
+| Design and boundary | mature            | —                                                                           |
+| Coverage            | strong but uneven | the live contract suite skips by default                                    |
+| Operation           | immature          | no CI in the host repository, console logging, no metrics, no rate limiting |
+| External contract   | unproven          | exactly one consumer has ever used it                                       |
+| Documentation       | above average     | —                                                                           |
+| Versioning          | none              | irrelevant while it is copied, not published                                |
+
+The three gaps that matter, in the order worth fixing:
+
+1. **No CI in the host repository.** The suite runs when somebody remembers. Everything proven so far —
+   the content-length preflight, the SVG block, the import boundary, the 200 on an orphan delete —
+   decays silently from the first day nobody runs it. This module's own repository had CI; that
+   repository is archived.
+2. **The live contract suite is opt-in.** It passed 6/6 against the real account once and reports as
+   `skipped` in the normal run, so a Cloudinary change to an option's shape will not be noticed. Either
+   schedule it or make it a documented release step; today it is neither.
+3. **One consumer proves nothing about the boundary.** "Copy-pasteable to another project" is a claim
+   about a second project, not about this code. Whether `getActor` and `authorizeDelete` are the right
+   extension points stays unknown until someone copies it and finds out.
+
+A fourth, smaller one: `tests/boundaries.test.ts` guards the imports into this folder, and nothing
+prevents the _interface_ from growing provider-specific methods. Invariant 12 is a convention, not a
+check.
+
+Known technical debt, left on purpose:
+
+- A chunked upload with no `content-length` still reaches `formData()` and is buffered. Set a request
+  body limit on the host; the module cannot enforce that itself.
+- No retry or backoff on transient provider failures.
+- The whole file is buffered in memory through `arrayBuffer()`. Fine at the current 15 MB ceiling, wrong
+  if that ceiling grows.
+- A client disconnect on the proxy answers `500 UPSTREAM_FAILED`; only a timeout is distinguished, as
+  `504`.
+
 ## Working notes
 
 - `cloudinary` is a dependency of the host project, not of this folder: only code importing
