@@ -11,7 +11,7 @@ host project, so every command runs from the host project's root with a path fil
 Verify any change with:
 
 ```bash
-pnpm exec vitest run src/modules/image-uploads/tests   # 151 passed + 2 skipped, plus the boundary test
+pnpm exec vitest run src/modules/image-uploads/tests   # 153 passed + 2 skipped
 pnpm exec tsc --noEmit
 ```
 

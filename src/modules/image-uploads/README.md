@@ -30,7 +30,7 @@ code needs is `cloudinary`, and only `providers/cloudinary.ts` imports it.
 Everything runs from the host project's root, with a path filter:
 
 ```bash
-pnpm exec vitest run src/modules/image-uploads/tests                     # 151 passed + 2 skipped (live contract)
+pnpm exec vitest run src/modules/image-uploads/tests                     # 153 passed + 2 skipped (live contract)
 pnpm exec vitest run src/modules/image-uploads/tests/boundaries.test.ts  # nothing imports the host app
 pnpm exec tsc --noEmit
 ```
