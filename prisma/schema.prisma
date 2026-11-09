@@ -422,52 +422,37 @@ model Lead {
   @@index([utmSource])
 }
 
-/// The linked Mercado Libre seller account.
-///
-/// Credentials live here and not in the generic `Settings` key/value table on
-/// purpose: that table has a listing API, and an access token must never be able
-/// to leak through a screen that renders "all settings".
-///
-/// Tokens are sealed with AES-256-GCM before they reach this table, so a database
-/// dump alone is not enough to publish on the dealership's behalf.
-model MeliAccount {
-  id           String   @id @default(uuid())
-  /// ML's own user id, unique so re-linking an account replaces the old row.
-  meliUserId   String   @unique
-  nickname     String
-  siteId       String?
-  /// Sealed, never plaintext.
-  accessToken  String
-  /// Sealed, and single-use: Mercado Libre returns a new one on every refresh.
-  refreshToken String
-  expiresAt    DateTime
-  scope        String?
-  linkedById   String?
-  linkedAt     DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-}
-
 /// The credential set for one marketplace or social account.
 ///
 /// Tokens are sealed with AES-256-GCM before they reach this table (D2), so a
 /// dump alone does not let anyone publish as the agency. `status` records what
 /// the last attempt found: a token that cannot be decrypted marks the account
 /// `REVOKED` and asks for a reconnect instead of retrying forever.
+///
+/// `remoteNickname` and `siteId` are the account's identity as the provider
+/// describes it, captured when it is linked: a Mercado Libre nickname and site
+/// today, a Facebook page name tomorrow. They live here instead of in a second
+/// table because every channel has the same shape, and they are nullable because
+/// a provider that says nothing must not be recorded as an empty string.
 model ChannelAccount {
-  id           String               @id @default(uuid())
-  channel      Channel
+  id             String               @id @default(uuid())
+  channel        Channel
   /// The account's own id on that platform, unique per channel so re-linking
   /// replaces the row instead of leaving two candidates for the sync.
-  remoteUserId String
+  remoteUserId   String
+  /// Display name on that platform, as returned at link time.
+  remoteNickname String?
+  /// The provider's own site or region for the account, e.g. Mercado Libre's `MLA`.
+  siteId         String?
   /// Sealed, never plaintext.
-  accessToken  String
+  accessToken    String
   /// Sealed, and single-use where the platform says so (Mercado Libre).
-  refreshToken String
-  expiresAt    DateTime
-  status       ChannelAccountStatus @default(CONNECTED)
-  createdAt    DateTime             @default(now())
-  updatedAt    DateTime             @updatedAt
-  publications Publication[]
+  refreshToken   String
+  expiresAt      DateTime
+  status         ChannelAccountStatus @default(CONNECTED)
+  createdAt      DateTime             @default(now())
+  updatedAt      DateTime             @updatedAt
+  publications   Publication[]
 
   @@unique([channel, remoteUserId])
 }
@@ -521,6 +506,24 @@ model PublicationEvent {
   createdAt     DateTime    @default(now())
 
   @@index([publicationId, createdAt])
+}
+
+/// The required attribute set of one Mercado Libre category, as fetched.
+///
+/// The set is a fact owned by the marketplace, not by us: `MLA1744` asks for
+/// BRAND, MODEL, TRIM and VEHICLE_YEAR today, and Mercado Libre can make another
+/// attribute mandatory without telling anyone. A hand-written table would rot
+/// silently and turn into a publish that fails with an opaque error, so it is
+/// discovered at runtime and cached here.
+///
+/// `fetchedAt` is the only defence against a stale set — there is no change
+/// feed to subscribe to — so the reader refetches once it is older than the TTL.
+/// One row per category id, which is the marketplace's own primary key.
+model CategoryAttributeCache {
+  categoryId String   @id
+  /// The required attributes, as `{ id, name, valueType }` objects.
+  attributes Json
+  fetchedAt  DateTime
 }
 
 /// A customer testimonial shown on the landing.

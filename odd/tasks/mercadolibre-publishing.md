@@ -187,3 +187,22 @@ Narrow, and none of them blocks phase 0 or the start of phase 1:
   module's current variants is valid for ML** — 300×225 and 400×300 are below the 500 minimum, 2400×1800
   exceeds the 1920 maximum — which is why T7 gained a 1200×1200 variant. Also recorded: no sandbox
   exists, and rate limits have no official numbers.
+
+- **L8** (correction to L3, during T5/T6) — **L3 was wrong.** It claimed no token model existed. It did:
+  `MeliAccount`, with `crypto.ts` (`sealValue`/`openValue`), `store.ts`, `token.ts` (its own refresh
+  manager) and `manager.ts`. The L3 grep searched for `Integration|Token|Channel|Publication|Mercado`,
+  and `MeliAccount` matches none of them: the conclusion rested on a search that could not have found
+  it. "It does not exist" needs a grep capable of finding it; searching for the names I expected is
+  exactly what produced the error.
+
+  Cost: T5 wrote 458 new lines beside 410 existing ones doing the same job. Because no MercadoLibre
+  account was ever linked, retiring the old path cost no data and no reconnection: `store.ts`,
+  `crypto.ts`, `token.ts` and `manager.ts` are deleted (−800 lines with their tests), the callback and
+  the disconnect route write through `ChannelAccount`, `MeliAccount` is out of the schema, relinking
+  still replaces the previous account, and the admin card reads status plus a read-only readability
+  probe so a page view can never persist a state.
+
+  Explicitly out of scope and left as a decision: `readMeliConfig` still treats `MELI_TOKEN_ENCRYPTION_KEY`
+  as the "configured" gate although nothing reads it any more, so a deployment can look configured and
+  fail at link time with `KeyRingError`; and `ChannelAccount` no longer records who linked the account
+  or the granted scope.
