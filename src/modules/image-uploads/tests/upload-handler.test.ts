@@ -594,3 +594,216 @@ describe("createUploadHandler DELETE", () => {
     expect(harness.remove).toHaveBeenCalledWith("catalogue/asset");
   });
 });
+
+describe("createUploadHandler lifecycle hooks", () => {
+  let harness: Harness;
+  const allow = () => ({ allowed: true as const });
+
+  beforeEach(() => {
+    harness = fakeProvider();
+  });
+
+  it("passes the actor and the stored result to onUploaded before answering", async () => {
+    let release = () => {};
+    const gate = new Promise<void>((resolve) => {
+      release = resolve;
+    });
+    const onUploaded = vi.fn(() => gate);
+    const handler = createUploadHandler({
+      provider: harness.provider,
+      getActor: () => actor,
+      validate: LIMITS,
+      onUploaded,
+    });
+
+    const pending = handler.POST(uploadRequest(makeFile()));
+    let settled = false;
+    void pending.then(() => {
+      settled = true;
+    });
+
+    await vi.waitFor(() => expect(onUploaded).toHaveBeenCalled());
+
+    expect(onUploaded).toHaveBeenCalledWith({
+      actor,
+      result: { key: "catalogue/asset", url: "https://cdn/asset.png" },
+    });
+    expect(settled).toBe(false);
+
+    release();
+    const response = await pending;
+
+    expect(response.status).toBe(200);
+    await expect(response.json()).resolves.toEqual({
+      success: true,
+      key: "catalogue/asset",
+      url: "https://cdn/asset.png",
+    });
+  });
+
+  it("passes the actor and the key to onDeleted before answering", async () => {
+    const onDeleted = vi.fn();
+    const handler = createUploadHandler({
+      provider: harness.provider,
+      getActor: () => actor,
+      authorizeDelete: allow,
+      onDeleted,
+    });
+
+    const response = await handler.DELETE(
+      deleteRequest({ key: "catalogue/asset" }),
+    );
+
+    expect(onDeleted).toHaveBeenCalledWith({ actor, key: "catalogue/asset" });
+    expect(response.status).toBe(200);
+    await expect(response.json()).resolves.toEqual({ success: true });
+  });
+
+  it("never notifies an upload the request was refused", async () => {
+    const onUploaded = vi.fn();
+    const unauthenticated = createUploadHandler({
+      provider: harness.provider,
+      getActor: () => null,
+      validate: LIMITS,
+      onUploaded,
+    });
+    const withoutFile = createUploadHandler({
+      provider: harness.provider,
+      getActor: () => actor,
+      validate: LIMITS,
+      onUploaded,
+    });
+
+    const refused = await unauthenticated.POST(uploadRequest(makeFile()));
+    const missing = await withoutFile.POST(uploadRequest());
+
+    expect(refused.status).toBe(401);
+    expect(missing.status).toBe(400);
+    expect(onUploaded).not.toHaveBeenCalled();
+  });
+
+  it("never notifies a delete the request was refused", async () => {
+    const onDeleted = vi.fn();
+    const unauthenticated = createUploadHandler({
+      provider: harness.provider,
+      getActor: () => null,
+      authorizeDelete: allow,
+      onDeleted,
+    });
+    const withoutKey = createUploadHandler({
+      provider: harness.provider,
+      getActor: () => actor,
+      authorizeDelete: allow,
+      onDeleted,
+    });
+    const unauthorized = createUploadHandler({
+      provider: harness.provider,
+      getActor: () => actor,
+      authorizeDelete: () => ({ allowed: false, reason: "OTHER_OWNER" }),
+      onDeleted,
+    });
+
+    const anonymous = await unauthenticated.DELETE(
+      deleteRequest({ key: "catalogue/asset" }),
+    );
+    const noKey = await withoutKey.DELETE(deleteRequest({}));
+    const foreign = await unauthorized.DELETE(
+      deleteRequest({ key: "catalogue/asset" }),
+    );
+
+    expect(anonymous.status).toBe(401);
+    expect(noKey.status).toBe(400);
+    expect(foreign.status).toBe(403);
+    expect(onDeleted).not.toHaveBeenCalled();
+  });
+
+  it("never notifies a provider call that failed", async () => {
+    const onUploaded = vi.fn();
+    const onDeleted = vi.fn();
+    const failingUpload = fakeProvider(async () => {
+      throw new Error("socket hang up");
+    });
+    const failingDelete = createUploadHandler({
+      provider: {
+        upload: vi.fn(),
+        delete: vi.fn(async () => ({ success: false })),
+        deleteMany: vi.fn(),
+      } as unknown as ImageProvider,
+      getActor: () => actor,
+      validate: LIMITS,
+      authorizeDelete: allow,
+      onUploaded,
+      onDeleted,
+    });
+    const failingStore = createUploadHandler({
+      provider: failingUpload.provider,
+      getActor: () => actor,
+      validate: LIMITS,
+      authorizeDelete: allow,
+      onUploaded,
+      onDeleted,
+    });
+
+    const stored = await failingStore.POST(uploadRequest(makeFile()));
+    const removed = await failingDelete.DELETE(
+      deleteRequest({ key: "catalogue/asset" }),
+    );
+
+    expect(stored.status).toBe(500);
+    expect(removed.status).toBe(500);
+    expect(onUploaded).not.toHaveBeenCalled();
+    expect(onDeleted).not.toHaveBeenCalled();
+  });
+
+  it("keeps the 200 upload answer and logs when onUploaded throws", async () => {
+    const error = vi.fn();
+    const handler = createUploadHandler({
+      provider: harness.provider,
+      getActor: () => actor,
+      validate: LIMITS,
+      logger: { warn: vi.fn(), error },
+      onUploaded: () => {
+        throw new Error("audit table is down");
+      },
+    });
+
+    const response = await handler.POST(uploadRequest(makeFile()));
+
+    expect(response.status).toBe(200);
+    await expect(response.json()).resolves.toEqual({
+      success: true,
+      key: "catalogue/asset",
+      url: "https://cdn/asset.png",
+    });
+    expect(error).toHaveBeenCalledWith("Image lifecycle hook failed", {
+      hook: "onUploaded",
+      key: "catalogue/asset",
+      error: "audit table is down",
+    });
+  });
+
+  it("keeps the 200 delete answer and logs when onDeleted throws", async () => {
+    const error = vi.fn();
+    const handler = createUploadHandler({
+      provider: harness.provider,
+      getActor: () => actor,
+      authorizeDelete: allow,
+      logger: { warn: vi.fn(), error },
+      onDeleted: async () => {
+        throw new Error("audit table is down");
+      },
+    });
+
+    const response = await handler.DELETE(
+      deleteRequest({ key: "catalogue/asset" }),
+    );
+
+    expect(response.status).toBe(200);
+    await expect(response.json()).resolves.toEqual({ success: true });
+    expect(error).toHaveBeenCalledWith("Image lifecycle hook failed", {
+      hook: "onDeleted",
+      key: "catalogue/asset",
+      error: "audit table is down",
+    });
+  });
+});

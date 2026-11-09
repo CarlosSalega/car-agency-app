@@ -13,6 +13,7 @@ import type {
   Logger,
   UploadableFile,
   UploadOptions,
+  UploadResult,
 } from "../core/types";
 import type { UploadValidationPolicy } from "../core/validate";
 import {
@@ -45,6 +46,16 @@ export interface UploadHandlerConfig<
     readonly actor: Actor;
     readonly file: UploadableFile;
   }) => UploadOptions | undefined;
+
+  readonly onUploaded?: (args: {
+    readonly actor: Actor;
+    readonly result: UploadResult;
+  }) => Promise<void> | void;
+
+  readonly onDeleted?: (args: {
+    readonly actor: Actor;
+    readonly key: string;
+  }) => Promise<void> | void;
 
   readonly messages?: MessagesConfig;
   readonly logger?: Logger;
@@ -84,6 +95,24 @@ export function createUploadHandler<
       { error: message ?? messages.error(code) },
       { status: statusForImageError(code) },
     );
+  }
+
+  async function runHook(
+    hook: "onUploaded" | "onDeleted",
+    notify: (() => Promise<void> | void) | undefined,
+    key: string,
+  ): Promise<void> {
+    if (notify === undefined) return;
+
+    try {
+      await notify();
+    } catch (error) {
+      logger.error("Image lifecycle hook failed", {
+        hook,
+        key,
+        error: describeError(error),
+      });
+    }
   }
 
   async function POST(request: WebRequestLike): Promise<Response> {
@@ -142,6 +171,15 @@ export function createUploadHandler<
         file: fileDecision.file,
       });
       const result = await config.provider.upload(fileDecision.file, options);
+      const onUploaded = config.onUploaded;
+
+      await runHook(
+        "onUploaded",
+        onUploaded === undefined
+          ? undefined
+          : () => onUploaded({ actor: authentication.actor, result }),
+        result.key,
+      );
 
       return Response.json(
         { success: true, key: result.key, url: result.url },
@@ -215,6 +253,16 @@ export function createUploadHandler<
           { key },
         );
       }
+
+      const onDeleted = config.onDeleted;
+
+      await runHook(
+        "onDeleted",
+        onDeleted === undefined
+          ? undefined
+          : () => onDeleted({ actor: authentication.actor, key }),
+        key,
+      );
 
       return Response.json({ success: true }, { status: 200 });
     } catch (error) {
