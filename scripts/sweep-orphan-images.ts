@@ -34,6 +34,19 @@ import type {
  *
  * Dry run is the default: the report is written in both modes, and no asset is
  * removed unless `--confirm` is present.
+ *
+ * It is a one-off and should stay one. This deployment is single tenant, so the
+ * orphan volume is just whatever a handful of operators abandon in a form, and
+ * a 6 KiB asset costs nothing. Do not schedule it because "it might be useful
+ * periodically".
+ *
+ * The trigger to revisit is NOT volume, it is shared storage. The day one
+ * Cloudinary account serves several clients, every client's database sees the
+ * other clients' assets as orphans: the sweep stops being optional and becomes
+ * a correctness problem, and it must not be scheduled until it is scoped — one
+ * folder (or tag) per tenant, so a sweep for one client cannot even see
+ * another's assets. Scheduling it before that scoping exists would delete
+ * another client's images.
  */
 
 const DEFAULT_FOLDER = "car-agency-app";
