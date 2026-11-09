@@ -205,3 +205,22 @@ expect.any(AbortSignal)` en las dos aserciones de payload completo. `git diff -U
     preexistentes.
   - Pendiente: borrar el repo `CarlosSalega/image-uploads` (el token de `gh` no tiene scope `delete_repo`)
     y la carpeta `Dev/modules/image-uploads`, una vez verificada esta mudanza.
+
+- **L15** (cierre del último hueco) — la suite de contrato viva corrió contra la cuenta real de
+  Cloudinary: **6 de 6 en verde** en 4.69 s (4 estáticos + 2 vivos). Los vivos generaron un PNG 1×1
+  válido, lo subieron a `image-uploads-contract/`, verificaron la forma de la key y de la URL, lo
+  borraron dos veces y comprobaron el conteo de `deleteMany` contra una key inexistente.
+
+  Con eso queda probado empíricamente lo único que `tsc` no podía validar: que el SDK acepta la forma de
+  opciones que emite `buildCloudinaryUploadOptions`. La razón por la que no podía es que
+  `UploadApiOptions` de cloudinary@2.11.0 cierra con `[futureKey: string]: any` y ni siquiera declara
+  `timeout` ni `tags`, aunque el SDK los honra en runtime.
+
+  Comando usado (vitest no carga el entorno por su cuenta; el proyecto del módulo no tiene setup files):
+
+  ```
+  node --env-file=.env node_modules/vitest/vitest.mjs run \
+    src/modules/image-uploads/tests/cloudinary-contract.test.ts
+  ```
+
+  Nada que commitear: la suite ya estaba en el repo y sigue corriendo como skipped en `pnpm test`.
