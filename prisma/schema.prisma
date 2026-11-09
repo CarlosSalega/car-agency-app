@@ -523,6 +523,24 @@ model PublicationEvent {
   @@index([publicationId, createdAt])
 }
 
+/// The required attribute set of one Mercado Libre category, as fetched.
+///
+/// The set is a fact owned by the marketplace, not by us: `MLA1744` asks for
+/// BRAND, MODEL, TRIM and VEHICLE_YEAR today, and Mercado Libre can make another
+/// attribute mandatory without telling anyone. A hand-written table would rot
+/// silently and turn into a publish that fails with an opaque error, so it is
+/// discovered at runtime and cached here.
+///
+/// `fetchedAt` is the only defence against a stale set — there is no change
+/// feed to subscribe to — so the reader refetches once it is older than the TTL.
+/// One row per category id, which is the marketplace's own primary key.
+model CategoryAttributeCache {
+  categoryId String   @id
+  /// The required attributes, as `{ id, name, valueType }` objects.
+  attributes Json
+  fetchedAt  DateTime
+}
+
 /// A customer testimonial shown on the landing.
 ///
 /// Kept in the database instead of the component because the quotes were
