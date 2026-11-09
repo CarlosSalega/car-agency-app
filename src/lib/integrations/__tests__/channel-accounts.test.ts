@@ -10,7 +10,9 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 const db = vi.hoisted(() => ({
   upsert: vi.fn(),
   findUnique: vi.fn(),
+  findFirst: vi.fn(),
   update: vi.fn(),
+  deleteMany: vi.fn(),
 }));
 
 vi.mock("@/lib/db", () => ({
@@ -18,8 +20,11 @@ vi.mock("@/lib/db", () => ({
 }));
 
 import {
+  canReadTokens,
+  clearChannelAccounts,
   decryptStoredTokens,
   markAccountStatus,
+  readConnectedAccount,
   readTokens,
   saveTokens,
 } from "../channel-accounts";
@@ -34,9 +39,12 @@ const EXPIRES_AT = new Date("2026-11-10T12:00:00.000Z");
 beforeEach(() => {
   db.upsert.mockReset();
   db.findUnique.mockReset();
+  db.findFirst.mockReset();
   db.update.mockReset();
+  db.deleteMany.mockReset();
   db.upsert.mockResolvedValue({});
   db.update.mockResolvedValue({});
+  db.deleteMany.mockResolvedValue({ count: 1 });
 });
 
 describe("saveTokens", () => {
@@ -90,6 +98,149 @@ describe("saveTokens", () => {
     const second = db.upsert.mock.calls[1][0].create.accessToken;
 
     expect(first).not.toBe(second);
+  });
+});
+
+describe("saveTokens display fields", () => {
+  it("stores the account's own name and site, so the panel needs no second table", async () => {
+    process.env[TOKEN_KEYS_ENV] = `v1:${randomKey()}`;
+
+    await saveTokens({
+      channel: "MERCADOLIBRE",
+      remoteUserId: "123456789",
+      remoteNickname: "GLAUTOS",
+      siteId: "MLA",
+      accessToken: "APP_USR-access",
+      refreshToken: "TG-REFRESH",
+      expiresAt: EXPIRES_AT,
+    });
+
+    const args = db.upsert.mock.calls[0][0];
+    expect(args.create.remoteNickname).toBe("GLAUTOS");
+    expect(args.create.siteId).toBe("MLA");
+    expect(args.update.remoteNickname).toBe("GLAUTOS");
+    expect(args.update.siteId).toBe("MLA");
+  });
+
+  it("stores null for a name the provider did not send, never an empty string", async () => {
+    process.env[TOKEN_KEYS_ENV] = `v1:${randomKey()}`;
+
+    const base = {
+      channel: "MERCADOLIBRE" as const,
+      remoteUserId: "123456789",
+      accessToken: "APP_USR-access",
+      refreshToken: "TG-REFRESH",
+      expiresAt: EXPIRES_AT,
+    };
+
+    await saveTokens(base);
+
+    const absent = db.upsert.mock.calls[0][0];
+    expect(absent.create.remoteNickname).toBeNull();
+    expect(absent.create.siteId).toBeNull();
+
+    await saveTokens({ ...base, remoteNickname: "   ", siteId: "" });
+
+    const blank = db.upsert.mock.calls[1][0];
+    expect(blank.create.remoteNickname).toBeNull();
+    expect(blank.create.siteId).toBeNull();
+  });
+});
+
+describe("readConnectedAccount", () => {
+  it("answers with the identifiers the panel shows, without opening the tokens", async () => {
+    db.findFirst.mockResolvedValue({
+      id: "account-1",
+      remoteUserId: "123456789",
+      remoteNickname: "GLAUTOS",
+      siteId: "MLA",
+      expiresAt: EXPIRES_AT,
+      // Not a sealed payload at all. Returning an account proves the reader
+      // never decrypts: attempting it would throw.
+      accessToken: "not-sealed",
+      refreshToken: "not-sealed",
+    });
+
+    await expect(readConnectedAccount("MERCADOLIBRE")).resolves.toEqual({
+      id: "account-1",
+      remoteUserId: "123456789",
+      remoteNickname: "GLAUTOS",
+      siteId: "MLA",
+      expiresAt: EXPIRES_AT,
+    });
+    expect(db.findFirst).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { channel: "MERCADOLIBRE", status: "CONNECTED" },
+      }),
+    );
+  });
+
+  it("returns null when the channel has no connected account", async () => {
+    db.findFirst.mockResolvedValue(null);
+
+    await expect(readConnectedAccount("MERCADOLIBRE")).resolves.toBeNull();
+  });
+});
+
+describe("canReadTokens", () => {
+  it("is true when both stored tokens decrypt", async () => {
+    process.env[TOKEN_KEYS_ENV] = `v1:${randomKey()}`;
+    const ring = loadKeyRing(process.env);
+
+    db.findUnique.mockResolvedValue({
+      accessToken: encryptToken("APP_USR-access", ring),
+      refreshToken: encryptToken("TG-REFRESH", ring),
+      expiresAt: EXPIRES_AT,
+    });
+
+    await expect(canReadTokens("account-1")).resolves.toBe(true);
+    expect(db.update).not.toHaveBeenCalled();
+  });
+
+  it("is false and writes nothing when a token cannot be decrypted", async () => {
+    process.env[TOKEN_KEYS_ENV] = `v1:${randomKey()}`;
+    const foreign = loadKeyRing({ [TOKEN_KEYS_ENV]: `v1:${randomKey()}` });
+
+    db.findUnique.mockResolvedValue({
+      accessToken: encryptToken("APP_USR-access", foreign),
+      refreshToken: encryptToken("TG-REFRESH", foreign),
+      expiresAt: EXPIRES_AT,
+    });
+
+    await expect(canReadTokens("account-1")).resolves.toBe(false);
+    // Rendering a page must never change a row: the probe reports, it does not
+    // persist REVOKED the way readTokens does.
+    expect(db.update).not.toHaveBeenCalled();
+  });
+
+  it("is false for an account that is not there", async () => {
+    process.env[TOKEN_KEYS_ENV] = `v1:${randomKey()}`;
+    db.findUnique.mockResolvedValue(null);
+
+    await expect(canReadTokens("missing")).resolves.toBe(false);
+  });
+
+  it("is false instead of throwing when the key ring is not configured", async () => {
+    delete process.env[TOKEN_KEYS_ENV];
+    db.findUnique.mockResolvedValue({
+      accessToken: "sealed-somewhere-else",
+      refreshToken: "sealed-somewhere-else",
+      expiresAt: EXPIRES_AT,
+    });
+
+    await expect(canReadTokens("account-1")).resolves.toBe(false);
+    expect(db.update).not.toHaveBeenCalled();
+  });
+});
+
+describe("clearChannelAccounts", () => {
+  it("deletes only the given channel's accounts, so another marketplace is untouched", async () => {
+    await clearChannelAccounts("MERCADOLIBRE");
+
+    expect(db.deleteMany).toHaveBeenCalledTimes(1);
+    expect(db.deleteMany).toHaveBeenCalledWith({
+      where: { channel: "MERCADOLIBRE" },
+    });
   });
 });
 

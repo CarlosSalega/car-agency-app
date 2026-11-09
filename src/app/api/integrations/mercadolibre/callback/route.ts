@@ -1,6 +1,10 @@
 import { NextResponse } from "next/server";
 
 import { getSession } from "@/lib/auth";
+import {
+  clearChannelAccounts,
+  saveTokens,
+} from "@/lib/integrations/channel-accounts";
 import { readMeliConfig } from "@/lib/integrations/mercadolibre/config";
 import {
   MELI_OAUTH_STATE_COOKIE,
@@ -11,7 +15,6 @@ import {
   fetchMeliProfile,
 } from "@/lib/integrations/mercadolibre/oauth";
 import { safeEqual } from "@/lib/integrations/mercadolibre/pkce";
-import { saveLinkedAccount } from "@/lib/integrations/mercadolibre/store";
 
 import { cookies } from "next/headers";
 
@@ -96,13 +99,19 @@ export async function GET(request: Request) {
     return back(request, "profile_failed");
   }
 
-  await saveLinkedAccount({
-    meliUserId: profile.meliUserId,
-    nickname: profile.nickname,
+  // Relinking replaces the previous account, the rule the old store enforced by
+  // deleting the other rows: the admin card reads one connected row per channel,
+  // and with two it would show whichever the query happened to return.
+  await clearChannelAccounts("MERCADOLIBRE");
+
+  await saveTokens({
+    channel: "MERCADOLIBRE",
+    remoteUserId: profile.meliUserId,
+    remoteNickname: profile.nickname,
     siteId: profile.siteId,
-    tokens: exchanged.tokens,
-    linkedById: session.user.id,
-    encryptionKey: config.config.encryptionKey,
+    accessToken: exchanged.tokens.accessToken,
+    refreshToken: exchanged.tokens.refreshToken,
+    expiresAt: exchanged.tokens.expiresAt,
   });
 
   const response = back(request, "linked");

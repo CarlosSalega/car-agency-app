@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 
 import { getSession } from "@/lib/auth";
-import { clearLinkedAccount } from "@/lib/integrations/mercadolibre/store";
+import { clearChannelAccounts } from "@/lib/integrations/channel-accounts";
 
 /**
  * Unlink the account.
@@ -48,7 +48,7 @@ export async function POST(request: Request) {
     );
   }
 
-  await clearLinkedAccount();
+  await clearChannelAccounts("MERCADOLIBRE");
 
   return NextResponse.redirect(
     new URL(`${CONFIG_URL}?status=unlinked`, request.url),

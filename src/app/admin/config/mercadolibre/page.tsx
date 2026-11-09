@@ -3,11 +3,14 @@ import { redirect } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { requireAuthSession } from "@/lib/auth";
 import {
+  canReadTokens,
+  readConnectedAccount,
+} from "@/lib/integrations/channel-accounts";
+import {
   MELI_ENV_VARS,
   MELI_TOKEN_URL,
   readMeliConfig,
 } from "@/lib/integrations/mercadolibre/config";
-import { readLinkedAccount } from "@/lib/integrations/mercadolibre/store";
 
 export const dynamic = "force-dynamic";
 
@@ -90,9 +93,11 @@ export default async function MeliConfigPage({
   const status = params.status ? STATUS_MESSAGES[params.status] : undefined;
 
   const config = readMeliConfig();
-  const linked = config.ok
-    ? await readLinkedAccount(config.config.encryptionKey)
-    : null;
+  // Only a CONNECTED account counts as linked, and nothing here opens a token to
+  // find out: the probe below reports whether they are readable without writing.
+  const account = config.ok ? await readConnectedAccount("MERCADOLIBRE") : null;
+  const tokensReadable =
+    account === null ? false : await canReadTokens(account.id);
 
   return (
     <div className="bg-background min-h-screen">
@@ -139,28 +144,27 @@ export default async function MeliConfigPage({
         ) : (
           <section className="border-border bg-card rounded-xl border p-6">
             <h2 className="text-lg font-semibold">
-              {linked ? "Cuenta vinculada" : "Vincular cuenta"}
+              {account ? "Cuenta vinculada" : "Vincular cuenta"}
             </h2>
 
-            {linked ? (
+            {account ? (
               <div className="mt-3 space-y-2 text-sm">
                 <p>
                   <span className="text-muted-foreground">Cuenta: </span>
                   <span className="font-medium">
-                    {linked.account.nickname}
+                    {account.remoteNickname ?? account.remoteUserId}
                   </span>{" "}
                   <span className="text-muted-foreground">
-                    (ID {linked.account.meliUserId}
-                    {linked.account.siteId ? ` · ${linked.account.siteId}` : ""}
-                    )
+                    (ID {account.remoteUserId}
+                    {account.siteId ? ` · ${account.siteId}` : ""})
                   </span>
                 </p>
                 <p>
                   <span className="text-muted-foreground">Tokens: </span>
-                  {linked.tokens ? (
+                  {tokensReadable ? (
                     <span>
                       válidos hasta{" "}
-                      {linked.tokens.expiresAt.toLocaleString("es-AR", {
+                      {account.expiresAt.toLocaleString("es-AR", {
                         timeZone: "America/Argentina/Buenos_Aires",
                       })}
                     </span>

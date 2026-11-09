@@ -1,5 +1,4 @@
 import { MELI_API_BASE, MELI_TOKEN_URL, type MeliConfig } from "./config";
-import type { MeliTokens } from "./store";
 
 /**
  * The two network steps of the OAuth flow.
@@ -8,6 +7,18 @@ import type { MeliTokens } from "./store";
  * exchange is where this flow breaks, so it has to be testable without a real
  * authorization code.
  */
+
+/**
+ * The token set Mercado Libre hands back, whether the admin just linked the
+ * account or a later refresh rotated it. `scope` is kept because it is what the
+ * provider granted, not because the stored row needs it.
+ */
+export interface MeliTokens {
+  accessToken: string;
+  refreshToken: string;
+  expiresAt: Date;
+  scope?: string | null;
+}
 
 export interface MeliProfile {
   meliUserId: string;

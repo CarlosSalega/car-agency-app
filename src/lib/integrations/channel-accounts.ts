@@ -6,6 +6,7 @@ import type { KeyRing } from "./token-crypto";
 import {
   decryptToken,
   encryptToken,
+  KeyRingError,
   loadKeyRing,
   TokenDecryptionError,
 } from "./token-crypto";
@@ -72,16 +73,25 @@ export function decryptStoredTokens(
  *
  * Upsert on `[channel, remoteUserId]`: re-linking an account refreshes the
  * tokens instead of leaving a second row that the sync could pick up.
+ *
+ * `remoteNickname` and `siteId` are display data the provider gave us at link
+ * time (a Mercado Libre nickname and site, later a Facebook page name). They are
+ * optional, and a provider that says nothing stores `null`: an empty string would
+ * render as a blank line in the panel.
  */
 export async function saveTokens({
   channel,
   remoteUserId,
+  remoteNickname,
+  siteId,
   accessToken,
   refreshToken,
   expiresAt,
 }: {
   channel: Channel;
   remoteUserId: string;
+  remoteNickname?: string | null;
+  siteId?: string | null;
   accessToken: string;
   refreshToken: string;
   expiresAt: Date;
@@ -92,6 +102,8 @@ export async function saveTokens({
     accessToken: encryptToken(accessToken, ring),
     refreshToken: encryptToken(refreshToken, ring),
     expiresAt,
+    remoteNickname: blankToNull(remoteNickname),
+    siteId: blankToNull(siteId),
   };
 
   await prisma.channelAccount.upsert({
@@ -101,6 +113,95 @@ export async function saveTokens({
     create: { channel, remoteUserId, ...sealed },
     update: sealed,
   });
+}
+
+/** `null` for "the provider did not tell us", never an empty or blank string. */
+function blankToNull(value: string | null | undefined): string | null {
+  if (value === undefined || value === null) return null;
+
+  return value.trim() === "" ? null : value;
+}
+
+/** The identity of one linked account, as a panel needs to show it. */
+export interface ConnectedChannelAccount {
+  readonly id: string;
+  readonly remoteUserId: string;
+  readonly remoteNickname: string | null;
+  readonly siteId: string | null;
+  readonly expiresAt: Date;
+}
+
+/**
+ * The channel's linked account, or `null` when it is not linked.
+ *
+ * Only `CONNECTED` counts as linked: an `EXPIRED` or `REVOKED` row is a record of
+ * what went wrong, and reporting it as "vinculada" would hide the reconnect the
+ * admin has to do. Deliberately reads identifiers only and never opens a token,
+ * so a page can call it without touching the key ring.
+ */
+export async function readConnectedAccount(
+  channel: Channel,
+): Promise<ConnectedChannelAccount | null> {
+  const row = await prisma.channelAccount.findFirst({
+    where: { channel, status: "CONNECTED" },
+    select: {
+      id: true,
+      remoteUserId: true,
+      remoteNickname: true,
+      siteId: true,
+      expiresAt: true,
+    },
+  });
+
+  if (row === null) return null;
+
+  // Projected explicitly rather than returned as-is: `select` keeps the sealed
+  // columns out of the query, and this keeps them out of the result even if the
+  // row ever arrives with more than it should.
+  return {
+    id: row.id,
+    remoteUserId: row.remoteUserId,
+    remoteNickname: row.remoteNickname,
+    siteId: row.siteId,
+    expiresAt: row.expiresAt,
+  };
+}
+
+/**
+ * Whether the stored tokens can still be opened, without changing anything.
+ *
+ * This is the read-only sibling of `readTokens`, for callers that must report a
+ * problem instead of acting on it: a page render that persisted `REVOKED` would
+ * make a GET a write. A missing row and an unusable key ring both answer `false`,
+ * because from the caller's side both mean "there is nothing readable here".
+ */
+export async function canReadTokens(accountId: string): Promise<boolean> {
+  const stored = await prisma.channelAccount.findUnique({
+    where: { id: accountId },
+    select: { accessToken: true, refreshToken: true, expiresAt: true },
+  });
+
+  if (stored === null) return false;
+
+  try {
+    return (
+      decryptStoredTokens(stored, loadKeyRing(process.env)).status === "ok"
+    );
+  } catch (error) {
+    // A key ring that cannot be built is a configuration problem, not a row to
+    // mark: the page says "reconnect" and the operator fixes the environment.
+    if (error instanceof KeyRingError) return false;
+
+    throw error;
+  }
+}
+
+/**
+ * Forgets every account of one channel, which is what "unlink" means: the row
+ * holds the only copy of the tokens, so a row left behind is not an unlink.
+ */
+export async function clearChannelAccounts(channel: Channel): Promise<void> {
+  await prisma.channelAccount.deleteMany({ where: { channel } });
 }
 
 /**

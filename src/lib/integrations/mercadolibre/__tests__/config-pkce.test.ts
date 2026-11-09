@@ -6,7 +6,6 @@ import {
   buildAuthorizationUrl,
   readMeliConfig,
 } from "../config";
-import { openValue, sealValue } from "../crypto";
 import {
   createCodeChallenge,
   createCodeVerifier,
@@ -99,43 +98,6 @@ describe("buildAuthorizationUrl", () => {
     );
 
     expect(url.searchParams.get("redirect_uri")).toBe("https://x.ar/cb?a=1");
-  });
-});
-
-describe("sealValue / openValue", () => {
-  const secret = "test-secret";
-
-  it("round-trips a token", () => {
-    const sealed = sealValue("APP_USR-abc-123", secret);
-
-    expect(sealed).not.toContain("APP_USR-abc-123");
-    expect(openValue(sealed, secret)).toBe("APP_USR-abc-123");
-  });
-
-  it("produces a different ciphertext every time, so equal tokens are not obvious", () => {
-    expect(sealValue("same", secret)).not.toBe(sealValue("same", secret));
-  });
-
-  it("returns null for the wrong secret instead of throwing", () => {
-    expect(openValue(sealValue("token", secret), "another-secret")).toBeNull();
-  });
-
-  it("detects a tampered ciphertext", () => {
-    const sealed = sealValue("token", secret);
-    const parts = sealed.split(".");
-    const flipped = Buffer.from(parts[3], "base64url");
-    flipped[0] ^= 0xff;
-    const tampered = [...parts.slice(0, 3), flipped.toString("base64url")].join(
-      ".",
-    );
-
-    expect(openValue(tampered, secret)).toBeNull();
-  });
-
-  it("returns null for malformed input", () => {
-    expect(openValue("", secret)).toBeNull();
-    expect(openValue("v2.a.b.c", secret)).toBeNull();
-    expect(openValue("not-a-sealed-value", secret)).toBeNull();
   });
 });
 
