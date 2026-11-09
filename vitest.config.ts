@@ -1,5 +1,5 @@
 import { fileURLToPath } from "node:url";
-import { defineConfig } from "vitest/config";
+import { configDefaults, defineConfig } from "vitest/config";
 import path from "node:path";
 
 const root = path.dirname(fileURLToPath(import.meta.url));
@@ -19,12 +19,34 @@ export default defineConfig({
     },
   },
   test: {
-    environment: "jsdom",
-    // `src/modules/**` is the copy-pasteable image-uploads module. Its tests are
-    // written for a plain Node runtime (`File`, `arrayBuffer`, real `Request`)
-    // and jsdom replaces those globals with DOM-only versions.
-    environmentMatchGlobs: [["src/modules/**", "node"]],
-    include: ["src/**/*.test.{ts,tsx}", "prisma/**/*.test.ts"],
-    setupFiles: ["./vitest.setup.ts"],
+    // Both projects declare `extends: true` so the `esbuild.jsx` and
+    // `resolve.alias` settings above keep applying to them.
+    projects: [
+      {
+        extends: true,
+        test: {
+          name: "app",
+          // The application's tests render React components and touch `window`.
+          environment: "jsdom",
+          // `src/modules/**` is the copy-pasteable image-uploads module, owned by
+          // the `image-uploads-module` project below.
+          exclude: [...configDefaults.exclude, "src/modules/**"],
+          include: ["src/**/*.test.{ts,tsx}", "prisma/**/*.test.ts"],
+          setupFiles: ["./vitest.setup.ts"],
+        },
+      },
+      {
+        extends: true,
+        test: {
+          name: "image-uploads-module",
+          // The module's tests are written for a plain Node runtime (`File`,
+          // `arrayBuffer`, real `Request`) and jsdom replaces those globals with
+          // DOM-only versions. The module also must not depend on
+          // `vitest.setup.ts`, so this project loads no setup files.
+          environment: "node",
+          include: ["src/modules/**/*.test.ts"],
+        },
+      },
+    ],
   },
 });
