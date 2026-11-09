@@ -22,6 +22,7 @@
     "db:studio": "prisma studio",
     "remove-comments": "node src/scripts/remove-comments.mjs && pnpm format",
     "sweep:orphans": "tsx scripts/sweep-orphan-images.ts",
+    "drain:jobs": "tsx scripts/drain-jobs.ts",
     "rotate:tokens": "tsx scripts/rotate-tokens.ts"
   },
   "lint-staged": {
