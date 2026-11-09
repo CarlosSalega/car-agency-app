@@ -23,3 +23,11 @@ client is configuration that ships with the code.
   `src/site/`. Do not weaken it to land a change; fix the code.
 - A missing or unknown site **must fail the build**. Falling back to a default client means
   showing one dealership's name, phone and address on another dealership's site.
+
+## Database in the MVP phase
+
+The schema is applied with `pnpm db:push`. `prisma/migrations` exists but was never applied to the
+development database, so `prisma migrate deploy` and `prisma migrate dev` both fail on objects that are
+already there. Ignore the "run prisma migrate deploy" hint that `prisma migrate status` prints: it
+assumes the migration history is the source of truth, and here it is not. Before the project leaves the
+MVP phase, baseline the folder with `prisma migrate resolve --applied` for each migration.
