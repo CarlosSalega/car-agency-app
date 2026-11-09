@@ -1,23 +1,32 @@
+import { createImageUrlResolver } from "@/modules/image-uploads";
+
 import { FALLBACK_IMAGE } from "@/lib/constants";
 
-const VARIANTS = {
-  thumbnail: "w_300,h_225,c_fill,f_auto,q_auto,dpr_auto",
-  card: "w_400,h_300,c_fill,f_auto,q_auto,dpr_auto",
-  detail: "w_800,h_600,c_fill,f_auto,q_auto,dpr_auto",
-  fullscreen: "w_2400,h_1800,c_limit,f_auto,q_auto,dpr_auto",
-};
+/**
+ * The four sizes the app renders. The transform strings themselves are the
+ * module's `DEFAULT_VARIANTS` — they were this file's data before the
+ * extraction and are byte-identical, so every URL this app has ever emitted
+ * stays valid.
+ */
+type ImageVariant = "thumbnail" | "card" | "detail" | "fullscreen";
 
-export function resolveImageUrl(
-  key: string,
-  variant: keyof typeof VARIANTS = "card",
-) {
-  const base = process.env.NEXT_PUBLIC_IMAGE_CDN;
-  const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
+/**
+ * The resolver is built once, from configuration that is constant for the
+ * deployment: `NEXT_PUBLIC_*` variables are inlined at build time, so reading
+ * them here is the same as reading them per call.
+ *
+ * `base` still carries the legacy `${NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}`
+ * placeholder — the module accepts it, so `.env` needs no change.
+ */
+const images = createImageUrlResolver({
+  base: process.env.NEXT_PUBLIC_IMAGE_CDN,
+  cloudName: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
+  fallback: FALLBACK_IMAGE,
+  // The app has always defaulted to `card`; the module would pick the first
+  // variant (`thumbnail`) instead.
+  defaultVariant: "card",
+});
 
-  if (!key || !cloudName || !base) return FALLBACK_IMAGE;
-
-  const transform = VARIANTS[variant];
-  const cleanKey = key.replace(/\.webp$/, "");
-
-  return `${base.replace("${NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}", cloudName)}/${transform}/${cleanKey}`;
+export function resolveImageUrl(key: string, variant: ImageVariant = "card") {
+  return images.resolve(key, variant);
 }

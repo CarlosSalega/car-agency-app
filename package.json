@@ -15,6 +15,7 @@
     "prepare": "husky",
     "test": "vitest run",
     "test:watch": "vitest",
+    "test:contract": "vitest run src/modules/image-uploads/tests/cloudinary-contract.test.ts",
     "db:push": "prisma db push",
     "db:seed": "tsx prisma/seed.ts",
     "db:seed:reviews": "tsx prisma/seed-reviews.ts",

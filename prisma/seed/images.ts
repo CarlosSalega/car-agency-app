@@ -2,6 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import crypto from "node:crypto";
 import { v2 as cloudinary } from "cloudinary";
+import { cloudinaryConfigFromEnv } from "@/modules/image-uploads/providers/cloudinary";
 import { CLOUDINARY_UPLOAD_OPTIONS } from "@/lib/images/cloudinary-config";
 import type { ImageManifest, ImageManifestEntry } from "./types";
 
@@ -66,24 +67,12 @@ export function buildDeterministicPublicId(seed: string): string {
   return crypto.createHash("sha1").update(seed).digest("hex").slice(0, 20);
 }
 
-export function assertCloudinaryConfigured(): void {
-  const configured = Boolean(
-    process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME &&
-    process.env.CLOUDINARY_API_KEY &&
-    process.env.CLOUDINARY_API_SECRET,
-  );
-  if (!configured) {
-    throw new Error(
-      "Cloudinary is not configured. Required: NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET",
-    );
-  }
-}
-
 export function configureCloudinary(): void {
+  const config = cloudinaryConfigFromEnv(process.env);
   cloudinary.config({
-    cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
-    api_key: process.env.CLOUDINARY_API_KEY,
-    api_secret: process.env.CLOUDINARY_API_SECRET,
+    cloud_name: config.cloudName,
+    api_key: config.apiKey,
+    api_secret: config.apiSecret,
     timeout: 60_000,
   });
 }

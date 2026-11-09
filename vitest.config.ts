@@ -20,6 +20,10 @@ export default defineConfig({
   },
   test: {
     environment: "jsdom",
+    // `src/modules/**` is the copy-pasteable image-uploads module. Its tests are
+    // written for a plain Node runtime (`File`, `arrayBuffer`, real `Request`)
+    // and jsdom replaces those globals with DOM-only versions.
+    environmentMatchGlobs: [["src/modules/**", "node"]],
     include: ["src/**/*.test.{ts,tsx}", "prisma/**/*.test.ts"],
     setupFiles: ["./vitest.setup.ts"],
   },
