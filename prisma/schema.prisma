@@ -70,6 +70,39 @@ enum LinkTreeCategory {
   SOCIAL
 }
 
+/// Where a vehicle can be published besides our own site (S2). Mercado Libre
+/// first (S5); the socials come later and are listed so the model does not need
+/// a migration to grow.
+enum Channel {
+  MERCADOLIBRE
+  FACEBOOK
+  INSTAGRAM
+  TIKTOK
+}
+
+/// `CONNECTED` is usable, `EXPIRED` needs a refresh and `REVOKED` needs a human:
+/// a token that cannot be decrypted (D2) or that the marketplace rejected.
+enum ChannelAccountStatus {
+  CONNECTED
+  EXPIRED
+  REVOKED
+}
+
+/// The lifecycle of one vehicle on one channel.
+///
+/// `DIVERGED` is the state D1 exists for: the remote value no longer matches
+/// `syncedSnapshot`, and only a human chooses which side wins.
+enum PublicationState {
+  DRAFT
+  PUBLISHING
+  PUBLISHED
+  OUTDATED
+  DIVERGED
+  PAUSED
+  REMOVED
+  FAILED
+}
+
 // Auth models follow better-auth's canonical shape. They are not Auth.js
 // models: passwords live on `Account.password` with `providerId: "credential"`
 // and `accountId` equal to the user id. Without that row, email+password
@@ -235,6 +268,7 @@ model Car {
   user           User?           @relation("UserCars", fields: [userId], references: [id])
   visits         Visit[]
   leads          Lead[]
+  publications   Publication[]
 
   @@index([userId])
   @@index([status])
@@ -365,6 +399,82 @@ model MeliAccount {
   linkedById   String?
   linkedAt     DateTime @default(now())
   updatedAt    DateTime @updatedAt
+}
+
+/// The credential set for one marketplace or social account.
+///
+/// Tokens are sealed with AES-256-GCM before they reach this table (D2), so a
+/// dump alone does not let anyone publish as the agency. `status` records what
+/// the last attempt found: a token that cannot be decrypted marks the account
+/// `REVOKED` and asks for a reconnect instead of retrying forever.
+model ChannelAccount {
+  id           String               @id @default(uuid())
+  channel      Channel
+  /// The account's own id on that platform, unique per channel so re-linking
+  /// replaces the row instead of leaving two candidates for the sync.
+  remoteUserId String
+  /// Sealed, never plaintext.
+  accessToken  String
+  /// Sealed, and single-use where the platform says so (Mercado Libre).
+  refreshToken String
+  expiresAt    DateTime
+  status       ChannelAccountStatus @default(CONNECTED)
+  createdAt    DateTime             @default(now())
+  updatedAt    DateTime             @updatedAt
+  publications Publication[]
+
+  @@unique([channel, remoteUserId])
+}
+
+/// One vehicle on one channel.
+///
+/// Merging the writable fields into a single record per vehicle means the panel
+/// can answer "where is this published and is it up to date" with one query,
+/// even when two channels sit behind the same account.
+model Publication {
+  id              String           @id @default(uuid())
+  carId           String
+  car             Car              @relation(fields: [carId], references: [id], onDelete: Cascade)
+  channel         Channel
+  accountId       String
+  account         ChannelAccount   @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  /// The marketplace's own id, e.g. an ML item id. Null until the first publish,
+  /// and replaced (not kept) when a relist returns a new one.
+  remoteId        String?
+  state           PublicationState @default(DRAFT)
+  /// Remote status and sub-status verbatim. Mapping them onto `state` loses
+  /// information: `paused` plus `picture downloading pending` is transient and
+  /// resolves itself, which is not the same as a pause a human caused.
+  remoteStatus    String?
+  remoteSubStatus String?
+  /// What we last sent: price, title, status, picture count. Without it the app
+  /// cannot tell "the remote site differs because someone edited it" from "we
+  /// have not pushed yet" (D1).
+  syncedSnapshot  Json?
+  syncedAt        DateTime?
+  lastError       String?
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  events          PublicationEvent[]
+
+  @@unique([carId, channel, accountId])
+  @@index([state])
+}
+
+/// An append-only trace of what happened to a publication.
+///
+/// Kept separate from `Publication` so the record of a failure survives the
+/// retry that overwrote `lastError`.
+model PublicationEvent {
+  id            String      @id @default(uuid())
+  publicationId String
+  publication   Publication @relation(fields: [publicationId], references: [id], onDelete: Cascade)
+  /// Short verb-like label, e.g. `create`, `price-update`, `pause`.
+  kind          String
+  payload       Json?
+  createdAt     DateTime    @default(now())
+
+  @@index([publicationId, createdAt])
 }
 
 /// A customer testimonial shown on the landing.
