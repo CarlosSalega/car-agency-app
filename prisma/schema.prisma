@@ -89,6 +89,7 @@ model User {
   sessions         Session[]
   twoFactors       TwoFactor[]
   cars             Car[]       @relation("UserCars")
+  imageUploads     ImageUpload[]
   logs             Log[]
   createdBrands    Brand[]     @relation("UserBrands")
   createdModels    Model[]     @relation("UserModels")
@@ -240,6 +241,22 @@ model Car {
   @@index([brandId])
   @@index([modelId])
   @@index([sellerId])
+}
+
+/// One stored image and the user whose upload created it.
+///
+/// The row describes an upload, not an ownership transfer: assets stay keyed by
+/// their storage key and a key listed by a car is authorised by that car. This
+/// record only lets the uploader clean up an image nobody attached to a
+/// vehicle.
+model ImageUpload {
+  id        String   @id @default(uuid())
+  key       String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@index([userId])
 }
 
 model Log {
