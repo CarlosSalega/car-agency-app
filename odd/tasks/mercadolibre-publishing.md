@@ -1,8 +1,8 @@
 # mercadoLibre-publishing — one vehicle, published to every channel
 
 Planning document, not an implementation record. Phases 0 and 1 are specified; phases 2 and 3 are one
-line each. The MercadoLibre documentation was verified (see `## Verified against the documentation`), so
-the remaining estimate blockers are narrow and named.
+line each. The MercadoLibre documentation was verified (`## Verified against the documentation`) and the
+two decisions that block T1 are resolved (`## Decisions`).
 
 ## Specs
 
@@ -31,22 +31,74 @@ the remaining estimate blockers are narrow and named.
   for the same reasoning).
 - A generic channel framework. Channels become plugins of the publication model, not the reverse.
 
+## Decisions
+
+### D1 — The app owns the fields; a human resolves divergence
+
+The product publishes from car-agency. That means car-agency is authoritative for everything it
+publishes: title, description, pictures, price, currency, the identity fields, and the sold intent.
+MercadoLibre contributes read-only facts: item status, sub-status, questions, visits.
+
+The mechanism, which is the part that matters:
+
+- **Sync is event-driven, never a periodic push.** A periodic "push everything" is exactly what silently
+  reverts an edit somebody made in ML from the lot. A change in car-agency queues a publication update;
+  nothing else writes.
+- **Every publication stores what we last sent**: `syncedSnapshot` (price, title, status, picture count)
+  plus `syncedAt`. Without that snapshot you cannot tell "ML differs because someone edited it" from "we
+  have not pushed yet", and the whole rule collapses.
+- **A read that disagrees with the snapshot moves the publication to `DIVERGED`**, carrying both values.
+  It is never auto-resolved. The panel offers two buttons: _import what ML has_ or _impose what
+  car-agency has_. The first is the escape hatch that respects reality — whoever edited in ML usually did
+  it because they were standing next to the car.
+- **"Sold" is an intent, not a field.** Marking a vehicle sold closes the item unconditionally, with no
+  divergence check. A closed item due to a sale is never a conflict.
+
+Why not ML as the source of truth: the product degrades into a viewer of ML, and S3 dies with it. Why not
+silent overwrite: it destroys trust the first time a price edited on a phone gets reverted by a job.
+
+Cost: one JSON column, one extra state, and two buttons. Cheap, and it is the difference between a tool
+that is trusted and one that has to be babysat.
+
+### D2 — Token encryption: AES-256-GCM in the application, with versioned keys
+
+Access and refresh tokens are credentials that let anyone act as the agency on the marketplace. They are
+encrypted before they reach the database, so a database dump on its own leaks nothing.
+
+- **Key material lives in the environment**, not in the database: `TOKEN_ENCRYPTION_KEYS`, a list of
+  `v<version>:<base64 32 bytes>` entries. The current version encrypts; any version still listed can
+  decrypt.
+- **Cipher**: AES-256-GCM via `node:crypto`, random 12-byte IV per record, authenticated. One column
+  holds `v<version>:<iv>:<tag>:<ciphertext>`, all base64. No new dependency.
+- **Rotation is a documented path, not a hope**: add `v2` to the environment, run a re-encrypt command
+  that reads with the record's version and writes with the current one, then remove `v1`. This is why the
+  version is stored per record instead of assumed.
+- **Failure mode**: a token that cannot be decrypted marks the account `REVOKED` and asks for a
+  reconnect. The sync skips that account and keeps going for the others; it never crashes the queue and
+  never retries a token it cannot read.
+- **Tokens are never logged**, and error paths redact them. The refresh token is single-use, so losing
+  the latest one means a reconnect — another reason not to print it anywhere.
+
+Why not a KMS: an extra network hop on every sync, for a deployment that holds one agency's tokens. The
+threat model is the same one that already protects the app's signing secrets, and single tenancy means a
+compromised deployment exposes only that agency.
+
 ## Tasks
 
-| ID  | Specs  | Task                                                                                                                                                                                                                                                                                               | Route  | Commit |
-| --- | ------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------ | ------ |
-| T1  | S3     | `ChannelAccount`, `Publication`, `PublicationEvent` models plus the migration. `Publication` carries the state machine and persists the remote status _and_ sub-status verbatim, because mapping loses information; `PublicationEvent` is append-only for audit and retries                        | inline | —      |
-| T2  | S1     | Token storage: encryption at rest, `EXPIRED`/`REVOKED` states, and a reconnect path from the panel. These are credentials, not settings strings                                                                                                                                                    | inline | —      |
-| T3  | S3     | Panel: per-vehicle, per-channel state. Ships with manual channels ("published by hand" + URL + date), so it is useful before any API exists                                                                                                                                                        | inline | —      |
-| T4  | S4, S5 | Documentation verification                                                                                                                                                                                                                                                                         | done   | —      |
-| T5  | S5     | ML token lifecycle. **The refresh token is single-use**: a second concurrent refresh invalidates the first, so refreshes must be serialized per account. Access tokens last 6 h, so renewal is proactive, not reactive                                                                             | inline | —      |
-| T6  | S5     | Category discovery at runtime (`/sites/MLA/domain_discovery/search`) plus the required attributes per category from `/categories/{id}/attributes`, cached. Not a hand-written table: the required set lives in the category, not in the docs. Map our fields onto it, including `version` → `TRIM` | inline | —      |
-| T7  | S2     | Per-channel image derivatives. ML needs a **new** variant: 1200×1200 (its recommendation), because `thumbnail` 300×225 and `card` 400×300 are below the 500×500 minimum and `fullscreen` 2400×1800 exceeds the 1920×1920 maximum                                                                   | inline | —      |
-| T8  | S5     | Create, update price, pause, close. "Sold" means `closed` (there is no sold endpoint). Relisting produces a **new item id**, so `Publication.remoteId` must be updated, and visits carry over only within 60 days for vehicles                                                                     | inline | —      |
-| T9  | S3     | Job queue with idempotent handlers and per-channel retries. MercadoLibre publishes no numeric rate limit, only 429 plus backoff-with-jitter guidance, so the design is defensive by default: low concurrency, exponential backoff, no burst                                                        | inline | —      |
-| T10 | S3     | Actionable per-channel errors in Spanish. Distinguish a failure from a transient state: URL-hosted pictures can auto-pause the item with sub-status `picture downloading pending`, which resolves itself and must not be reported as an error                                                      | inline | —      |
-| T11 | S2     | Phase 2: Facebook Page and Instagram publishing (carousel from Cloudinary URLs)                                                                                                                                                                                                                    | —      | —      |
-| T12 | S2     | Phase 3: generated content for TikTok and Reels. Not a publishing integration: the Content Posting API is video, so the feature is producing the asset for the agency to review and post                                                                                                           | —      | —      |
+| ID  | Specs  | Task                                                                                                                                                                                                                                                                              | Route  | Commit |
+| --- | ------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------ | ------ |
+| T1  | S3, D1 | `ChannelAccount`, `Publication`, `PublicationEvent` models plus the migration. `Publication` carries the state machine including `DIVERGED`, `syncedSnapshot` and `syncedAt` (D1), and persists the remote status _and_ sub-status verbatim because mapping loses information     | inline | —      |
+| T2  | S1, D2 | Token storage per D2: AES-256-GCM, versioned keys, `EXPIRED`/`REVOKED` states, a reconnect path in the panel, and the re-encrypt command for rotation                                                                                                                             | inline | —      |
+| T3  | S3, D1 | Panel: per-vehicle, per-channel state, including the `DIVERGED` view with both values and the two resolution buttons. Ships with manual channels ("published by hand" + URL + date), so it is useful before any API exists                                                        | inline | —      |
+| T4  | S4, S5 | Documentation verification                                                                                                                                                                                                                                                        | done   | —      |
+| T5  | S5     | ML token lifecycle. **The refresh token is single-use**: a second concurrent refresh invalidates the first, so refreshes must be serialized per account. Access tokens last 6 h, so renewal is proactive                                                                          | inline | —      |
+| T6  | S5     | Category discovery at runtime (`/sites/MLA/domain_discovery/search`) plus the required attributes per category from `/categories/{id}/attributes`, cached. Not a hand-written table: the required set lives in the category. Map our fields onto it, including `version` → `TRIM` | inline | —      |
+| T7  | S2     | Per-channel image derivatives. ML needs a **new** variant: 1200×1200 (its recommendation), because `thumbnail` 300×225 and `card` 400×300 are below the 500×500 minimum and `fullscreen` 2400×1800 exceeds the 1920×1920 maximum                                                  | inline | —      |
+| T8  | S5     | Create, update price, pause, close. "Sold" means `closed` (there is no sold endpoint). Relisting produces a **new item id**, so `Publication.remoteId` must be updated, and visits carry over only within 60 days for vehicles                                                    | inline | —      |
+| T9  | S3     | Job queue with idempotent handlers and per-channel retries. MercadoLibre publishes no numeric rate limit, only 429 plus backoff-with-jitter guidance, so the design is defensive: low concurrency, exponential backoff, no burst                                                  | inline | —      |
+| T10 | S3     | Actionable per-channel errors in Spanish. Distinguish a failure from a transient state: URL-hosted pictures can auto-pause the item with sub-status `picture downloading pending`, which resolves itself and must not be reported as an error                                     | inline | —      |
+| T11 | S2     | Phase 2: Facebook Page and Instagram publishing (carousel from Cloudinary URLs)                                                                                                                                                                                                   | —      | —      |
+| T12 | S2     | Phase 3: generated content for TikTok and Reels. Not a publishing integration: the Content Posting API is video, so the feature is producing the asset for the agency to review and post                                                                                          | —      | —      |
 
 Exit criteria: phase 0 is done when opening a vehicle answers "where is this published and is it up to
 date". Phase 1 is done when a price change in car-agency is reflected in ML without manual work, and a
@@ -90,20 +142,14 @@ distribute requests and avoid extreme concurrency. No official numeric limit for
 
 ## Still unknown
 
-Narrow now, and none of them blocks phase 0 or the start of phase 1:
+Narrow, and none of them blocks phase 0 or the start of phase 1:
 
 1. The numeric rate limit for item create/update on MLA. The app's own quota display would answer it.
 2. The minimum image count for car categories.
 3. Whether `sale_terms` is mandatory for a used car (only the reconditioned rule is documented).
 4. The exhaustive required-attribute list for this agency's categories: answered by querying
-   `/categories/{id}/attributes` per category, which is exactly what T6 builds.
+   `/categories/{id}/attributes` per category, which is what T6 builds.
 5. The effect of `target=classified` in the predictor, beyond choosing the domain.
-
-Not answerable from documentation, and still needed before phase 1 ships:
-
-- **Source of truth per field.** If the agency edits the price in ML and also in car-agency, which one
-  wins? Needs an explicit, visible rule for price, stock and status, plus a divergence warning.
-- **Token encryption approach.** Where the key lives, and what happens when it rotates.
 
 ## Log
 
@@ -118,38 +164,26 @@ Not answerable from documentation, and still needed before phase 1 ships:
 - **L3** (evidence, repository) — what already exists: `src/app/api/integrations/mercadolibre/` with
   `authorize`, `callback` and `disconnect`, PKCE plus state in httpOnly cookies, and session guards. What
   does not exist: any `ChannelAccount`/token model in `prisma/schema.prisma`, any publication model, any
-  job queue. The dashboard already reports leads per channel (instagram, facebook, google, directo), and
-  the image module (merged, 160 tests) already ships named variants per destination.
+  job queue. The dashboard already reports leads per channel, and the image module (merged, 160 tests)
+  already ships named variants per destination.
 - **L4** (analysis by the parent, not a user requirement) — the central claim of the plan: the product is
   the **publication model**, not the integrations. Publishing creates N remote records with N lifecycles,
-  so the moment a price changes or a vehicle is sold, a system without a `Publication` state per channel
-  cannot answer "where is this published". That is why phase 0 is useful with zero APIs.
-  Consequences recorded as decisions: channels are not interchangeable (ML is bidirectional and
-  attribute-heavy; Instagram needs a Business account linked to a Page and publicly reachable media;
-  TikTok takes video, not photo carousels, which makes it a content-generation feature); app review by
-  Meta and TikTok is a calendar risk that starts in phase 0; a half-published vehicle needs per-channel
-  retries and a visible state; the "sold" cascade matters more than the initial publish.
-- **L5** (decisions to make before phase 1, not during) — the job/queue mechanism (a `Job` table plus a
-  cron drainer is the simplest option on Vercel, versus a separate worker), and the per-field
-  source-of-truth rule. Both are named as blockers rather than silently decided.
-- **L6** (not done, deliberately) — no code, no schema, no branch. This document is the deliverable of
-  that pass.
+  so without a `Publication` state per channel nothing can answer "where is this published". That is why
+  phase 0 is useful with zero APIs. Channels are not interchangeable: ML is bidirectional and
+  attribute-heavy, Instagram needs a Business account linked to a Page and publicly reachable media,
+  TikTok takes video rather than photo carousels. A half-published vehicle needs per-channel retries and
+  a visible state, and the sold cascade matters more than the initial publish.
+- **L5** (decisions taken before phase 1, by the human's instruction "Resuelve esos dos antes de escribir
+  T1") — D1 and D2 above. They are decisions, not requirements: D1 chooses the app as authoritative with
+  human-resolved divergence over both silent overwrite and ML-as-source; D2 chooses application-level
+  AES-256-GCM with versioned keys over a KMS.
+- **L6** (not done, deliberately) — no code, no schema, no branch. This document is the deliverable.
 - **L7** (T4, documentation verified) — read the official MLA developer pages. Five findings changed the
-  plan, each now reflected in a task:
-  1. **There is no publishing scope to request.** The authorization URL takes no `scope`
-     (`https://developers.mercadolibre.com.ar/en_us/authentication-and-authorization`); the repo's flow
-     is already complete at that layer. The blocker about "whether the OAuth flow requests the publishing
-     scopes" is closed.
-  2. **The refresh token is single-use**, so parallel refreshes invalidate each other. That turned into a
-     hard requirement in T5. Access tokens last 6 h.
-  3. **Required attributes are per category at runtime**, not a documented list. T6 now builds discovery
-     plus caching instead of a hand-written table. The one worked example (MLA1744) names TRIM, which our
-     `Car.version` maps onto.
-  4. **`pictures[].source` is supported on MLA**, so Cloudinary URLs can be used directly — but URL
-     pictures auto-pause the item with sub-status `picture downloading pending` while they are processed.
-     That is why T10 must separate a transient state from a failure.
-  5. **None of the image module's current variants is valid for ML**: 300×225 and 400×300 are below the
-     500×500 minimum and 2400×1800 exceeds the 1920×1920 maximum. T7 gained a marketplace variant at
-     1200×1200.
-     Also recorded: no sandbox exists (test users in production), and rate limits have no official numbers,
-     so T9 is defensive by design.
+  plan, each reflected in a task: there is no publishing scope to request, so the OAuth layer is already
+  complete; the refresh token is single-use, so refreshes must be serialized per account; required
+  attributes are discovered per category at runtime, and the one worked example names TRIM, which our
+  `Car.version` maps onto; `pictures[].source` is supported but URL pictures auto-pause the item while
+  they are processed, so T10 must separate a transient state from a failure; and **none of the image
+  module's current variants is valid for ML** — 300×225 and 400×300 are below the 500 minimum, 2400×1800
+  exceeds the 1920 maximum — which is why T7 gained a 1200×1200 variant. Also recorded: no sandbox
+  exists, and rate limits have no official numbers.
