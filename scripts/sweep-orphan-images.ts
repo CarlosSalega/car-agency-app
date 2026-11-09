@@ -1,3 +1,5 @@
+import "dotenv/config";
+
 import { appendFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 
