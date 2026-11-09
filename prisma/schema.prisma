@@ -103,6 +103,52 @@ enum PublicationState {
   FAILED
 }
 
+/// The lifecycle of one background job.
+///
+/// `RETRYING` is not a state: a job that will run again is `PENDING` with an
+/// incremented `attempts` and a later `runAt`, because one query answers "what
+/// can I claim now". `DEAD` is terminal for a human's attention, not for the
+/// drainer: the queue never picks it up again.
+enum JobStatus {
+  PENDING
+  RUNNING
+  SUCCEEDED
+  FAILED
+  DEAD
+}
+
+/// One deferred unit of work, claimed by a drainer.
+///
+/// The queue is a table instead of an in-process array because the work it
+/// carries (publishing a vehicle to a marketplace) outlives a request and must
+/// survive a deploy. Claiming is a compare-and-set so two drainers running at
+/// once cannot both own the same row.
+///
+/// `idempotencyKey` is unique on purpose: the same logical operation enqueued
+/// twice is one row, so a retried request cannot publish a vehicle twice.
+/// History lives on this row (`attempts`, `lastError`, the timestamps) and not
+/// in `PublicationEvent`, which traces a publication, not a job.
+model Job {
+  id             String    @id @default(uuid())
+  kind           String
+  idempotencyKey String    @unique
+  payload        Json?
+  status         JobStatus @default(PENDING)
+  attempts       Int       @default(0)
+  maxAttempts    Int       @default(5)
+  /// Earliest moment a drainer may claim this job.
+  runAt          DateTime
+  /// Set when claimed, cleared when the job reaches a terminal state.
+  lockedAt       DateTime?
+  lockedBy       String?
+  lastError      String?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  // Serves the claim query exactly: `status` equality, then `runAt` range.
+  @@index([status, runAt])
+}
+
 // Auth models follow better-auth's canonical shape. They are not Auth.js
 // models: passwords live on `Account.password` with `providerId: "credential"`
 // and `accountId` equal to the user id. Without that row, email+password
