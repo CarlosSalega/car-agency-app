@@ -96,9 +96,11 @@
  *   --primary  the action colour: buttons, the highlighted option, a focused
  *              row. Near-white on a dark page, because red on a button reads
  *              as "this deletes something".
- *   --brand    the identity colour, from `public/logo.png` (`#FE0000`, 212 px,
- *              the "GL"): the wordmark, active indicators, a status in play.
- *              Never used as a filled surface that carries an action label.
+ *   --brand    the identity colour, and it does not live in this file: the active
+ *              client's `theme.css` sets the pair, which is what lets one
+ *              deployment be blue and another red without touching this block.
+ *              It drives the wordmark, active indicators and a status in play,
+ *              and is never used as a filled surface carrying an action label.
  *
  * Red keeps its conventional meaning, so `--destructive` stays a lighter,
  * distinctly different red `#ff5c5c` rather than the brand's own.
@@ -112,11 +114,11 @@
  *   foreground        #f5f5f5  17.18:1
  *   subtle-foreground #c4c7c8  11.02:1
  *   muted-foreground  #a3a3a3   7.43:1
- *   brand             #fe0000   4.65:1
- *   ring              #fe0000   4.65:1
+ *   ring              #3b82f6   5.09:1
  *   primary (surface) #f5f5f5  17.18:1
- * and `--primary-foreground` (#121212) on `--primary` is 17.18:1, while
- * `--brand-foreground` (#000000) on `--brand` is 5.21:1.
+ * and `--primary-foreground` (#121212) on `--primary` is 17.18:1. The brand pair
+ * is measured where it is defined, in the client's own theme file: the demo's
+ * `--brand-foreground` on `--brand` is 7.76:1.
  *
  * Known gap: `--border` (1.31:1) and `--input` (~1.72:1) sit under the 3:1 that
  * WCAG 1.4.11 asks of control boundaries. That is the ramp the newest
@@ -169,8 +171,11 @@
 
   --border: #2a2a2a;
   --input: #3d3d3d;
-  /* Focus follows the brand, not the action: a red ring is identity. */
-  --ring: #fe0000;
+  /* Focus follows the identity colour, not the action one. The default is
+     Tailwind's blue-500, the same blue the product's own logo and icons use, so
+     a deployment with no theme of its own still has a focus ring that is not
+     borrowed from another client. */
+  --ring: #3b82f6;
 
   /* Neutral: a count series reads as data, not as an alarm. */
   --chart-1: #a3a3a3;
@@ -183,12 +188,15 @@
      relationship `sidebar` had with `background` in the previous light theme. */
   --sidebar: #1c1c1c;
   --sidebar-foreground: #f5f5f5;
-  --sidebar-primary: #fe0000;
-  --sidebar-primary-foreground: #000000;
+  /* One step darker than the ring on purpose: gray-100 on blue-600 measures
+     4.70:1, while on blue-500 it would be 3.34:1 and the rail's label would
+     fail AA. */
+  --sidebar-primary: #2563eb;
+  --sidebar-primary-foreground: #f3f4f6;
   --sidebar-accent: #242424;
   --sidebar-accent-foreground: #f5f5f5;
   --sidebar-border: #2a2a2a;
-  --sidebar-ring: #fe0000;
+  --sidebar-ring: #3b82f6;
 
   /* Project tokens with no theme counterpart. `subtle-foreground` is the
      middle step of the three-step text ramp the car card introduced. */
