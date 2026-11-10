@@ -547,7 +547,7 @@ model Review {
   /// When the customer wrote it. The "hace 3 meses" label is derived from this
   /// at render time: a stored phrase would be wrong a month later.
   reviewedAt DateTime
-  /// Repository path such as `/reviews/norma-sonez.webp`, or null for a review
+  /// Repository path such as `/reviews/cliente.webp`, or null for a review
   /// whose author has no photo. Never an external URL: the public assets sweep
   /// in `src/__tests__/public-assets.test.ts` only covers what we serve.
   photoPath  String?

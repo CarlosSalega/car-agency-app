@@ -58,8 +58,8 @@ export function decideSeedAllowed(env: SeedGuardInput): SeedGuardDecision {
     return { allowed: true, overridden: true };
   }
 
-  // `tsx prisma/seed.ts` leaves NODE_ENV unset, which is a normal local run, so
-  // only an explicit "production" blocks it. Blocking on "not development"
+  // `tsx prisma/seed.ts` leaves NODE_ENV unset, which is an ordinary local run,
+  // so only an explicit "production" blocks it. Blocking on "not development"
   // instead would break the documented `pnpm db:seed` flow for everyone.
   if (env.NODE_ENV === "production") {
     return { allowed: false, reason: 'NODE_ENV is "production"' };
