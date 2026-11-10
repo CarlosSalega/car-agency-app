@@ -55,6 +55,8 @@ export interface MeliClientOptions {
 
 export interface MeliClient {
   get<T>(path: string, query?: MeliQuery): Promise<T>;
+  post<T>(path: string, body: unknown, query?: MeliQuery): Promise<T>;
+  put<T>(path: string, body: unknown, query?: MeliQuery): Promise<T>;
 }
 
 /** Mercado Libre answered, and the answer was not what we asked for. */
@@ -196,24 +198,46 @@ function describeTransportError(error: unknown): string {
   return "unknown transport error";
 }
 
+type MeliMethod = "GET" | "POST" | "PUT";
+
+interface MeliRequest {
+  readonly method: MeliMethod;
+  readonly path: string;
+  readonly query?: MeliQuery;
+  /** Left out of a GET entirely: `undefined` is not an empty JSON body. */
+  readonly payload?: unknown;
+}
+
 export function createMeliClient(options: MeliClientOptions): MeliClient {
   const doFetch = options.fetchImpl ?? fetch;
   const baseUrl = options.baseUrl ?? MELI_API_BASE;
   const timeoutMs = options.timeoutMs ?? MELI_REQUEST_TIMEOUT_MS;
   const now = options.now ?? (() => new Date());
 
-  async function get<T>(path: string, query?: MeliQuery): Promise<T> {
+  // One pipeline for reads and writes, so `429`, the deadline, the body excerpt
+  // and the "never leak the token" rule cannot drift between them.
+  async function request<T>({
+    method,
+    path,
+    query,
+    payload,
+  }: MeliRequest): Promise<T> {
     const url = buildUrl(baseUrl, path, query);
     const token = await options.getAccessToken();
     const deadline = createDeadline(timeoutMs);
 
+    const headers: Record<string, string> = {
+      authorization: `Bearer ${token}`,
+      accept: "application/json",
+    };
+
+    if (payload !== undefined) headers["content-type"] = "application/json";
+
     try {
       const response = await doFetch(url, {
-        method: "GET",
-        headers: {
-          authorization: `Bearer ${token}`,
-          accept: "application/json",
-        },
+        method,
+        headers,
+        ...(payload === undefined ? {} : { body: JSON.stringify(payload) }),
         signal: deadline.signal,
         // An authenticated read is not something the framework's fetch cache
         // should keep or replay.
@@ -267,5 +291,11 @@ export function createMeliClient(options: MeliClientOptions): MeliClient {
     }
   }
 
-  return { get };
+  return {
+    get: (path, query) => request({ method: "GET", path, query }),
+    post: (path, body, query) =>
+      request({ method: "POST", path, payload: body, query }),
+    put: (path, body, query) =>
+      request({ method: "PUT", path, payload: body, query }),
+  };
 }

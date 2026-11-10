@@ -15,9 +15,10 @@
  * `pause` stops it temporarily and `close` is the sold cascade. They are
  * separate kinds because they have different handlers and different failure
  * meaning: a failed update is a stale listing, a failed close is a vehicle that
- * is still for sale somewhere.
+ * is still for sale somewhere. `sync` is the read-only reconciliation: it
+ * reads the remote item and records what it found.
  */
-export type JobKind = "publish" | "update" | "pause" | "close";
+export type JobKind = "publish" | "update" | "pause" | "close" | "sync";
 
 /** Every kind the engine knows. A drained row with anything else is a bug. */
 export const JOB_KINDS: readonly JobKind[] = [
@@ -25,6 +26,7 @@ export const JOB_KINDS: readonly JobKind[] = [
   "update",
   "pause",
   "close",
+  "sync",
 ];
 
 /** Mirrors the `JobStatus` enum in `prisma/schema.prisma`. */
