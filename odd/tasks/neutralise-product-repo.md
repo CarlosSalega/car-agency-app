@@ -54,7 +54,7 @@ pass, and which carries no data belonging to a dealership or to its customers.
 | N5  | S1, S3 | Branded assets: replace the logo, hero, preview, favicon and apple icon with neutral ones owned by the product. The 62 vehicle photos stay, and the deployment keeps its own set                                                                                                                                                                                              | inline | —      |
 | N6  | S5     | Tests: `brand-leak.test.ts` reads its markers from the active client instead of a literal list, and keeps the positive control; `package.test.ts` points at the demo package; the fixtures that use `glautos.ar` and the dealership phone become neutral                                                                                                                      | inline | —      |
 | N7  | S5     | Prose: `design/` and `odd/` records that name the client. Decide per file whether it stays (historical record, still private) or is scrubbed                                                                                                                                                                                                                                  | inline | —      |
-| N8  | —      | The sync must preserve the deployment surface: a documented command that copies the product tree over `glautos` while restoring `src/site/glautos/`, `public/` client assets, the deployment's seed, and its environment. Without this, the next sync destroys the deployment                                                                                                 | inline | —      |
+| N8  | —      | **done** — The sync must preserve the deployment surface: a documented command that copies the product tree over `glautos` while restoring `src/site/glautos/`, `public/` client assets, the deployment's seed, and its environment. Without this, the next sync destroys the deployment                                                                                      | inline | —      |
 
 Exit criteria: `pnpm test` green with `SITE_SLUG` unset in the environment (the suite sets it), the build
 fails with a clear message when `SITE_SLUG` is missing or unknown, and `grep -ri glautos` over tracked
@@ -116,3 +116,46 @@ files returns only the historical `odd/` records that N7 decided to keep.
   while that package is still part of the product — and it must not stay there. So the order is: remove
   the people (N4, done), remove the client package and re-point the tests (N6), then move the seed
   behind the seam (N3), then the assets (N5), then the sync (N8).
+
+- **L7** (N8 done) — the sync exists, and it is the only thing that may now be run against a deployment.
+  `pnpm sync:deployment --to=<deployment>` is a dry run that prints the plan; `--confirm` creates **one**
+  ordinary commit on top of the deployment's `HEAD` and pushes it; `--push=false` keeps the commit local
+  so the deployment's own build can be run first. The rules live in `src/lib/deploy/sync-deployment.ts`
+  (`planSync` is pure, `inspectSync` is the read-only half, `applySync` writes, `pushDeployment` pushes),
+  and the shell in `scripts/sync-deployment.ts` only parses flags and prints.
+
+  **The preserved surface, verbatim**, derived rather than configured — a list of names here would be a
+  list of clients, and the product must not know which clients exist:
+  - `src/site/<client>/` — every top-level directory under `src/site/` other than `__tests__` and `demo`.
+    Its identity, theme, SEO, assets config and (after N3) its seed data.
+  - `src/site/registry.ts` — the slug → package map that makes it selectable.
+  - `src/site/theme.css` — the static `@import` of its theme.
+  - `src/site/seed.ts` — the pointer to its seed data.
+  - `public/` — its logo, hero, social preview, favicon and its vehicle photographs.
+
+  Everything else under the tree is the product's and is updated by the sync. A deployment that ships no
+  extra client package, or has no `src/site/seed.ts` yet, is **reported and not failed**: the sync prints
+  the missing preserved path and never substitutes the product's copy, because pointing a deployment at
+  the demo's seed is exactly the silent defect this feature exists to remove.
+
+  **Why it refuses to force.** The deployment's history is the deployment's, and the paths this feature
+  protects — the client package, the seams, `public/` — are the ones a force would discard without
+  leaving a commit to recover them from. A rejected push means the local branch is behind the one the
+  deployment is served from, which is a fact a human has to reconcile; there is no force variant in the
+  tool and no flag that reaches one. For the same reason it refuses a dirty tree on either side, a path
+  that is not the root of a repository (a subdirectory sync would look like a hundred deletions), a
+  deployment with no `origin`, a detached `HEAD`, and it creates no commit at all when the deployment
+  already matches the product.
+
+  Two things the first real run will surface, both reported by the tool rather than repaired by it:
+  1. The deployment was synced at `8fd209e`, before N3, so it has no `src/site/seed.ts` and its catalogue
+     still lives in the old product-owned `prisma/seed/`. The sync reports the missing seam, updates
+     `prisma/seed.ts` to import `@/site/seed`, and therefore leaves `db:seed` broken until the maintainer
+     creates its own `src/site/<client>/seed/` and `src/site/seed.ts`. That is a manual step, and the
+     commit is the record of what the sync did; do it before `--confirm`, not after.
+  2. **`public/` being wholly preserved** means a product-owned asset added there — the neutral logo,
+     hero, preview, favicon and apple icon from N5 — never reaches an existing deployment. It reaches a
+     deployment created from this tree after the change. This is deliberate: the alternative is an
+     exception list of "product assets inside the deployment's folder", which is how the deployment
+     loses its photos on the day somebody adds the wrong name to it. Deciding otherwise is a product
+     decision, not a sync one, and it is recorded here instead of being implemented quietly.

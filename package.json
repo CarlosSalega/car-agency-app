@@ -24,7 +24,8 @@
     "sweep:orphans": "tsx scripts/sweep-orphan-images.ts",
     "publications": "tsx scripts/publications.ts",
     "drain:jobs": "tsx scripts/drain-jobs.ts",
-    "rotate:tokens": "tsx scripts/rotate-tokens.ts"
+    "rotate:tokens": "tsx scripts/rotate-tokens.ts",
+    "sync:deployment": "tsx scripts/sync-deployment.ts"
   },
   "lint-staged": {
     "*.{js,mjs,cjs,ts,tsx,jsx,css,md,mdx,html,json,jsonc,yml,yaml,graphql}": [
