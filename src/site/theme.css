@@ -7,5 +7,10 @@
  * Keeping it as a stable path is what stops the layout from being edited on every
  * new client; a CSS import has to be static, so a single indirection is the whole
  * trick available.
+ *
+ * This repository ships the demo client. A deployment changes the one `@import`
+ * below to its own `./<client>/theme.css` and keeps this file: the sync that
+ * ships the product over its tree must restore it, because a whole-tree copy
+ * would point the deployment's stylesheet back at the demo's colours.
  */
-@import "./glautos/theme.css";
+@import "./demo/theme.css";
