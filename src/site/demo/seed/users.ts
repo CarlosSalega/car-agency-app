@@ -1,4 +1,3 @@
-import { Role } from "@generated/prisma/client";
 import type { SeedUser } from "./types";
 
 /**
@@ -16,7 +15,7 @@ export const seedUsers: SeedUser[] = [
     email: "admin@example.com",
     password: "admin1234",
     name: "Administrador",
-    role: Role.ADMIN,
+    role: "ADMIN",
     isActive: true,
   },
 ];

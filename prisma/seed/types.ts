@@ -1,86 +1,26 @@
-import type {
-  CarStatus,
-  CarType,
-  Currency,
-  FuelType,
-  LinkTreeCategory,
-  Role,
-  Transmission,
-} from "@generated/prisma/client";
-
-export interface SeedUser {
-  key: string;
-  email: string;
-  password: string;
-  name: string;
-  role: Role;
-  isActive: boolean;
-}
-
-export interface SeedSeller {
-  key: string;
-  firstName: string;
-  lastName: string;
-  phone: string;
-  email: string;
-  isActive: boolean;
-}
-
-export interface SeedLinkTreeLink {
-  id: string;
-  category: LinkTreeCategory;
-  label: string;
-  href: string;
-  iconKey: string;
-  sortOrder: number;
-  isActive: boolean;
-}
-
-export interface SeedCar {
-  key: string;
-  title: string;
-  brand: string;
-  model: string;
-  version: string;
-  year: number;
-  color: string;
-  kilometers: number;
-  type: CarType;
-  fuelType: FuelType;
-  transmission: Transmission;
-  price: number;
-  currency: Currency;
-  description: string;
-  sellerKey: string | null;
-  status: CarStatus;
-}
-
-export interface ImageManifestEntry {
-  carKey: string;
-  files: string[];
-}
+import type { StagedAssetGroup } from "@/site/seed";
 
 /**
- * A group of local assets that no catalog entry claims yet. Declaring them
- * turns "this file is unused" from a silent runtime observation into an
- * explicit, reviewable decision.
+ * The seed machinery's own shapes: how the run reports, and how the files in
+ * `public/autos` divide up.
+ *
+ * The **data** shapes are not here. A client's seed set lives in
+ * `src/site/<client>/seed/`, the seam the product must never overwrite, so those
+ * interfaces had to leave this folder: a site module importing `prisma/seed/types`
+ * would tie the client package to the product's seed script, and their old
+ * definitions imported the generated Prisma enums, which would drag the Prisma
+ * client into the site layer. They are re-exported below so the machinery still
+ * has one module to import for the data it writes.
  */
-export interface StagedAssetGroup {
-  /**
-   * Filename prefix identifying the vehicle, without the trailing separator or
-   * the numeric suffix — e.g. `chevrolet_cruze` for `chevrolet_cruze_1.webp`.
-   */
-  vehicleKey: string;
-  /** Human-readable vehicle name, used in the seed report. */
-  label: string;
-  /** Why these assets are intentionally not used by the current catalog. */
-  reason: string;
-}
-
-export interface ImageManifest {
-  entries: ImageManifestEntry[];
-  stagedAssets: StagedAssetGroup[];
-}
+export type {
+  ImageManifest,
+  ImageManifestEntry,
+  SeedCar,
+  SeedLinkTreeLink,
+  SeedSeller,
+  SeedUser,
+  StagedAssetGroup,
+} from "@/site/seed";
 
 /**
  * How the files found in `public/autos` divide up. `orphans` is the only
