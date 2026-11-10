@@ -4,8 +4,7 @@ import { useState } from "react";
 
 import type { PublicReview } from "@/lib/queries/reviews";
 import { formatRelativeReviewDate } from "@/lib/reviews";
-
-import { GOOGLE_REVIEW_URL } from "./review-google";
+import { activeSite } from "@/site/active";
 
 /**
  * The testimonials, as one quote at a time.
@@ -21,6 +20,7 @@ import { GOOGLE_REVIEW_URL } from "./review-google";
 export function ReviewsQuote({ reviews }: { reviews: PublicReview[] }) {
   const [index, setIndex] = useState(0);
   const current = reviews[index] ?? reviews[0];
+  const reviewUrl = activeSite.identity.reviewUrl;
 
   const go = (next: number) => {
     setIndex((next + reviews.length) % reviews.length);
@@ -97,14 +97,16 @@ export function ReviewsQuote({ reviews }: { reviews: PublicReview[] }) {
           >
             →
           </button>
-          <a
-            href={GOOGLE_REVIEW_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="border-line-strong hover:bg-accent ml-auto flex h-[38px] items-center border px-3 font-mono text-[10px] tracking-[0.16em] uppercase transition-colors"
-          >
-            Dejar reseña en Google
-          </a>
+          {reviewUrl ? (
+            <a
+              href={reviewUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="border-line-strong hover:bg-accent ml-auto flex h-[38px] items-center border px-3 font-mono text-[10px] tracking-[0.16em] uppercase transition-colors"
+            >
+              Dejar reseña en Google
+            </a>
+          ) : null}
         </div>
       </div>
     </div>

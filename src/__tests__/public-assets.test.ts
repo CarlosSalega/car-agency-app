@@ -16,8 +16,8 @@ import { describe, expect, it } from "vitest";
  * `/autos` or `/api/cars` are out of scope by construction.
  *
  * `prisma/seed` is swept too, and that is not scope creep: a testimonial's photo
- * arrives as a database column now, so a typo in `seed/reviews.ts` ships as a
- * blank avatar exactly the way the navbar one did, while nothing in `src/` ever
+ * arrives as a database column now, so a typo in the seed's review data ships as
+ * a blank avatar exactly the way the navbar one did, while nothing in `src/` ever
  * mentions the path. `prisma/generated` is a build output and stays out.
  */
 const SRC = path.resolve(__dirname, "..");

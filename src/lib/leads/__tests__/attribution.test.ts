@@ -56,8 +56,8 @@ describe("parseAttribution", () => {
 
   it("keeps an external referrer as host plus path", () => {
     expect(
-      parseAttribution("", "https://l.instagram.com/stories/glautos/123?x=1"),
-    ).toEqual({ referrer: "l.instagram.com/stories/glautos/123" });
+      parseAttribution("", "https://l.instagram.com/stories/marca/123?x=1"),
+    ).toEqual({ referrer: "l.instagram.com/stories/marca/123" });
   });
 
   it("drops our own host, because internal navigation is not a source", () => {

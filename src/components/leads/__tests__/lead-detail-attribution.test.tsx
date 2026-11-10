@@ -29,7 +29,7 @@ function buildLead(
   const base: LeadWithRelations = {
     id: "lead-1",
     name: "Ana Pérez",
-    phone: "342 577 7646",
+    phone: "351 555 0123",
     email: null,
     message: "¿Está disponible?",
     status: "NEW",
@@ -56,7 +56,7 @@ describe("lead detail attribution", () => {
         utmSource: "instagram",
         utmMedium: "cpc",
         utmCampaign: "hilux-octubre",
-        referrer: "l.instagram.com/stories/glautos/123",
+        referrer: "l.instagram.com/stories/marca/123",
       }),
     );
 
@@ -64,9 +64,7 @@ describe("lead detail attribution", () => {
       within(dialog).getByText("instagram · cpc · hilux-octubre"),
     ).toBeTruthy();
     expect(
-      within(dialog).getByText(
-        /desde l\.instagram\.com\/stories\/glautos\/123/,
-      ),
+      within(dialog).getByText(/desde l\.instagram\.com\/stories\/marca\/123/),
     ).toBeTruthy();
   });
 

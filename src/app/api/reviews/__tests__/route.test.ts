@@ -64,11 +64,11 @@ function post(body: unknown) {
 }
 
 const valid = {
-  authorName: "Norma Soñez",
+  authorName: "Ana Pérez",
   rating: 5,
-  text: "Gracias Facundo por la amabilidad y la atención.",
+  text: "Atención clara y sin vueltas.",
   reviewedAt: "2026-07-01T12:00:00.000Z",
-  photoPath: "/reviews/norma-sonez.webp",
+  photoPath: "/reviews/ana-perez.webp",
   sortOrder: 2,
   isPublished: true,
 };
@@ -120,7 +120,7 @@ describe("POST /api/reviews", () => {
     expect(state.reviewCreate).toHaveBeenCalledWith(
       expect.objectContaining({
         data: expect.objectContaining({
-          authorName: "Norma Soñez",
+          authorName: "Ana Pérez",
           rating: 5,
           isPublished: true,
         }),

@@ -15,7 +15,7 @@ import { withReviewStructuredData } from "@/lib/reviews";
 const base = {
   "@context": "https://schema.org",
   "@type": "AutoDealer",
-  name: "GL Autos",
+  name: "Autos Demo",
 };
 
 const review = (id: string, rating: number) => ({
@@ -82,7 +82,7 @@ describe("withReviewStructuredData", () => {
       reviews: [review("1", 5)],
     });
 
-    expect(result).toMatchObject({ "@type": "AutoDealer", name: "GL Autos" });
+    expect(result).toMatchObject({ "@type": "AutoDealer", name: "Autos Demo" });
   });
 
   it("never emits the panel's unpublished columns", () => {

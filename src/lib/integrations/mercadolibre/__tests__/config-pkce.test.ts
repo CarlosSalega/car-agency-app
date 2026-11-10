@@ -17,7 +17,7 @@ const FULL_ENV = {
   MELI_CLIENT_ID: "123456789",
   MELI_CLIENT_SECRET: "super-secret",
   MELI_REDIRECT_URI:
-    "https://glautos.ar/api/integrations/mercadolibre/callback",
+    "https://example.com/api/integrations/mercadolibre/callback",
   MELI_TOKEN_ENCRYPTION_KEY: "a-long-enough-development-secret",
 };
 
@@ -69,7 +69,7 @@ describe("buildAuthorizationUrl", () => {
       buildAuthorizationUrl({
         authHost: MELI_DEFAULT_AUTH_HOST,
         clientId: "123",
-        redirectUri: "https://glautos.ar/cb",
+        redirectUri: "https://example.com/cb",
         state: "state-abc",
         codeChallenge: "challenge-xyz",
       }),
@@ -80,7 +80,7 @@ describe("buildAuthorizationUrl", () => {
     );
     expect(url.searchParams.get("response_type")).toBe("code");
     expect(url.searchParams.get("client_id")).toBe("123");
-    expect(url.searchParams.get("redirect_uri")).toBe("https://glautos.ar/cb");
+    expect(url.searchParams.get("redirect_uri")).toBe("https://example.com/cb");
     expect(url.searchParams.get("state")).toBe("state-abc");
     expect(url.searchParams.get("code_challenge")).toBe("challenge-xyz");
     expect(url.searchParams.get("code_challenge_method")).toBe("S256");

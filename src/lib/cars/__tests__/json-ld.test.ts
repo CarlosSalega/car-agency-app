@@ -24,10 +24,10 @@ const car: JsonLdCar = {
 };
 
 const options = {
-  siteUrl: "https://glautos.ar",
-  dealerName: "GL Autos",
+  siteUrl: "https://example.com",
+  dealerName: "Autos Demo",
   imageUrl: (key: string) => `https://cdn.example/${key}.webp`,
-  fallbackImageUrl: "https://glautos.ar/placeholder.webp",
+  fallbackImageUrl: "https://example.com/placeholder.webp",
 };
 
 function build(overrides: Partial<JsonLdCar> = {}) {
@@ -43,7 +43,7 @@ describe("buildCarJsonLd", () => {
       "@type": "Vehicle",
       name: "Volkswagen Taos Highline 2025",
       sku: "car-1",
-      url: "https://glautos.ar/autos/volkswagen-taos-2025",
+      url: "https://example.com/autos/volkswagen-taos-2025",
       brand: { "@type": "Brand", name: "Volkswagen" },
       model: "Taos",
       vehicleModelDate: "2025",
@@ -74,7 +74,7 @@ describe("buildCarJsonLd", () => {
 
   it("falls back to the placeholder image when the car has no photos", () => {
     expect(build({ images: [] }).image).toEqual([
-      "https://glautos.ar/placeholder.webp",
+      "https://example.com/placeholder.webp",
     ]);
   });
 
@@ -83,7 +83,7 @@ describe("buildCarJsonLd", () => {
       "@type": "Offer",
       price: 39500000,
       priceCurrency: "ARS",
-      seller: { "@type": "AutoDealer", name: "GL Autos" },
+      seller: { "@type": "AutoDealer", name: "Autos Demo" },
     });
   });
 
@@ -149,9 +149,9 @@ describe("buildCarJsonLd", () => {
   it("does not double the slash when the site url ends with one", () => {
     const jsonLd = buildCarJsonLd(car, {
       ...options,
-      siteUrl: "https://glautos.ar/",
+      siteUrl: "https://example.com/",
     });
 
-    expect(jsonLd.url).toBe("https://glautos.ar/autos/volkswagen-taos-2025");
+    expect(jsonLd.url).toBe("https://example.com/autos/volkswagen-taos-2025");
   });
 });

@@ -29,16 +29,16 @@ import {
 const rows = [
   {
     id: "r1",
-    authorName: "Juni",
+    authorName: "Ana",
     rating: 5,
     text: "Excelente",
     reviewedAt: new Date("2026-08-01T12:00:00.000Z"),
-    photoPath: "/reviews/juli-ballester.webp",
+    photoPath: "/reviews/ana-perez.webp",
     sortOrder: 1,
   },
   {
     id: "r2",
-    authorName: "Dario",
+    authorName: "Diego",
     rating: 4,
     text: "Muy bien",
     reviewedAt: new Date("2026-07-01T12:00:00.000Z"),

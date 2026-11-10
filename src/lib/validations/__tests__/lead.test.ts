@@ -6,7 +6,8 @@ import {
   leadSubmitSchema,
 } from "../lead";
 
-const valid = { name: "Ana Pérez", phone: "342 577 7646", consent: true };
+// Neutral fixture values: the shape is what the schema is about, not the digits.
+const valid = { name: "Ana Pérez", phone: "351 555 0123", consent: true };
 
 function errorsFor(payload: unknown) {
   const parsed = leadSubmitSchema.safeParse(payload);
@@ -29,17 +30,17 @@ describe("leadSubmitSchema", () => {
   });
 
   it.each([
-    "342 577 7646",
-    "+54 9 342 577-7646",
-    "(0342) 5777646",
-    "3425777646",
+    "351 555 0123",
+    "+54 9 351 555-0123",
+    "(0351) 5550123",
+    "3515550123",
   ])("accepts the phone format %s", (phone) => {
     expect(leadSubmitSchema.safeParse({ ...valid, phone }).success).toBe(true);
   });
 
   it("rejects a phone with too few digits, however it is punctuated", () => {
     // Six digits is the floor: enough to catch "no tengo" and a lone area code.
-    expect(errorsFor({ ...valid, phone: "342 57" })).toEqual([
+    expect(errorsFor({ ...valid, phone: "351 55" })).toEqual([
       "phone: El teléfono debe tener al menos 6 dígitos",
     ]);
   });

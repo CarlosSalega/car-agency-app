@@ -6,7 +6,7 @@ import { exchangeCodeForTokens, fetchMeliProfile } from "../oauth";
 const config: MeliConfig = {
   clientId: "app-id",
   clientSecret: "app-secret",
-  redirectUri: "https://glautos.ar/cb",
+  redirectUri: "https://example.com/cb",
   encryptionKey: "key",
   authHost: "https://auth.mercadolibre.com.ar",
 };
@@ -56,7 +56,7 @@ describe("exchangeCodeForTokens", () => {
     expect(body).toContain("grant_type=authorization_code");
     expect(body).toContain("code=the-code");
     expect(body).toContain("code_verifier=the-verifier");
-    expect(body).toContain("redirect_uri=https%3A%2F%2Fglautos.ar%2Fcb");
+    expect(body).toContain("redirect_uri=https%3A%2F%2Fexample.com%2Fcb");
   });
 
   it("computes the expiry from expires_in instead of trusting a fixed hour", async () => {

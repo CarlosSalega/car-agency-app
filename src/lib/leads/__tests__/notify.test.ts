@@ -10,7 +10,9 @@ import {
 
 const lead = {
   name: "Ana Pérez",
-  phone: "342 577 7646",
+  // An invented number in the shape the app accepts: area code, space, three
+  // digits, space, four digits. The notification turns it into `wa.me` digits.
+  phone: "351 555 0123",
   email: "ana@ejemplo.com",
   message: "¿Está disponible?",
   carTitle: "Volkswagen Taos 2025",
@@ -40,7 +42,7 @@ function harness(
       sendEmail: send,
       isEmailConfigured: () => options.configured ?? true,
       recipient:
-        "recipient" in options ? options.recipient : "avisos@glautos.ar",
+        "recipient" in options ? options.recipient : "avisos@example.com",
       now: () => new Date("2026-10-31T13:30:00Z"),
     },
   };
@@ -50,9 +52,9 @@ describe("leadNotificationRecipient", () => {
   it("reads the configured inbox", () => {
     expect(
       leadNotificationRecipient({
-        [LEAD_NOTIFICATION_ENV]: "avisos@glautos.ar",
+        [LEAD_NOTIFICATION_ENV]: "avisos@example.com",
       }),
-    ).toBe("avisos@glautos.ar");
+    ).toBe("avisos@example.com");
   });
 
   it("treats a blank value as unconfigured instead of passing it to the provider", () => {
@@ -71,7 +73,7 @@ describe("notifyNewLead", () => {
 
     expect(result).toEqual({ sent: true });
     expect(sent).toHaveLength(1);
-    expect(sent[0].to).toBe("avisos@glautos.ar");
+    expect(sent[0].to).toBe("avisos@example.com");
     expect(sent[0].subject).toContain("Volkswagen Taos 2025");
   });
 
@@ -80,8 +82,8 @@ describe("notifyNewLead", () => {
 
     await notifyNewLead(lead, deps);
 
-    expect(sent[0].html).toContain("https://wa.me/3425777646");
-    expect(sent[0].text).toContain("https://wa.me/3425777646");
+    expect(sent[0].html).toContain("https://wa.me/3515550123");
+    expect(sent[0].text).toContain("https://wa.me/3515550123");
   });
 
   it("links to the public car page and the panel", async () => {

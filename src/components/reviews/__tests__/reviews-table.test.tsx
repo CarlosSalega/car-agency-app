@@ -24,11 +24,11 @@ vi.mock("next/navigation", () => ({
 function buildReview(overrides: Partial<AdminReview> = {}): AdminReview {
   return {
     id: "review-1",
-    authorName: "Norma Soñez",
+    authorName: "Ana Pérez",
     rating: 5,
-    text: "Gracias Facundo por la amabilidad y la atención.",
+    text: "Atención clara y sin vueltas.",
     reviewedAt: new Date("2026-07-01T12:00:00.000Z"),
-    photoPath: "/reviews/norma-sonez.webp",
+    photoPath: "/reviews/ana-perez.webp",
     sortOrder: 1,
     isPublished: true,
     updatedAt: new Date("2026-07-02T12:00:00.000Z"),
@@ -48,15 +48,15 @@ describe("ReviewsTable", () => {
           buildReview(),
           buildReview({
             id: "review-2",
-            authorName: "Dario Ledesma",
+            authorName: "Diego Gómez",
             isPublished: false,
           }),
         ]}
       />,
     );
 
-    const published = screen.getByText("Norma Soñez").closest("tr");
-    const hidden = screen.getByText("Dario Ledesma").closest("tr");
+    const published = screen.getByText("Ana Pérez").closest("tr");
+    const hidden = screen.getByText("Diego Gómez").closest("tr");
 
     expect(published).not.toBeNull();
     expect(
