@@ -108,7 +108,7 @@ describe("saveTokens display fields", () => {
     await saveTokens({
       channel: "MERCADOLIBRE",
       remoteUserId: "123456789",
-      remoteNickname: "GLAUTOS",
+      remoteNickname: "AUTOS DEMO",
       siteId: "MLA",
       accessToken: "APP_USR-access",
       refreshToken: "TG-REFRESH",
@@ -116,9 +116,9 @@ describe("saveTokens display fields", () => {
     });
 
     const args = db.upsert.mock.calls[0][0];
-    expect(args.create.remoteNickname).toBe("GLAUTOS");
+    expect(args.create.remoteNickname).toBe("AUTOS DEMO");
     expect(args.create.siteId).toBe("MLA");
-    expect(args.update.remoteNickname).toBe("GLAUTOS");
+    expect(args.update.remoteNickname).toBe("AUTOS DEMO");
     expect(args.update.siteId).toBe("MLA");
   });
 
@@ -152,7 +152,7 @@ describe("readConnectedAccount", () => {
     db.findFirst.mockResolvedValue({
       id: "account-1",
       remoteUserId: "123456789",
-      remoteNickname: "GLAUTOS",
+      remoteNickname: "AUTOS DEMO",
       siteId: "MLA",
       expiresAt: EXPIRES_AT,
       // Not a sealed payload at all. Returning an account proves the reader
@@ -164,7 +164,7 @@ describe("readConnectedAccount", () => {
     await expect(readConnectedAccount("MERCADOLIBRE")).resolves.toEqual({
       id: "account-1",
       remoteUserId: "123456789",
-      remoteNickname: "GLAUTOS",
+      remoteNickname: "AUTOS DEMO",
       siteId: "MLA",
       expiresAt: EXPIRES_AT,
     });

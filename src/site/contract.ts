@@ -36,7 +36,7 @@ export interface SiteIdentity {
   /** How the dealership describes what it sells, for the `AutoDealer` node. */
   dealerDescription: string;
   contact: {
-    /** E.164 with the leading `+`, e.g. `+5493425777646`. */
+    /** E.164 with the leading `+`, e.g. `+5490000000000`. */
     phoneRaw: string;
     /** The same number as a visitor reads it, with spaces. */
     phoneDisplay: string;
@@ -62,6 +62,15 @@ export interface SiteIdentity {
   social: {
     instagram?: string;
   };
+  /**
+   * Where "Dejá tu reseña" sends a visitor: the review page of the profile this
+   * client actually uses.
+   *
+   * Optional on purpose. A product cannot invent it, and pointing it at a guess
+   * sends visitors to another business's reviews. When it is absent the call to
+   * action does not render at all.
+   */
+  reviewUrl?: string;
   /** Who the copyright line belongs to. */
   copyrightHolder: string;
 }

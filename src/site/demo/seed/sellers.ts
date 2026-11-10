@@ -9,8 +9,8 @@ import type { SeedSeller } from "./types";
  * phone is a zero, so no call or message can reach a person, and the address uses
  * `example.com`, which RFC 2606 reserves for exactly this.
  *
- * The `key` is the identifier `seed/cars.ts` points at; it has no meaning of its
- * own beyond keeping the catalogue attached to this seller.
+ * The `key` is the identifier `cars.ts` in this folder points at; it has no
+ * meaning of its own beyond keeping the catalogue attached to this seller.
  */
 export const seedSellers: SeedSeller[] = [
   {

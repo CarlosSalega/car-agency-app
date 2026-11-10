@@ -1,4 +1,3 @@
-import { LinkTreeCategory } from "@generated/prisma/client";
 import type { SeedLinkTreeLink } from "./types";
 
 /**
@@ -14,7 +13,7 @@ import type { SeedLinkTreeLink } from "./types";
 export const seedLinkTreeLinks: SeedLinkTreeLink[] = [
   {
     id: "telefono",
-    category: LinkTreeCategory.CONTACT,
+    category: "CONTACT",
     label: "Llamanos",
     href: "tel:+5490000000000",
     iconKey: "phone",
@@ -23,7 +22,7 @@ export const seedLinkTreeLinks: SeedLinkTreeLink[] = [
   },
   {
     id: "whatsapp",
-    category: LinkTreeCategory.CONTACT,
+    category: "CONTACT",
     label: "Mensaje de WhatsApp",
     href: "https://api.whatsapp.com/send?phone=5490000000000&text=%C2%BFTe%20podemos%20ayudar%20a%20encontrar%20tu%20auto%3F",
     iconKey: "whatsapp",
@@ -32,7 +31,7 @@ export const seedLinkTreeLinks: SeedLinkTreeLink[] = [
   },
   {
     id: "instagram",
-    category: LinkTreeCategory.SOCIAL,
+    category: "SOCIAL",
     label: "Seguinos en Instagram",
     href: "https://www.instagram.com/",
     iconKey: "instagram",
@@ -41,7 +40,7 @@ export const seedLinkTreeLinks: SeedLinkTreeLink[] = [
   },
   {
     id: "ubicacion",
-    category: LinkTreeCategory.SOCIAL,
+    category: "SOCIAL",
     label: "Ver nuestra ubicación",
     href: "https://www.google.com/maps/search/?api=1&query=Calle+de+Ejemplo+123",
     iconKey: "location",

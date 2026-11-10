@@ -1,8 +1,15 @@
 import { describe, expect, it } from "vitest";
 
-import { seedLinkTreeLinks } from "../link-tree";
-import { seedSellers } from "../sellers";
-import { seedUsers } from "../users";
+import { seedData } from "@/site/seed";
+
+// Read through the seam, so the rules below guard whatever client this
+// deployment seeds -- the demo set in this repository, and the real one in the
+// deployment that replaces `src/site/seed.ts`.
+const {
+  users: seedUsers,
+  sellers: seedSellers,
+  linkTree: seedLinkTreeLinks,
+} = seedData;
 
 /**
  * Guards the shape of the seed data itself.
@@ -13,6 +20,10 @@ import { seedUsers } from "../users";
  * `facundo@Car Agency Appautomotores.com` and a `mailto:` link that could not
  * resolve. Nothing caught it, because a seed is data and data does not fail to
  * compile.
+ *
+ * The assertions moved with the data: the set now lives in the client package,
+ * behind `src/site/seed.ts`, because the product once overwrote a deployment's
+ * catalogue on every sync.
  *
  * The seed no longer carries a link-tree email at all: the domain it pointed at
  * was invented by the same rename, so it was removed instead of guessed.

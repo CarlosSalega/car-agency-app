@@ -1,6 +1,7 @@
 import "dotenv/config";
 import { generateSlugBase } from "@/lib/cars/slug";
 import { prisma } from "@/lib/db";
+import { seedData } from "@/site/seed";
 import {
   buildDeterministicPublicId,
   assertCloudinaryAccessible,
@@ -11,12 +12,10 @@ import {
   uploadLocalImage,
 } from "./seed/images";
 import {
-  imageManifest,
   matchesStagedGroup,
   partitionImageAssets,
   validateImageManifest,
-} from "./seed/image-manifest";
-import { seedCars } from "./seed/cars";
+} from "./seed/image-assets";
 import { buildSeedLeads } from "./seed/leads";
 import {
   DESTRUCTIVE_TABLES,
@@ -24,9 +23,6 @@ import {
   decideSeedAllowed,
   seedRefusalMessage,
 } from "./seed/guard";
-import { seedLinkTreeLinks } from "./seed/link-tree";
-import { seedSellers } from "./seed/sellers";
-import { seedUsers } from "./seed/users";
 import {
   createBrandsAndModels,
   createCar,
@@ -63,6 +59,10 @@ function printImageSummary(summary: ImageSummary): void {
 }
 
 async function main(): Promise<void> {
+  // The data comes from the client package, through `src/site/seed.ts`; the
+  // mechanisms below stay in this folder, because they are the product's.
+  const { cars, users, sellers, linkTree, imageManifest } = seedData;
+
   try {
     console.log("🌱 Iniciando seed...");
     configureCloudinary();
@@ -75,12 +75,12 @@ async function main(): Promise<void> {
     await prisma.$connect();
     await resetDatabase(prisma);
 
-    const admin = await createUser(prisma, seedUsers[0]);
-    await createLinkTreeLinks(prisma, seedLinkTreeLinks);
-    const sellers = new Map<string, string>();
-    for (const seller of seedSellers) {
+    const admin = await createUser(prisma, users[0]);
+    await createLinkTreeLinks(prisma, linkTree);
+    const sellerIds = new Map<string, string>();
+    for (const seller of sellers) {
       const created = await createSeller(prisma, seller, admin.id);
-      sellers.set(seller.key, created.id);
+      sellerIds.set(seller.key, created.id);
     }
 
     const { brandMap, modelMap } = await createBrandsAndModels(
@@ -117,7 +117,7 @@ async function main(): Promise<void> {
     };
     const consumedFiles = new Set<string>();
 
-    for (const car of seedCars) {
+    for (const car of cars) {
       const modelKey = `${car.brand}-${car.model}`;
       const brandId = brandMap[car.brand];
       const modelId = modelMap[modelKey];
@@ -176,7 +176,9 @@ async function main(): Promise<void> {
         {
           brandId,
           modelId,
-          sellerId: car.sellerKey ? (sellers.get(car.sellerKey) ?? null) : null,
+          sellerId: car.sellerKey
+            ? (sellerIds.get(car.sellerKey) ?? null)
+            : null,
           userId: admin.id,
         },
         keys,
@@ -231,10 +233,10 @@ async function main(): Promise<void> {
 
     console.log("🎉 Seed finalizado exitosamente!");
     console.log("=================================");
-    console.log(`   Usuarios:  ${seedUsers.length}`);
+    console.log(`   Usuarios:  ${users.length}`);
     console.log(`   Marcas:    ${summary.brandsCreated}`);
     console.log(`   Modelos:   ${summary.modelsCreated}`);
-    console.log(`   Vehículos: ${summary.carsCreated}/${seedCars.length}`);
+    console.log(`   Vehículos: ${summary.carsCreated}/${cars.length}`);
     console.log(`   Consultas demo: ${summary.leadsCreated}`);
     console.log(`   Imágenes:  ${summary.images.matchedFiles.length} matched`);
     printImageSummary(summary.images);

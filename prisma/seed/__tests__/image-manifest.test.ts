@@ -1,13 +1,17 @@
 import path from "node:path";
 import { describe, expect, it } from "vitest";
+
+import { seedData } from "@/site/seed";
 import {
-  imageManifest,
   matchesStagedGroup,
   partitionImageAssets,
   validateImageManifest,
-} from "../image-manifest";
+} from "../image-assets";
 import { indexLocalImages, matchImagesForCar } from "../images";
-import { seedCars } from "../cars";
+
+// The manifest and the catalogue are the client's data now, so they are read
+// through the seam; the rules that validate them are still the product's.
+const { cars: seedCars, imageManifest } = seedData;
 
 const files = [
   "toyota_corolla_1.webp",
