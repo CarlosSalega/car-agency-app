@@ -6,6 +6,7 @@ import {
   saveTokens,
 } from "@/lib/integrations/channel-accounts";
 import { readMeliConfig } from "@/lib/integrations/mercadolibre/config";
+import { KeyRingError, loadKeyRing } from "@/lib/integrations/token-crypto";
 import {
   MELI_OAUTH_STATE_COOKIE,
   MELI_OAUTH_VERIFIER_COOKIE,
@@ -38,6 +39,24 @@ function back(request: Request, status: string): NextResponse {
   return NextResponse.redirect(
     new URL(`${CONFIG_URL}?status=${status}`, request.url),
   );
+}
+
+/**
+ * `null` when the key ring can be built, or the reason it cannot.
+ *
+ * A bare `KeyRingError` message is a configuration sentence, not a secret: it
+ * names the missing variable and never a token.
+ */
+function keyRingProblem(): string | null {
+  try {
+    loadKeyRing(process.env);
+
+    return null;
+  } catch (error) {
+    if (error instanceof KeyRingError) return error.message;
+
+    throw error;
+  }
 }
 
 export async function GET(request: Request) {
@@ -102,17 +121,40 @@ export async function GET(request: Request) {
   // Relinking replaces the previous account, the rule the old store enforced by
   // deleting the other rows: the admin card reads one connected row per channel,
   // and with two it would show whichever the query happened to return.
+  //
+  // The key ring is checked **before** the old account is cleared. `saveTokens`
+  // seals both tokens, so a missing or malformed `TOKEN_ENCRYPTION_KEYS` used to
+  // unlink a working account and only then fail: the admin lost the connection
+  // and got a 500 to explain it. A bad environment deserves a sentence.
+  const keyProblem = keyRingProblem();
+
+  if (keyProblem !== null) {
+    console.warn("[MELI] Token encryption is not configured:", keyProblem);
+    return back(request, "key_ring_error");
+  }
+
   await clearChannelAccounts("MERCADOLIBRE");
 
-  await saveTokens({
-    channel: "MERCADOLIBRE",
-    remoteUserId: profile.meliUserId,
-    remoteNickname: profile.nickname,
-    siteId: profile.siteId,
-    accessToken: exchanged.tokens.accessToken,
-    refreshToken: exchanged.tokens.refreshToken,
-    expiresAt: exchanged.tokens.expiresAt,
-  });
+  try {
+    await saveTokens({
+      channel: "MERCADOLIBRE",
+      remoteUserId: profile.meliUserId,
+      remoteNickname: profile.nickname,
+      siteId: profile.siteId,
+      accessToken: exchanged.tokens.accessToken,
+      refreshToken: exchanged.tokens.refreshToken,
+      expiresAt: exchanged.tokens.expiresAt,
+    });
+  } catch (error) {
+    // `loadKeyRing` is read again inside `saveTokens`, so the same failure is
+    // still possible here. It is reported with its own status instead of a 500.
+    if (error instanceof KeyRingError) {
+      console.warn("[MELI] Token encryption is not configured:", error.message);
+      return back(request, "key_ring_error");
+    }
+
+    throw error;
+  }
 
   const response = back(request, "linked");
   // The round trip is over; these must not linger.

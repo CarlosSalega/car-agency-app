@@ -241,6 +241,14 @@ describe("createImageUrlResolver", () => {
     );
   });
 
+  it("builds the marketplace variant a publication ingests", () => {
+    const resolver = createImageUrlResolver({ base, cloudName: "demo" });
+
+    expect(resolver.resolve("cars/abc", "marketplace")).toBe(
+      "https://res.cloudinary.com/demo/image/upload/w_1200,h_1200,c_limit,f_jpg,q_auto/cars/abc",
+    );
+  });
+
   it("keeps the transform-layer default unchanged", () => {
     const resolver = createImageUrlResolver({ base, cloudName: "demo" });
 

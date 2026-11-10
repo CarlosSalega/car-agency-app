@@ -566,3 +566,25 @@ export async function drain(options: DrainOptions): Promise<DrainSummary> {
     outcomes,
   };
 }
+
+/**
+ * The drain pass, as lines a person reads.
+ *
+ * In the engine instead of a script so the two callers — `drain:jobs` and
+ * `publications drain` — cannot describe the same pass differently, and so the
+ * format is pinned by the type it prints.
+ */
+export function formatDrainSummary(summary: DrainSummary): string {
+  const lines = [
+    `Claimed ${summary.claimed} job(s): ${summary.succeeded} succeeded, ${summary.rateLimited} rate-limited, ${summary.retried} retried, ${summary.dead} dead, ${summary.failed} failed.`,
+  ];
+
+  for (const outcome of summary.outcomes) {
+    const suffix = outcome.error === null ? "" : `  ${outcome.error}`;
+    lines.push(
+      `  ${outcome.jobId}  ${outcome.kind}  ${outcome.outcome}  attempts=${outcome.attempts}${suffix}`,
+    );
+  }
+
+  return lines.join("\n");
+}

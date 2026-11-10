@@ -270,3 +270,39 @@ describe("the token", () => {
     },
   );
 });
+
+describe("a write", () => {
+  it("posts the payload as JSON and reads the answer", async () => {
+    const { impl, calls } = fakeFetch(() =>
+      fakeResponse({ body: { id: "MLA100", status: "active" } }),
+    );
+
+    const answer = await client(impl).post<{ id: string }>("/items", {
+      title: "Volkswagen Gol",
+    });
+
+    expect(answer).toEqual({ id: "MLA100", status: "active" });
+
+    const [call] = calls;
+
+    expect(call.init.method).toBe("POST");
+    expect(call.init.body).toBe(JSON.stringify({ title: "Volkswagen Gol" }));
+    expect(call.init.headers).toMatchObject({
+      "content-type": "application/json",
+    });
+  });
+
+  it("applies the same 429 contract to a PUT as to a GET", async () => {
+    const { impl, calls } = fakeFetch(() =>
+      fakeResponse({ status: 429, headers: { "retry-after": "60" } }),
+    );
+
+    const error = (await client(impl)
+      .put("/items/MLA100", { status: "paused" })
+      .catch((thrown: unknown) => thrown)) as RateLimitedError;
+
+    expect(error).toBeInstanceOf(RateLimitedError);
+    expect(error.retryAfterMs).toBe(60_000);
+    expect(calls[0].init.method).toBe("PUT");
+  });
+});

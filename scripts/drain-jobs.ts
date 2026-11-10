@@ -4,6 +4,7 @@ import {
   DEFAULT_DRAIN_LIMIT,
   DEFAULT_STALE_AFTER_MS,
   drain,
+  formatDrainSummary,
   listClaimable,
   listStale,
   recoverStale,
@@ -42,9 +43,9 @@ Options:
 A lock older than ${DEFAULT_STALE_AFTER_MS / 60_000} minutes is stale: a drainer died holding it, so the
 pass returns the job to the queue and counts that attempt.
 
-No handlers are registered yet. Until T5–T8 register the MercadoLibre ones, a
-job whose kind has no handler is marked FAILED with a message saying so, and
-enqueueing the same key again revives it.
+The MercadoLibre handlers are registered here (publish, update, pause, close,
+sync). A job whose kind has no handler is marked FAILED with a message saying so,
+and enqueueing the same key again revives it.
 
 Exit codes: 0 on success, 1 when the pass failed or left a job DEAD/FAILED,
 2 on a usage error.
@@ -150,12 +151,16 @@ async function main(argv: readonly string[]): Promise<number> {
 /**
  * The handlers this drainer knows.
  *
- * Empty until T5–T8 land the MercadoLibre operations. It is a `Map` and not an
- * object so a row whose `kind` happens to be `constructor` cannot resolve to
- * something inherited.
+ * Built lazily: the runtime reads the account and builds a client per job, so
+ * `--help` and a dry run with no environment still work. The registry is a `Map`
+ * and not an object so a row whose `kind` happens to be `constructor` cannot
+ * resolve to something inherited.
  */
-function loadRegistry(): JobRegistry {
-  return new Map();
+async function loadRegistry(): Promise<JobRegistry> {
+  const { createMeliRuntime } =
+    await import("@/lib/integrations/mercadolibre/publications/runtime");
+
+  return createMeliRuntime().registry;
 }
 
 async function run(options: Options): Promise<number> {
@@ -176,7 +181,7 @@ async function run(options: Options): Promise<number> {
 
   try {
     const now = new Date();
-    const registry = loadRegistry();
+    const registry = await loadRegistry();
     const stale = await listStale(store, { now });
 
     if (!options.confirm) {
@@ -245,31 +250,8 @@ function printDryRun(
   process.stdout.write(`${lines.join("\n")}\n`);
 }
 
-function printSummary(summary: {
-  readonly claimed: number;
-  readonly succeeded: number;
-  readonly rateLimited: number;
-  readonly retried: number;
-  readonly dead: number;
-  readonly failed: number;
-  readonly outcomes: readonly {
-    readonly jobId: string;
-    readonly kind: string;
-    readonly outcome: string;
-    readonly attempts: number;
-    readonly error: string | null;
-  }[];
-}): void {
-  process.stdout.write(
-    `Claimed ${summary.claimed} job(s): ${summary.succeeded} succeeded, ${summary.rateLimited} rate-limited, ${summary.retried} retried, ${summary.dead} dead, ${summary.failed} failed.\n`,
-  );
-
-  for (const outcome of summary.outcomes) {
-    const suffix = outcome.error === null ? "" : `  ${outcome.error}`;
-    process.stdout.write(
-      `  ${outcome.jobId}  ${outcome.kind}  ${outcome.outcome}  attempts=${outcome.attempts}${suffix}\n`,
-    );
-  }
+function printSummary(summary: Parameters<typeof formatDrainSummary>[0]): void {
+  process.stdout.write(`${formatDrainSummary(summary)}\n`);
 
   if (summary.dead + summary.failed > 0) {
     process.stderr.write(

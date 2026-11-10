@@ -9,6 +9,7 @@ export const DEFAULT_VARIANTS = {
   thumbnail: "w_300,h_225,c_fill,f_auto,q_auto,dpr_auto",
   card: "w_400,h_300,c_fill,f_auto,q_auto,dpr_auto",
   detail: "w_800,h_600,c_fill,f_auto,q_auto,dpr_auto",
+  marketplace: "w_1200,h_1200,c_limit,f_jpg,q_auto",
   fullscreen: "w_2400,h_1800,c_limit,f_auto,q_auto,dpr_auto",
 } as const;
 
