@@ -25,7 +25,6 @@ import {
   seedRefusalMessage,
 } from "./seed/guard";
 import { seedLinkTreeLinks } from "./seed/link-tree";
-import { seedReviews } from "./seed/reviews";
 import { seedSellers } from "./seed/sellers";
 import { seedUsers } from "./seed/users";
 import {
@@ -33,7 +32,6 @@ import {
   createCar,
   createLeads,
   createLinkTreeLinks,
-  createReviews,
   createSeller,
   createUser,
   resetDatabase,
@@ -108,7 +106,6 @@ async function main(): Promise<void> {
       brandsCreated: Object.keys(brandMap).length,
       modelsCreated: Object.keys(modelMap).length,
       leadsCreated: 0,
-      reviewsCreated: 0,
       images: {
         matchedFiles: [],
         stagedAssets: imageManifest.stagedAssets,
@@ -213,10 +210,10 @@ async function main(): Promise<void> {
     await createLeads(prisma, demoLeads);
     summary.leadsCreated = demoLeads.length;
 
-    // Nobody's reviews, no dependency on the inventory: seeded before the cars
-    // are even relevant, and the landing renders them straight from here.
-    await createReviews(prisma, seedReviews);
-    summary.reviewsCreated = seedReviews.length;
+    // No reviews are seeded: a testimonial is a customer's words, so it belongs
+    // to the deployment that collected it and never to the product. The `Review`
+    // rows arrive through the panel, and the landing renders nothing until one
+    // is published.
 
     await prisma.log.create({
       data: {
@@ -225,7 +222,6 @@ async function main(): Promise<void> {
         metadata: JSON.stringify({
           carsCreated: summary.carsCreated,
           leadsCreated: summary.leadsCreated,
-          reviewsCreated: summary.reviewsCreated,
           brandsCreated: summary.brandsCreated,
           modelsCreated: summary.modelsCreated,
         }),
@@ -240,7 +236,6 @@ async function main(): Promise<void> {
     console.log(`   Modelos:   ${summary.modelsCreated}`);
     console.log(`   Vehículos: ${summary.carsCreated}/${seedCars.length}`);
     console.log(`   Consultas demo: ${summary.leadsCreated}`);
-    console.log(`   Reseñas:   ${summary.reviewsCreated}`);
     console.log(`   Imágenes:  ${summary.images.matchedFiles.length} matched`);
     printImageSummary(summary.images);
     console.log("=================================");

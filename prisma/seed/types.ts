@@ -107,25 +107,11 @@ export interface ImageSummary {
   placeholderCars: string[];
 }
 
-export interface SeedReview {
-  authorName: string;
-  rating: number;
-  /** Verbatim customer text; the only edit allowed is the current brand name. */
-  text: string;
-  /** Best known date. See the note in `seed/reviews.ts`. */
-  reviewedAt: Date;
-  photoPath: string | null;
-  sortOrder: number;
-  isPublished: boolean;
-}
-
 export interface SeedSummary {
   carsCreated: number;
   brandsCreated: number;
   modelsCreated: number;
   /** Demo inquiries, only ever written to a seeded development database. */
   leadsCreated: number;
-  /** Customer testimonials, the ones the landing renders. */
-  reviewsCreated: number;
   images: ImageSummary;
 }

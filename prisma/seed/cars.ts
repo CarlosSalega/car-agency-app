@@ -32,7 +32,7 @@ export const seedCars: SeedCar[] = [
     price: 22000000,
     currency: Currency.ARS,
     description,
-    sellerKey: "facundo",
+    sellerKey: "vendedor-demo",
     status: CarStatus.AVAILABLE,
   },
   {
@@ -50,7 +50,7 @@ export const seedCars: SeedCar[] = [
     price: 19000000,
     currency: Currency.ARS,
     description,
-    sellerKey: "facundo",
+    sellerKey: "vendedor-demo",
     status: CarStatus.AVAILABLE,
   },
   {
@@ -68,7 +68,7 @@ export const seedCars: SeedCar[] = [
     price: 15000000,
     currency: Currency.ARS,
     description,
-    sellerKey: "facundo",
+    sellerKey: "vendedor-demo",
     status: CarStatus.AVAILABLE,
   },
   {
@@ -86,7 +86,7 @@ export const seedCars: SeedCar[] = [
     price: 15000000,
     currency: Currency.ARS,
     description,
-    sellerKey: "facundo",
+    sellerKey: "vendedor-demo",
     status: CarStatus.AVAILABLE,
   },
   {
@@ -104,7 +104,7 @@ export const seedCars: SeedCar[] = [
     price: 10000000,
     currency: Currency.ARS,
     description,
-    sellerKey: "facundo",
+    sellerKey: "vendedor-demo",
     status: CarStatus.AVAILABLE,
   },
   {
@@ -122,7 +122,7 @@ export const seedCars: SeedCar[] = [
     price: 18500000,
     currency: Currency.ARS,
     description,
-    sellerKey: "facundo",
+    sellerKey: "vendedor-demo",
     status: CarStatus.AVAILABLE,
   },
   {
@@ -140,7 +140,7 @@ export const seedCars: SeedCar[] = [
     price: 24500000,
     currency: Currency.ARS,
     description,
-    sellerKey: "facundo",
+    sellerKey: "vendedor-demo",
     status: CarStatus.AVAILABLE,
   },
   {
@@ -158,7 +158,7 @@ export const seedCars: SeedCar[] = [
     price: 39900000,
     currency: Currency.ARS,
     description: suvDescription,
-    sellerKey: "facundo",
+    sellerKey: "vendedor-demo",
     status: CarStatus.AVAILABLE,
   },
   {
@@ -176,7 +176,7 @@ export const seedCars: SeedCar[] = [
     price: 21500000,
     currency: Currency.ARS,
     description,
-    sellerKey: "facundo",
+    sellerKey: "vendedor-demo",
     status: CarStatus.AVAILABLE,
   },
   {
@@ -194,7 +194,7 @@ export const seedCars: SeedCar[] = [
     price: 42000000,
     currency: Currency.ARS,
     description: pickupDescription,
-    sellerKey: "facundo",
+    sellerKey: "vendedor-demo",
     status: CarStatus.AVAILABLE,
   },
   {
@@ -212,7 +212,7 @@ export const seedCars: SeedCar[] = [
     price: 38500000,
     currency: Currency.ARS,
     description: pickupDescription,
-    sellerKey: "facundo",
+    sellerKey: "vendedor-demo",
     status: CarStatus.AVAILABLE,
   },
   {
@@ -230,7 +230,7 @@ export const seedCars: SeedCar[] = [
     price: 14500000,
     currency: Currency.ARS,
     description,
-    sellerKey: "facundo",
+    sellerKey: "vendedor-demo",
     status: CarStatus.AVAILABLE,
   },
   {
@@ -248,7 +248,7 @@ export const seedCars: SeedCar[] = [
     price: 16500000,
     currency: Currency.ARS,
     description,
-    sellerKey: "facundo",
+    sellerKey: "vendedor-demo",
     status: CarStatus.AVAILABLE,
   },
   {
@@ -266,7 +266,7 @@ export const seedCars: SeedCar[] = [
     price: 36500000,
     currency: Currency.ARS,
     description: suvDescription,
-    sellerKey: "facundo",
+    sellerKey: "vendedor-demo",
     status: CarStatus.AVAILABLE,
   },
   {
@@ -284,7 +284,7 @@ export const seedCars: SeedCar[] = [
     price: 52000000,
     currency: Currency.ARS,
     description: pickupDescription,
-    sellerKey: "facundo",
+    sellerKey: "vendedor-demo",
     status: CarStatus.AVAILABLE,
   },
   {
@@ -302,7 +302,7 @@ export const seedCars: SeedCar[] = [
     price: 20500000,
     currency: Currency.ARS,
     description,
-    sellerKey: "facundo",
+    sellerKey: "vendedor-demo",
     status: CarStatus.AVAILABLE,
   },
   {
@@ -320,7 +320,7 @@ export const seedCars: SeedCar[] = [
     price: 62000000,
     currency: Currency.ARS,
     description: pickupDescription,
-    sellerKey: "facundo",
+    sellerKey: "vendedor-demo",
     status: CarStatus.AVAILABLE,
   },
   {
@@ -338,7 +338,7 @@ export const seedCars: SeedCar[] = [
     price: 39500000,
     currency: Currency.ARS,
     description: suvDescription,
-    sellerKey: "facundo",
+    sellerKey: "vendedor-demo",
     status: CarStatus.AVAILABLE,
   },
 ];

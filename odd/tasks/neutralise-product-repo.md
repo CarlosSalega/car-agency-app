@@ -36,7 +36,7 @@ pass, and which carries no data belonging to a dealership or to its customers.
   `public/reviews/` holds their portraits.
 - **Dealership photography**: `public/logo*.png`, `hero.webp`, `preview.webp`, `favicon.ico`,
   `apple-touch-icon.png`, and 62 files under `public/autos/`.
-- Seed catalogue: `prisma/seed/cars.ts` with 16 units, `link-tree.ts` with the dealership's phone,
+- Seed catalogue: `prisma/seed/cars.ts` with 18 units, `link-tree.ts` with the dealership's phone,
   WhatsApp and maps links, `users.ts` with `admin@glautos.ar`.
 - Tests: `brand-leak.test.ts` holds the seven client markers as a literal list; `package.test.ts`
   imports `@/site/glautos` directly; several unrelated tests use `glautos.ar` and the dealership phone as
@@ -91,3 +91,28 @@ files returns only the historical `odd/` records that N7 decided to keep.
 - **L5** (warning, raised before writing any task) — the sync to `glautos` is a whole-tree replacement.
   Once this repo is neutralised, running it again would strip the deployment of its client package, its
   seed and its branded assets. N3 and N8 exist because of that; **do not sync again until N8 exists.**
+
+- **L6** (N4 done) — the people left the seed and `public/`. Deleted `prisma/seed/reviews.ts`, the
+  re-seed-only `prisma/seed-reviews.ts` and its script entry, the six portraits in `public/reviews/`, and
+  the review-seeding step; the seller is now `vendedor-demo` with an all-zero phone and an address at
+  `example.com`, the admin seeds as `admin@example.com`, and the link tree points at the invented demo
+  identity. The 18 vehicles and their photography are untouched.
+
+  Three things surfaced that the inventory missed, all of them leaks:
+  1. `prisma/schema.prisma` carried a doc comment naming a real reviewer in an example path.
+  2. `src/app/(landing)/components/reviews/review-google.ts` ships `GOOGLE_OVERALL_RATING = 5.0` and
+     `GOOGLE_TOTAL_REVIEWS = 6` with a Google search URL for the dealership's opinions. The section
+     renders nothing while no reviews are published, but the moment a deployment publishes one, the
+     badge will claim 5.0 from six reviews regardless of the rows. That is shipped copy, so it belongs
+     to N6/N7, not to the seed.
+  3. `resetDatabase` still empties the `review` table while nothing re-creates it: running `db:seed`
+     against a database that has real reviews deletes them permanently. The deployment is safe because
+     its own seed re-creates them, but the product's seed now has a destructive edge worth knowing.
+
+  Correction to the inventory: the catalogue is **18** vehicles, not 16.
+
+  Reorder, recorded here because it reverses the task numbering: **N4 before N3**, and **N6 before N3**.
+  N3 moves the seed behind the client seam, but the real seed data cannot move into `src/site/glautos/`
+  while that package is still part of the product — and it must not stay there. So the order is: remove
+  the people (N4, done), remove the client package and re-point the tests (N6), then move the seed
+  behind the seam (N3), then the assets (N5), then the sync (N8).
