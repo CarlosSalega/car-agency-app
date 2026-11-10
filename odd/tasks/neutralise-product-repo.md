@@ -53,7 +53,7 @@ pass, and which carries no data belonging to a dealership or to its customers.
 | N4  | S3     | Remove the people: `public/reviews/`, the verbatim testimonials, and the named seller with their contact details. The vehicles and their photography stay                                                                                                                                                                                                                     | inline | —      |
 | N5  | S1, S3 | Branded assets: replace the logo, hero, preview, favicon and apple icon with neutral ones owned by the product. The 62 vehicle photos stay, and the deployment keeps its own set                                                                                                                                                                                              | inline | —      |
 | N6  | S5     | Tests: `brand-leak.test.ts` reads its markers from the active client instead of a literal list, and keeps the positive control; `package.test.ts` points at the demo package; the fixtures that use `glautos.ar` and the dealership phone become neutral                                                                                                                      | inline | —      |
-| N7  | S5     | Prose: `design/` and `odd/` records that name the client. Decide per file whether it stays (historical record, still private) or is scrubbed                                                                                                                                                                                                                                  | inline | —      |
+| N7  | S5     | `design/` scrubbed: the client's name, phone, address, social handle, domain and brand hex replaced with the demo's, including the contrast figure the design system quoted. The `odd/` records stay, because S5 exempts the historical record and they are the reasoning behind every decision here                                                                          | done   | -      |
 | N8  | —      | **done** — The sync must preserve the deployment surface: a documented command that copies the product tree over `glautos` while restoring `src/site/glautos/`, `public/` client assets, the deployment's seed, and its environment. Without this, the next sync destroys the deployment                                                                                      | inline | —      |
 
 Exit criteria: `pnpm test` green with `SITE_SLUG` unset in the environment (the suite sets it), the build
@@ -159,3 +159,18 @@ files returns only the historical `odd/` records that N7 decided to keep.
      exception list of "product assets inside the deployment's folder", which is how the deployment
      loses its photos on the day somebody adds the wrong name to it. Deciding otherwise is a product
      decision, not a sync one, and it is recorded here instead of being implemented quietly.
+
+- **L8** (N7 done) — `design/` was the last place holding the client. Three artboards and the design system
+  carried its name 24 times, its phone, its street, its Instagram handle and its domain; the artboards,
+  `design/system.html` and `design/loaders/` also carried its brand red `#fe0000` in ten places, one of
+  them with the contrast figure measured for it. All of it now reads as the demo: `Autos Demo`, the
+  all-zero phone, `Calle de Ejemplo 123`, the Instagram root, `example.com`, and the demo's `#6ea8fe` with
+  the 7.76:1 the product actually measures.
+
+  The `odd/` records were left alone on purpose. S5 exempts the historical record, and scrubbing it would
+  destroy the reasoning behind every decision in this repository — including this document, which cannot
+  explain why the client had to leave without naming it.
+
+  Final state: `grep -riE "glautos|3425777646|General López|fe0000"` over `src/`, `prisma/`, `public/`,
+  `design/`, the config files, `AGENTS.md` and `README.md` returns nothing. The only places the client
+  still appears are the four `odd/` records.

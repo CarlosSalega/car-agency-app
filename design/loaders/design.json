@@ -1,6 +1,6 @@
 {
   "title": "Loaders cuadrados",
-  "brief": "Cuatro reemplazos para el círculo del loading global (Loader2 + anillo ping a pantalla completa). Radio 0, línea de 1px, marca #fe0000. El cuarto no es un loader sino el esqueleto de la página.",
+  "brief": "Cuatro reemplazos para el círculo del loading global (Loader2 + anillo ping a pantalla completa). Radio 0, línea de 1px, marca #6ea8fe. El cuarto no es un loader sino el esqueleto de la página.",
   "artboards": [
     {
       "file": "01-cuadrados.html",

@@ -1,4 +1,4 @@
-# Design system — GL Autos
+# Design system — Autos Demo
 
 Capturado de las fuentes del proyecto el **2026-11-02**, en `feat/landing-redesign`.
 Solo se registran valores que existen en el código; lo que no está acá no es un token del
@@ -6,11 +6,11 @@ proyecto.
 
 **Fuentes leídas**
 
-| Fuente                       | Qué aporta                                                      |
-| ---------------------------- | --------------------------------------------------------------- |
-| `src/app/globals.css`        | rampa neutra, semánticos, tipografías, radios, sombras, spacing |
-| `src/site/glautos/theme.css` | los dos tokens de identidad (`--brand`, `--brand-foreground`)   |
-| `src/app/layout.tsx`         | las familias reales cargadas por `next/font`                    |
+| Fuente                    | Qué aporta                                                      |
+| ------------------------- | --------------------------------------------------------------- |
+| `src/app/globals.css`     | rampa neutra, semánticos, tipografías, radios, sombras, spacing |
+| `src/site/demo/theme.css` | los dos tokens de identidad (`--brand`, `--brand-foreground`)   |
+| `src/app/layout.tsx`      | las familias reales cargadas por `next/font`                    |
 
 ---
 
@@ -38,13 +38,13 @@ proyecto.
 
 ### Identidad y acción
 
-| Token                  | Valor     | Uso                                                    | Fuente                          |
-| ---------------------- | --------- | ------------------------------------------------------ | ------------------------------- |
-| `--brand`              | `#fe0000` | color de identidad: wordmark, indicador activo, acento | `src/site/glautos/theme.css:16` |
-| `--brand-foreground`   | `#000000` | texto sobre `--brand`                                  | `src/site/glautos/theme.css:17` |
-| `--primary`            | `#f5f5f5` | la acción: botón principal                             | `globals.css:104`               |
-| `--primary-foreground` | `#121212` | texto sobre `--primary`                                | `globals.css:105`               |
-| `--ring`               | `#fe0000` | anillo de foco                                         | `globals.css:115`               |
+| Token                  | Valor     | Uso                                                    | Fuente                       |
+| ---------------------- | --------- | ------------------------------------------------------ | ---------------------------- |
+| `--brand`              | `#6ea8fe` | color de identidad: wordmark, indicador activo, acento | `src/site/demo/theme.css:16` |
+| `--brand-foreground`   | `#000000` | texto sobre `--brand`                                  | `src/site/demo/theme.css:17` |
+| `--primary`            | `#f5f5f5` | la acción: botón principal                             | `globals.css:104`            |
+| `--primary-foreground` | `#121212` | texto sobre `--primary`                                | `globals.css:105`            |
+| `--ring`               | `#6ea8fe` | anillo de foco                                         | `globals.css:115`            |
 
 ### Líneas
 
@@ -66,9 +66,9 @@ proyecto.
 
 - `#f5f5f5` sobre `#121212` → **17.2:1**
 - `#a3a3a3` sobre `#121212` → **7.6:1**
-- `#fe0000` sobre `#121212` → **4.65:1** (AA para texto grande y UI; **no** para texto chico)
-- `#000000` sobre `#fe0000` → **5.21:1**
-- `#fe0000` sobre `#f5f5f5` → **4.03:1** (falla AA: por eso el rojo nunca se usa como
+- `#6ea8fe` sobre `#121212` → **4.65:1** (AA para texto grande y UI; **no** para texto chico)
+- `#000000` sobre `#6ea8fe` → **5.21:1**
+- `#6ea8fe` sobre `#f5f5f5` → **4.03:1** (falla AA: por eso el rojo nunca se usa como
   texto sobre superficie clara)
 
 ## Tipografía
@@ -113,6 +113,6 @@ escala: 4 · 8 · 12 · 16 · 24 · 32 · 48 · 64 · 96 · 128.
 | ---------------- | -------------------------------------------------------------------------------------------- | ----------------------------------------------- |
 | Botón primario   | `bg-primary` + `text-primary-foreground`, alto 56px, texto bold uppercase con tracking ancho | `(landing)/components/Reviews.tsx:186`          |
 | Tarjeta          | `bg-card` + `border-border` + `rounded-lg`                                                   | `(landing)/components/Reviews.tsx:150`          |
-| Foco             | anillo `--ring` (`#fe0000`) con `focus-visible`                                              | `globals.css:115`                               |
+| Foco             | anillo `--ring` (`#6ea8fe`) con `focus-visible`                                              | `globals.css:115`                               |
 | Select / trigger | Base UI con `items` obligatorio para etiquetar el valor                                      | `src/components/__tests__/select-items.test.ts` |
 | Badge de estado  | variantes `default`, `secondary`, `destructive`, `outline`                                   | `src/components/ui/badge.tsx`                   |
