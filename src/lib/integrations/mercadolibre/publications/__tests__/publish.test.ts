@@ -37,8 +37,8 @@ describe("publish", () => {
       price: 12_500_000,
       currencyId: "ARS",
       pictureUrls: [
-        "https://cdn.example.com/w_800,h_600/cars/gol-front.jpg",
-        "https://cdn.example.com/w_800,h_600/cars/gol-back.jpg",
+        "https://cdn.example.com/w_1200,h_1200/cars/gol-front.jpg",
+        "https://cdn.example.com/w_1200,h_1200/cars/gol-back.jpg",
       ],
       attributes: [
         { id: "BRAND", value_name: "Volkswagen" },
@@ -48,10 +48,10 @@ describe("publish", () => {
       ],
     });
 
-    // `detail` is the only variant: the marketplace 1200×1200 is T7.
+    // The marketplace variant is what a publication ingests: no crop, JPG, 1200×1200.
     expect(harness.resolveImageUrl.mock.calls).toEqual([
-      ["cars/gol-front", "detail"],
-      ["cars/gol-back", "detail"],
+      ["cars/gol-front", "marketplace"],
+      ["cars/gol-back", "marketplace"],
     ]);
 
     expect(harness.publicationStore.updates.map((call) => call.patch)).toEqual([

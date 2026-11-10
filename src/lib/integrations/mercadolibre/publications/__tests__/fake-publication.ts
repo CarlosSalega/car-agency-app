@@ -159,7 +159,7 @@ export interface HarnessOptions {
   readonly item?: Partial<MeliItem>;
   readonly requiredAttributes?: readonly CategoryAttribute[];
   readonly prediction?: CategoryPrediction | null;
-  readonly imageUrl?: (key: string, variant: "detail") => string;
+  readonly imageUrl?: (key: string, variant: "marketplace") => string;
 }
 
 export interface TestHarness {
@@ -176,7 +176,9 @@ export interface TestHarness {
       PublicationCatalog["getRequiredAttributes"]
     >;
   };
-  readonly resolveImageUrl: Mock<(key: string, variant: "detail") => string>;
+  readonly resolveImageUrl: Mock<
+    (key: string, variant: "marketplace") => string
+  >;
 }
 
 const DEFAULT_ATTRIBUTES: readonly CategoryAttribute[] = [
@@ -228,9 +230,11 @@ export function createHarness(options: HarnessOptions = {}): TestHarness {
     ),
   };
 
-  const resolveImageUrl = vi.fn<(key: string, variant: "detail") => string>(
+  const resolveImageUrl = vi.fn<
+    (key: string, variant: "marketplace") => string
+  >(
     options.imageUrl ??
-      ((key) => `https://cdn.example.com/w_800,h_600/${key}.jpg`),
+      ((key) => `https://cdn.example.com/w_1200,h_1200/${key}.jpg`),
   );
 
   return {

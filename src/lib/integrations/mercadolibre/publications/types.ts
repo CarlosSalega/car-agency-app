@@ -141,7 +141,7 @@ export interface PublicationCatalog {
  * 1920 px maximum. The 1200×1200 `marketplace` variant is T7 and deliberately
  * not added here.
  */
-export type PublicationImageVariant = "detail";
+export type PublicationImageVariant = "marketplace";
 
 /** The marketplace surface of one account, resolved lazily per publication. */
 export interface PublicationChannel {

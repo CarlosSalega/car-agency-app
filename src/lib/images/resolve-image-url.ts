@@ -3,12 +3,17 @@ import { createImageUrlResolver } from "@/modules/image-uploads";
 import { FALLBACK_IMAGE } from "@/lib/constants";
 
 /**
- * The four sizes the app renders. The transform strings themselves are the
- * module's `DEFAULT_VARIANTS` — they were this file's data before the
- * extraction and are byte-identical, so every URL this app has ever emitted
- * stays valid.
+ * The five sizes the app renders, including the one a marketplace ingests.
+ * The transform strings themselves are the module's `DEFAULT_VARIANTS` — they
+ * were this file's data before the extraction and are byte-identical, so every
+ * URL this app has ever emitted stays valid.
  */
-type ImageVariant = "thumbnail" | "card" | "detail" | "fullscreen";
+type ImageVariant =
+  | "thumbnail"
+  | "card"
+  | "detail"
+  | "fullscreen"
+  | "marketplace";
 
 /**
  * The resolver is built once, from configuration that is constant for the

@@ -82,7 +82,7 @@ export async function publishPublication(
   // `detail` is 800×600: above ML's 500 px minimum, inside its 1920 px maximum.
   // The 1200×1200 marketplace variant is T7 and does not exist yet.
   const pictureUrls = publication.car.images
-    .map((key) => deps.resolveImageUrl(key, "detail"))
+    .map((key) => deps.resolveImageUrl(key, "marketplace"))
     .filter((url) => url.trim() !== "");
 
   if (pictureUrls.length === 0) {
