@@ -6,7 +6,7 @@ must move out of the source code before agency #2.
 
 Two different deadlines matter and they are not the same date:
 
-- **Before handing over to GL Autos:** Phase 0 + Phase 1. Without a guarded seed,
+- **Before handing over to [client]:** Phase 0 + Phase 1. Without a guarded seed,
   backups and leads, the delivery is a demo with a monthly invoice.
 - **Before selling to agency #2:** T6 (brand config) + T20 (deployment runbook).
   Selling the same codebase twice by hand-editing strings is how a product becomes
@@ -51,7 +51,7 @@ reviews that exist and can be verified, or Google treats it as spam. Either wire
 real source (T4.1) or delete the block.
 
 T0.4 — Real domain and a verified sending domain. **M**
-`glautos.ar` pointed at the deployment, `BETTER_AUTH_URL` set to the real origin
+`[client].ar` pointed at the deployment, `BETTER_AUTH_URL` set to the real origin
 (otherwise sign-in returns 403), `NEXT_PUBLIC_SITE_URL` updated once DNS resolves,
 and Resend's sending domain verified. Acceptance: password reset received end to end
 from a fresh browser.
@@ -66,7 +66,7 @@ One `dealer` config (name, legal name, domain, phone, WhatsApp, address, hours,
 socials, logo paths) as the single source, consumed by `metadata.ts`, the JSON-LD, the
 footer, the contact defaults, the seed and the linktree. The page-level
 titles/descriptions stay but must interpolate the config, never the literal
-"GL Autos". Acceptance: a deploy for a second agency needs zero source edits outside
+"[client]". Acceptance: a deploy for a second agency needs zero source edits outside
 the config and `public/`.
 
 T0.7 — Rate limit the public surface. **S**
@@ -240,4 +240,4 @@ must be an administrator, vehicles need a contracted package and photos).
   before a second agency.
 - Next that needs the owner: T0.4 (DNS, `BETTER_AUTH_URL`, sending domain) and T0.5
   (privacy text and legal review). T0.2 is deferred until production exists.
-- T0.6 (brand config) before any second agency, not before GL Autos.
+- T0.6 (brand config) before any second agency, not before [client].

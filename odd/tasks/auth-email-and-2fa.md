@@ -141,7 +141,7 @@ email as a second factor (TOTP only), and any change to the car/seller domain.
 
 1. **Sender address — RESOLVED.** Answered `onboarding@resend.dev`. Real
    delivery is therefore limited to the Resend account owner's inbox
-   (`carlosalfredosalegas@gmail.com` per Resend's own rejection message), which
+   (`[maintainer-email]` per Resend's own rejection message), which
    is enough to exercise the flow and not enough for real users. A verified
    domain plus a `RESEND_FROM_EMAIL` change is the only step left for
    production. No code change needed.
@@ -215,7 +215,7 @@ The one real send in T7 is a manual verification step, not part of the suite.
 - **L7** — Decision (user answer to the sender question):
   `RESEND_FROM_EMAIL="onboarding@resend.dev"`. Resend confirmed the limit in its
   own words: "You can only send testing emails to your own email address
-  (carlosalfredosalegas@gmail.com)". The flow is testable; real users need a
+  ([maintainer-email])". The flow is testable; real users need a
   verified domain.
 - **L8** — Deviation from the plan: the recovery pages live at `/forgot-password`
   and `/reset-password` inside a new `src/app/(auth)` route group, **not** under

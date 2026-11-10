@@ -49,13 +49,13 @@ Today `src/site/active.ts` is a constant, and it is the only file Phase 1 has to
 
 ## Tasks
 
-| ID  | Task                                                                   | Specs      | Route  | Commit |
-| --- | ---------------------------------------------------------------------- | ---------- | ------ | ------ |
-| T1  | `src/site/`: contract, deployment resolution, compose, glautos package | S1, S3, S5 | inline | C1     |
-| T2  | Migrate consumers: layout, 4 pages, JSON-LD, data files, footer, hero  | S2, S4     | inline | C1     |
-| T3  | Brand-leak sweep with a positive control                               | S2         | inline | C1     |
-| T4  | Package consistency tests (CSS vs TS theme, tel/wa derivation, copy)   | S3, S5     | inline | C1     |
-| T5  | Docs (`AGENTS.md`, roadmap) and the before/after HTML comparison       | S6         | inline | C1     |
+| ID  | Task                                                                    | Specs      | Route  | Commit |
+| --- | ----------------------------------------------------------------------- | ---------- | ------ | ------ |
+| T1  | `src/site/`: contract, deployment resolution, compose, [client] package | S1, S3, S5 | inline | C1     |
+| T2  | Migrate consumers: layout, 4 pages, JSON-LD, data files, footer, hero   | S2, S4     | inline | C1     |
+| T3  | Brand-leak sweep with a positive control                                | S2         | inline | C1     |
+| T4  | Package consistency tests (CSS vs TS theme, tel/wa derivation, copy)    | S3, S5     | inline | C1     |
+| T5  | Docs (`AGENTS.md`, roadmap) and the before/after HTML comparison        | S6         | inline | C1     |
 
 ## Log
 
@@ -65,9 +65,9 @@ Today `src/site/active.ts` is a constant, and it is the only file Phase 1 has to
 - **L2 (user, verbatim):** "procede con la Fase 0"
 - **L3 (medición previa):** la marca vivía en **cuatro capas**: tokens en `globals.css`,
   `SITE_CONFIG` en `src/data/metadata.ts`, literales en 9 archivos de pantalla y env sueltas.
-  "GL Autos" aparecía en 13 archivos, el teléfono en 8, la dirección en 3.
+  "[client]" aparecía en 13 archivos, el teléfono en 8, la dirección en 3.
 - **L4 (decisiones de forma):** el layout importa `src/site/theme.css` (ruta estable) y no
-  `src/site/glautos/theme.css`: un import de CSS no puede ser dinámico, así que la
+  `src/site/[client]/theme.css`: un import de CSS no puede ser dinámico, así que la
   indirección es lo único que impide que el producto nombre al cliente. Se verificó con el
   sweep: el path del import contaba como fuga.
 - **L5 (dependencia permitida):** `src/lib/images/cloudinary-config.ts` importa
@@ -75,13 +75,13 @@ Today `src/site/active.ts` is a constant, and it is the only file Phase 1 has to
   producto → site y es deliberada: una integración puede usar **etiquetas** del cliente y
   no puede ramificar su comportamiento según cuál sea.
 - **L6 (verificación):** `tsc` 0 · **47 archivos / 362 tests** · `pnpm build` 0. El sweep
-  baja de **13 archivos con "GL Autos" a 0** fuera de `src/site/`.
+  baja de **13 archivos con "[client]" a 0** fuera de `src/site/`.
 - **L7 (comparación HTML antes/después, build + start sobre la base real):** se capturaron
   `/`, `/autos`, una ficha real (`/autos/volkswagen-taos-highline-14-tsi-2025-0`),
   `/contacto` y `/ventas` en el commit base y después del cambio. Resultado: **markup,
   títulos, canónicas y JSON-LD idénticos**, con tres excepciones explícitas:
   1. Los hashes de los chunks de CSS/JS, que cambian por definición.
-  2. `© <!-- -->2026<!-- --> GL Autos.` → `© 2026 GL Autos.` en el footer: **mismo texto
+  2. `© <!-- -->2026<!-- --> [client].` → `© 2026 [client].` en el footer: **mismo texto
      renderizado**, un marcador de comentario menos de React. No se persigue la identidad
      byte a byte en los separadores que emite React.
   3. **Cambio intencional**: `og:title`, `og:description`, `og:url` y sus pares de Twitter

@@ -21,7 +21,7 @@ stored phrase is a lie the next month. Under a day it says "hoy".
 
 **S3 — The six real testimonials are seeded verbatim, with one declared exception.**
 Their text is copied exactly, including emoji and line breaks, except that a mention of
-`Car Agency App` becomes `GL Autos`: it is the same business after the rename, and the
+`Car Agency App` becomes `[client]`: it is the same business after the rename, and the
 dead brand must not ship. The `4.9 / 249 reseñas` badge stays a plain visual link to
 Google, with **no** structured data behind it.
 

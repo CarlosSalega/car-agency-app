@@ -1,18 +1,18 @@
 # neutralise-product-repo — car-agency as the product, not one client's site
 
-The client (`glautos`) now has its own private deployment repository, synced to `8fd209e`. This feature
+The client (`[client]`) now has its own private deployment repository, synced to `8fd209e`. This feature
 turns car-agency-app into the neutral product: a template with a demo client that builds, whose tests
 pass, and which carries no data belonging to a dealership or to its customers.
 
-> **Blocker before the next sync.** The sync to `glautos` replaced the whole tree. Today that was
+> **Blocker before the next sync.** The sync to `[client]` replaced the whole tree. Today that was
 > harmless because car-agency still carried the client package. After this feature, syncing again would
-> replace `src/site/glautos/`, the dealership seed and the branded assets with the demo ones, leaving the
+> replace `src/site/[client]/`, the dealership seed and the branded assets with the demo ones, leaving the
 > deployment without its client. **The sync must preserve the deployment's own surface before it is run
 > again.**
 
 ## Specs
 
-- **S1** — "glautos = deploy del cliente; car-agency = producto neutro" (the user's choice). This repo
+- **S1** — "[client] = deploy del cliente; car-agency = producto neutro" (the user's choice). This repo
   ships a demo client and no dealership identity; the deployment repo keeps the real one.
 - **S2** — "Cliente demo + SITE_SLUG que falla el build". The product must build with a neutral demo
   client, and a deployment that names no site, or names an unknown one, must fail the build rather than
@@ -21,25 +21,25 @@ pass, and which carries no data belonging to a dealership or to its customers.
   review portraits, the verbatim customer testimonials, and the real seller's name, phone and email go.
 - **S4** — "No publicar todavía": the repository stays private and its history is not rewritten. Nothing
   in this feature publishes anything.
-- **S5** — "todo lo relacionado a glautos en car-agency": at the end, no tracked file outside the
+- **S5** — "todo lo relacionado a [client] en car-agency": at the end, no tracked file outside the
   historical `odd/` records mentions the client's name, phone, address, domain, email or social handle,
   and `brand-leak.test.ts` still enforces that for the demo.
 
 ## What the inventory found
 
-- Selection is a hardcoded constant: `src/site/active.ts:17` is `export const activeSite = glautos;`. The
+- Selection is a hardcoded constant: `src/site/active.ts:17` is `export const activeSite = [client];`. The
   doc comment above it already describes the `SITE_SLUG` resolution that does not exist yet.
-- The client package is `src/site/glautos/` (`index.ts` id/theme, `identity.ts` name, phone, address,
+- The client package is `src/site/[client]/` (`index.ts` id/theme, `identity.ts` name, phone, address,
   geo, maps, hours, socials and asset paths, `seo.ts` page copy, `theme.css` brand colour).
-- **Real people**: `prisma/seed/sellers.ts` carries a named seller with a phone and an `@glautos.ar`
+- **Real people**: `prisma/seed/sellers.ts` carries a named seller with a phone and an `@[client].ar`
   address; `prisma/seed/reviews.ts` carries verbatim Google testimonials with six customers' full names;
   `public/reviews/` holds their portraits.
 - **Dealership photography**: `public/logo*.png`, `hero.webp`, `preview.webp`, `favicon.ico`,
   `apple-touch-icon.png`, and 62 files under `public/autos/`.
 - Seed catalogue: `prisma/seed/cars.ts` with 18 units, `link-tree.ts` with the dealership's phone,
-  WhatsApp and maps links, `users.ts` with `admin@glautos.ar`.
+  WhatsApp and maps links, `users.ts` with `admin@[client].ar`.
 - Tests: `brand-leak.test.ts` holds the seven client markers as a literal list; `package.test.ts`
-  imports `@/site/glautos` directly; several unrelated tests use `glautos.ar` and the dealership phone as
+  imports `@/site/[client]` directly; several unrelated tests use `[client].ar` and the dealership phone as
   fixtures.
 - Docs: `design/` and `odd/` contain the client's name, phone and address in prose.
 
@@ -52,12 +52,12 @@ pass, and which carries no data belonging to a dealership or to its customers.
 | N3  | S1, S3 | Move the seed data into the client package so it lives behind the same seam as identity and copy: `prisma/seed.ts` reads the catalogue, sellers, users, reviews and links from `@/site/active`, and the demo package carries a small synthetic set. This is what makes a sync safe: the deployment's `src/site/<client>/` is the only folder the product must never overwrite | inline | —      |
 | N4  | S3     | Remove the people: `public/reviews/`, the verbatim testimonials, and the named seller with their contact details. The vehicles and their photography stay                                                                                                                                                                                                                     | inline | —      |
 | N5  | S1, S3 | Branded assets: replace the logo, hero, preview, favicon and apple icon with neutral ones owned by the product. The 62 vehicle photos stay, and the deployment keeps its own set                                                                                                                                                                                              | inline | —      |
-| N6  | S5     | Tests: `brand-leak.test.ts` reads its markers from the active client instead of a literal list, and keeps the positive control; `package.test.ts` points at the demo package; the fixtures that use `glautos.ar` and the dealership phone become neutral                                                                                                                      | inline | —      |
+| N6  | S5     | Tests: `brand-leak.test.ts` reads its markers from the active client instead of a literal list, and keeps the positive control; `package.test.ts` points at the demo package; the fixtures that use `[client].ar` and the dealership phone become neutral                                                                                                                     | inline | —      |
 | N7  | S5     | `design/` scrubbed: the client's name, phone, address, social handle, domain and brand hex replaced with the demo's, including the contrast figure the design system quoted. The `odd/` records stay, because S5 exempts the historical record and they are the reasoning behind every decision here                                                                          | done   | -      |
-| N8  | —      | **done** — The sync must preserve the deployment surface: a documented command that copies the product tree over `glautos` while restoring `src/site/glautos/`, `public/` client assets, the deployment's seed, and its environment. Without this, the next sync destroys the deployment                                                                                      | inline | —      |
+| N8  | —      | **done** — The sync must preserve the deployment surface: a documented command that copies the product tree over `[client]` while restoring `src/site/[client]/`, `public/` client assets, the deployment's seed, and its environment. Without this, the next sync destroys the deployment                                                                                    | inline | —      |
 
 Exit criteria: `pnpm test` green with `SITE_SLUG` unset in the environment (the suite sets it), the build
-fails with a clear message when `SITE_SLUG` is missing or unknown, and `grep -ri glautos` over tracked
+fails with a clear message when `SITE_SLUG` is missing or unknown, and `grep -ri [client]` over tracked
 files returns only the historical `odd/` records that N7 decided to keep.
 
 ## Decisions taken, with the reason
@@ -74,12 +74,12 @@ files returns only the historical `odd/` records that N7 decided to keep.
 
 ## Log
 
-- **L1** (user, verbatim) — "tengo este repot: https://github.com/CarlosSalega/glautos actualizalo a como
-  tenemos el repo de car-agency, luego modifiquemos todo lo relacionado a glautos en car-agency"
-- **L2** (user, decisions) — direction: "glautos = deploy del cliente; car-agency = producto neutro";
-  history: "Conservar los 2 commits de glautos"; client: "Cliente demo + SITE_SLUG que falla el build";
+- **L1** (user, verbatim) — "tengo este repot: https://github.com/CarlosSalega/[client] actualizalo a como
+  tenemos el repo de car-agency, luego modifiquemos todo lo relacionado a [client] en car-agency"
+- **L2** (user, decisions) — direction: "[client] = deploy del cliente; car-agency = producto neutro";
+  history: "Conservar los 2 commits de [client]"; client: "Cliente demo + SITE_SLUG que falla el build";
   seeds: "Conservar autos, borrar personas"; publishing: "No publicar todavía".
-- **L3** (done before this feature) — `CarlosSalega/glautos` synced to car-agency `main` as commit
+- **L3** (done before this feature) — `CarlosSalega/[client]` synced to car-agency `main` as commit
   `8fd209e`, on top of its two existing commits, carrying an identical tree; verified against the remote
   through the API. No history was replaced.
 - **L4** (evidence) — the inventory that produced the task list: `src/site/active.ts:17` hardcodes the
@@ -88,7 +88,7 @@ files returns only the historical `odd/` records that N7 decided to keep.
   dealership's logo, hero, social preview and 62 vehicle photos; `brand-leak.test.ts` holds the seven
   markers literally; many tests use the dealership domain and phone as fixtures; `design/` and `odd/`
   name the client in prose.
-- **L5** (warning, raised before writing any task) — the sync to `glautos` is a whole-tree replacement.
+- **L5** (warning, raised before writing any task) — the sync to `[client]` is a whole-tree replacement.
   Once this repo is neutralised, running it again would strip the deployment of its client package, its
   seed and its branded assets. N3 and N8 exist because of that; **do not sync again until N8 exists.**
 
@@ -112,7 +112,7 @@ files returns only the historical `odd/` records that N7 decided to keep.
   Correction to the inventory: the catalogue is **18** vehicles, not 16.
 
   Reorder, recorded here because it reverses the task numbering: **N4 before N3**, and **N6 before N3**.
-  N3 moves the seed behind the client seam, but the real seed data cannot move into `src/site/glautos/`
+  N3 moves the seed behind the client seam, but the real seed data cannot move into `src/site/[client]/`
   while that package is still part of the product — and it must not stay there. So the order is: remove
   the people (N4, done), remove the client package and re-point the tests (N6), then move the seed
   behind the seam (N3), then the assets (N5), then the sync (N8).
@@ -171,6 +171,21 @@ files returns only the historical `odd/` records that N7 decided to keep.
   destroy the reasoning behind every decision in this repository — including this document, which cannot
   explain why the client had to leave without naming it.
 
-  Final state: `grep -riE "glautos|3425777646|General López|fe0000"` over `src/`, `prisma/`, `public/`,
+  Final state: `grep -riE "[client]|[client-phone]|fe0000"` over `src/`, `prisma/`, `public/`,
   `design/`, the config files, `AGENTS.md` and `README.md` returns nothing. The only places the client
   still appears are the four `odd/` records.
+
+- **L9** (the records were redacted too) — with the tree neutralised, the last place naming the client
+  was the historical record: 62 mentions across five `odd/` documents, including a seller's phone that
+  the earlier cleanup had missed and the maintainer's own personal email in the 2FA notes. They now read
+  `[client]`, `[client-phone]`, `[client-address]`, `[client-handle]`, `[seller]` and
+  `[maintainer-email]`.
+
+  Redaction was chosen over deletion because these documents are the reasoning behind every decision in
+  the repository, and over keeping the names because a public repository must not carry a client's
+  phone number or a person's mailbox. The bracketed tokens keep every argument readable: what changed is
+  who, not why.
+
+  A final sweep over every tracked `.md`, `.ts`, `.tsx`, `.css`, `.html` and `.json` outside
+  `node_modules` and `.git` returns nothing for the client's name, phone, street, social handle, domain
+  or the maintainer's address. The tree is publishable; what remains to decide is not technical.

@@ -1,4 +1,4 @@
-# Brand palette: GL AUTOS red/black, single mode
+# Brand palette: [CLIENT] red/black, single mode
 
 Replace the blue-tinted community theme with a palette derived from `public/logo.png`
 and collapse the project to exactly one color mode (no light/dark pair).
@@ -48,9 +48,9 @@ T4 — Regenerate `public/favicon.ico` and `public/apple-touch-icon.png` from th
 mark. S1 | route: inline | done | commit `5c1ccf6`
 T5 — Transparent logo variants: the black field and the collapse deformation.
 S1, S7 | route: inline | done | commit `b00d35b`
-T6 — Replace "FyF Automotores" copy with GL Autos. S1 | done | commit `1f6210f`
+T6 — Replace "FyF Automotores" copy with [client]. S1 | done | commit `1f6210f`
 T7 — Real business data: address, phone, hours, Instagram, positioning, and the
-GL Autos name in titles/SEO. S1 | done | commit `(T7)`
+[client] name in titles/SEO. S1 | done | commit `(T7)`
 
 Checks: `tsc --noEmit` clean, `pnpm test` 21 files / 119 tests passed,
 `pnpm build` exit 0. Compiled CSS carries `--primary:#fe0000`,
@@ -131,7 +131,7 @@ cache-key, cloudinary.provider). Verified identical against `HEAD`; untouched.
 
 L9 (follow-up request, verbatim): "regenera el favicon y apple-touch-icon con la
 nueva marca". The shipped icons were still the previous brand (the FyF Automotores
-Tesla-style mark), not GL Autos.
+Tesla-style mark), not [client].
 
 L10 (method): the icons are derived from `public/logo.png` itself, not re-set in a
 look-alike typeface, so the glyphs are the real brand letterforms. That source is
@@ -179,7 +179,7 @@ L18 (constraint found while sizing): the wordmark is a 9.4:1 lockup (179x19). In
 1.05x of native, so it stays crisp. The rail monogram is `w-8` (32x14) inside 48px.
 
 L19 (open question, not changed): the footer and the hero still read "FyF
-Automotores". That may be the legal name behind the GL Autos trade name, so it is
+Automotores". That may be the legal name behind the [client] trade name, so it is
 the user's call, not a silent rename.
 
 Checks: the two assets are derived by keying the black field out and
@@ -190,7 +190,7 @@ references the wordmark through `next/image` with a 1x/2x srcset; `tsc` clean,
 119/119 tests, `pnpm build` exit 0. Geometry is computed, and the two rail states
 were rasterised and inspected, not checked in a browser.
 
-L20 (user request, verbatim): "cambia todo lo que diga FyF Automotores por GL Autos".
+L20 (user request, verbatim): "cambia todo lo que diga FyF Automotores por [client]".
 
 L21 (discovery): the wordmark text was written as
 `F<span className="normal-case">y</span>F Automotores` in four places, which is why
@@ -204,18 +204,18 @@ strings that are not valid URLs. `SITE_CONFIG.name` and every page title carried
 the same replacement, so the site name was "Car Agency App" in the tab, og and
 title.
 
-L23 (user decision, verbatim): "Sí, "Car Agency App" → "GL Autos" en títulos y
+L23 (user decision, verbatim): "Sí, "Car Agency App" → "[client]" en títulos y
 SEO", excluding testimonials. `Reviews.tsx` keeps its two quotes verbatim: a
 customer review is not editable copy.
 
 L24 (real business data, dictated by the user): Instagram
-`https://www.instagram.com/gl.autos.sf/`, WhatsApp `5493425777646`, address
-`General López 3543`, hours Monday to Friday 08:30-12:30 and 16:00-20:00, Saturday
+`https://www.instagram.com/[client-handle]/`, WhatsApp `[client-phone]`, address
+`[client-address]`, hours Monday to Friday 08:30-12:30 and 16:00-20:00, Saturday
 09:00-12:30, positioning "Concesionario multimarcas de usados seleccionados y 0km",
 province Santa Fe.
 
 L25 (bug found by that data): `WhatsAppFloatButton` interpolated the env value
-directly, producing `wa.me/+5493425777646`, while `/ventas` already normalised with
+directly, producing `wa.me/+[client-phone]`, while `/ventas` already normalised with
 `replace(/\D/g, "")`. Both now strip non-digits.
 
 L26 (blocking, needs consent): the live `/contacto` reads `linkTreeLink` rows, and
@@ -230,22 +230,22 @@ URLs, the email (`info@caragency.com` in the seed is a botched domain), and whet
 the `maps.app.goo.gl` short link in the `ubicacion` row points at the new address.
 
 Checks: `tsc` clean, 119/119 tests, `pnpm build` exit 0. Rendered HTML verified:
-`"telephone":"+5493425777646"`, `"streetAddress":"General López 3543"`, the three
+`"telephone":"+[client-phone]"`, `"streetAddress":"[client-address]"`, the three
 `openingHoursSpecification` entries, the footer address/hours/phone/Instagram, the
-new site name in `<title>` and `og:site_name`, `wa.me/5493425777646` with no `+`, and
+new site name in `<title>` and `og:site_name`, `wa.me/[client-phone]` with no `+`, and
 zero occurrences of `5281841` on the home page. The local `.env` placeholders were
 filled with the real phone and Instagram (that file is untracked).
 
 L28 (applied, with explicit consent): the three `linkTreeLink` rows that had real
 values were updated in place (`telefono`, `whatsapp`, `instagram`) with a one-off
 Prisma `update({ where: { id } })` script, not with `pnpm db:seed`. Verified on the
-rendered `/contacto`: the new telephone appears 3x and `5281841` 0x, `gl.autos.sf`
+rendered `/contacto`: the new telephone appears 3x and `5281841` 0x, `[client-handle]`
 3x and `autos.usados.santafe` 0x, the new WhatsApp number 2x, the new address 3x and
 the opening hours 1x. `email` (`info@caragency.com`) and `ubicacion` (the
 `maps.app.goo.gl` short link) were left untouched because no real value was given.
 
 L29 (user request, verbatim): "modifica la basura heredada, tambien aca tienes perfil
-y la ubicacion:" followed by the Google Maps place URL for GL Autos.
+y la ubicacion:" followed by the Google Maps place URL for [client].
 
 L30 (removed, not guessed): no real value existed for the X handle, TikTok, Facebook
 or the email, so none was invented. `SITE_CONFIG.twitterHandle` and its
@@ -256,7 +256,7 @@ real address is one `update`. Leaving a `mailto:` at a domain the rename invente
 is worse than having no email link.
 
 L31 (real data from the place link): `ubicacion` (seed, defaults and DB), the footer
-maps fallback, and the JSON-LD `hasMap` all point at the GL Autos place. The JSON-LD
+maps fallback, and the JSON-LD `hasMap` all point at the [client] place. The JSON-LD
 also gains `geo` with the coordinates the link carries (-31.6552097, -60.7221098),
 which is what local search uses. Tracking params (`?entry=ttu&g_ep=…`) were stripped;
 the `data=` payload identifies the place and stays.
@@ -292,11 +292,11 @@ no `caragency.com`, no `facebook.com/people`, no tiktok junk and no `maps.app.go
 
 L36 (user request, verbatim): "modifica el seed con los datos de gl autos, y vuelve a
 repopular la DB, de momento no es produccion sino un mvp", followed by "usemos el
-dominio glautos.ar".
+dominio [client].ar".
 
-L37 (seed data): `admin@caragency.com` -> `admin@glautos.ar` and
-`facundo@caragency.com` -> `facundo@glautos.ar`, plus the seller phone from the old
-`+54 9 342 528 1841` to `+54 9 342 577 7646`. Those were the last two inherited
+L37 (seed data): `admin@caragency.com` -> `admin@[client].ar` and
+`[seller]@caragency.com` -> `[seller]@[client].ar`, plus the seller phone from the old
+`[client-phone]` to `[client-phone]`. Those were the last two inherited
 domains in the seed (`prisma/seed/{users,sellers}.ts`); nothing else in the seed
 carried brand copy.
 
@@ -310,8 +310,8 @@ unrecoverable was destroyed. Grant was explicit: MVP, not production.
 L39 (re-seed result, from the script's own summary): 1 user, 22 brands, 223 models,
 18/18 vehicles, 62 images matched, 0 upload failures, 4 cars on the placeholder image
 (`renault-clio-2013`, `peugeot-207-2013`, `fiat-palio-2011`, `ford-focus-2018`).
-Read back from the DB afterwards: user `admin@glautos.ar` (ADMIN, credential account
-with a hash), seller `facundo@glautos.ar` / `+54 9 342 577 7646`, 4 link rows
+Read back from the DB afterwards: user `admin@[client].ar` (ADMIN, credential account
+with a hash), seller `[seller]@[client].ar` / `[client-phone]`, 4 link rows
 (telefono, instagram, whatsapp, ubicacion) and no email row, 18 cars, 0 settings.
 
 L40 (login verified, two ways, because the first attempt was inconclusive): the first
@@ -320,7 +320,7 @@ it was rejected before checking credentials — `BETTER_AUTH_URL` is
 `http://localhost:3000` and better-auth refuses any other origin. Definitive checks:
 `verifyPassword` from `better-auth/crypto` against the stored hash returns true for
 `admin1234` and false for a wrong password; the old email no longer exists; and on
-port 3000, sign-in 200 with a session cookie, `get-session` 200 as `admin@glautos.ar`
+port 3000, sign-in 200 with a session cookie, `get-session` 200 as `admin@[client].ar`
 ADMIN, `/admin` 200 rendering the shell, while a wrong password and the old email both
 return 401.
 
@@ -332,7 +332,7 @@ does redirect to `/admin/login`). Unrelated to this seed work; needs its own loo
 L42 (deployment note, not changed): `.env` still has
 `NEXT_PUBLIC_SITE_URL=https://car-agency-app.vercel.app` and
 `BETTER_AUTH_URL=http://localhost:3000`. Both are hosting config, not brand copy:
-pointing the site URL at `glautos.ar` before DNS resolves would publish canonical,
+pointing the site URL at `[client].ar` before DNS resolves would publish canonical,
 sitemap and og:image URLs on a dead host, and leaving BETTER_AUTH_URL at localhost in
 the deploy breaks sign-in with the same 403 seen in L40. They belong in the host's
 environment variables, and the seeded `admin1234` password must change before this
