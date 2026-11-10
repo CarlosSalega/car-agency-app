@@ -1,105 +1,107 @@
 # Car Agency App
 
-Plataforma **white-label para concesionarias**: un despliegue por cliente, con catálogo público, panel de
-gestión y publicación en MercadoLibre desde un solo lugar.
+A **white-label platform for car dealerships**: one deployment per client, with a public catalogue, an
+admin panel and MercadoLibre publishing from a single place.
 
-La identidad del cliente — nombre, teléfono, dirección, colores, copy y catálogo — vive en
-`src/site/<cliente>/`. El producto no sabe de qué concesionaria se trata, y hay un test que lo verifica.
+The client's identity — name, phone, address, colours, copy and catalogue — lives in
+`src/site/<client>/`. The product does not know which dealership it is serving, and there is a test that
+proves it.
 
-## Qué incluye
+## What it includes
 
-- **Catálogo público** con filtros por marca, modelo, año, precio y combustible, ficha por vehículo con
-  galería, y datos estructurados (`AutoDealer`) para buscadores.
-- **Panel de gestión**: vehículos, marcas y modelos, vendedores, usuarios con roles, consultas con
-  atribución de canal, reseñas, links y ajustes.
-- **Pipeline de imágenes**: subida con guardas de identidad, validación y propiedad; borrado de huérfanas;
-  un módulo sin acoplamiento al producto.
-- **Publicación en MercadoLibre** (en desarrollo): cola de jobs durable, tokens cifrados, y handlers para
-  publicar, actualizar precio, pausar y cerrar.
+- **Public catalogue** with filters by make, model, year, price and fuel, a vehicle page with a gallery,
+  and `AutoDealer` structured data for search engines.
+- **Admin panel**: vehicles, brands and models, sellers, users with roles, inquiries with channel
+  attribution, reviews, links and settings.
+- **Image pipeline**: uploads with identity, validation and ownership guards; orphan sweeping; a module
+  with no coupling to the product.
+- **MercadoLibre publishing** (in progress): a durable job queue, encrypted tokens, and handlers to
+  publish, update price, pause and close.
 
 ## Stack
 
-|           |                                                                       |
-| --------- | --------------------------------------------------------------------- |
-| Framework | Next.js 16 (App Router, RSC)                                          |
-| Datos     | PostgreSQL + Prisma 7                                                 |
-| Auth      | better-auth (sesión, roles, 2FA)                                      |
-| UI        | React 19, Tailwind CSS 4, Base UI                                     |
-| Imágenes  | Cloudinary, detrás de un puerto propio                                |
-| Tests     | Vitest — 816 pruebas, más la suite de contrato viva contra Cloudinary |
+|           |                                                                   |
+| --------- | ----------------------------------------------------------------- |
+| Framework | Next.js 16 (App Router, RSC)                                      |
+| Data      | PostgreSQL + Prisma 7                                             |
+| Auth      | better-auth (session, roles, 2FA)                                 |
+| UI        | React 19, Tailwind CSS 4, Base UI                                 |
+| Images    | Cloudinary, behind a port of its own                              |
+| Tests     | Vitest — 816 tests, plus a live contract suite against Cloudinary |
 
-## Cómo está construido
+## How it is built
 
-Tres decisiones explican casi todo el código:
+Three decisions explain almost every file:
 
-**Un despliegue por cliente, sin `tenantId`.** El cliente es configuración que viaja con el código. Se
-resuelve una vez, por `SITE_SLUG`, en `src/site/active.ts`; si la variable falta o el slug no existe, **el
-build falla**. Un fallback silencioso terminaría mostrando el nombre y el teléfono de una concesionaria en
-el sitio de otra.
+**One deployment per client, with no `tenantId`.** The client is configuration that ships with the code.
+It is resolved once, by `SITE_SLUG`, in `src/site/active.ts`; a missing variable or an unknown slug
+**fails the build**. A silent fallback would end up showing one dealership's name and phone on another
+dealership's site.
 
-**Cuatro archivos son del despliegue, no del producto.** `src/site/registry.ts`, `src/site/theme.css`,
-`src/site/seed.ts` y el paquete `src/site/<cliente>/`. Un comando los preserva al actualizar un
-despliegue: `pnpm sync:deployment --to=<ruta>`, en seco por defecto y sin `--force` en ninguna parte.
+**Four files belong to the deployment, not to the product.** `src/site/registry.ts`,
+`src/site/theme.css`, `src/site/seed.ts` and the `src/site/<client>/` package. One command preserves them
+when updating a deployment: `pnpm sync:deployment --to=<path>`, a dry run by default and with no
+`--force` anywhere in it.
 
-**Los módulos no se empaquetan de más.** `MODULES.md` fija la regla: se extrae dentro del repositorio
-mientras haya un consumidor, y se promueve a paquete el día que un segundo proyecto lo importe.
-`src/modules/image-uploads/` es el ejemplo: puerto de tres métodos, guardas puras, adaptadores delgados y
-un test que falla si alguna vez importa la aplicación.
+**Modules are not packaged too early.** `MODULES.md` states the rule: extract inside the repository while
+there is one consumer, and promote to a package the day a second project imports it.
+`src/modules/image-uploads/` is the worked example — a three-method port, pure guards, thin adapters, and
+a test that fails if it ever imports the application.
 
-## Cómo correrlo
+## Running it
 
-Necesitás PostgreSQL, una cuenta de Cloudinary y el archivo de variables que está en la raíz del repo —
-copiá el de ejemplo y completá los valores.
+You need PostgreSQL, a Cloudinary account, and a filled-in environment file. The repository ships an
+example with every variable documented; copy it and fill in the values.
 
 ```bash
 pnpm install
-SITE_SLUG=demo pnpm db:push       # el esquema, por ahora sin migraciones
-pnpm db:seed                      # catálogo demo, un vendedor ficticio, sin reseñas
+SITE_SLUG=demo pnpm db:push       # the schema, applied without migrations for now
+pnpm db:seed                      # demo catalogue, one fictional seller, no reviews
 pnpm dev
 ```
 
-Entrá en `/admin` con `admin@example.com` / `admin1234`. **Esa credencial es de desarrollo**: un
-despliegue real tiene que crear sus usuarios y cambiarla.
+Sign in at `/admin` with `admin@example.com` / `admin1234`. **That credential is for development**: a real
+deployment has to create its own users and change it.
 
-`SITE_SLUG` es obligatorio: sin él, `dev` y `build` fallan explicando qué hacer.
+`SITE_SLUG` is required: without it, `dev` and `build` fail and explain what to do.
 
-## Sumar un cliente nuevo
+## Adding a client
 
-1. Copiá `src/site/demo/` a `src/site/<cliente>/` y reemplazá identidad, colores, copy y catálogo.
-2. Registralo en `src/site/registry.ts`.
-3. Apuntá `src/site/theme.css` a su `theme.css` y `src/site/seed.ts` a su `seed/`.
-4. Nada fuera de `src/site/` cambia.
+1. Copy `src/site/demo/` to `src/site/<client>/` and replace the identity, colours, copy and catalogue.
+2. Register it in `src/site/registry.ts`.
+3. Point `src/site/theme.css` at its `theme.css` and `src/site/seed.ts` at its `seed/`.
+4. Nothing outside `src/site/` changes.
 
-Después, para mantenerlo al día con el producto: `pnpm sync:deployment --to=<ruta del despliegue>`.
+To keep it up to date with the product afterwards: `pnpm sync:deployment --to=<deployment path>`.
 
-## Otros comandos
+## Other commands
 
-|                                   |                                                                    |
-| --------------------------------- | ------------------------------------------------------------------ |
-| `pnpm test` / `pnpm test:changed` | la suite completa / sólo lo afectado por cambios sin commitear     |
-| `pnpm publications <cmd>`         | publicar, sincronizar, pausar o cerrar un vehículo en MercadoLibre |
-| `pnpm drain:jobs`                 | drenar la cola de jobs (en seco por defecto)                       |
-| `pnpm sweep:orphans`              | barrido de imágenes huérfanas (en seco por defecto)                |
-| `pnpm rotate:tokens`              | recifrar credenciales tras rotar la clave                          |
+|                                   |                                                         |
+| --------------------------------- | ------------------------------------------------------- |
+| `pnpm test` / `pnpm test:changed` | the full suite / only what uncommitted changes affect   |
+| `pnpm publications <cmd>`         | publish, sync, pause or close a vehicle on MercadoLibre |
+| `pnpm drain:jobs`                 | drain the job queue (dry run by default)                |
+| `pnpm sweep:orphans`              | sweep orphan images (dry run by default)                |
+| `pnpm rotate:tokens`              | re-seal credentials after rotating the key              |
 
-Todo lo que muta estado tiene dry run por defecto y exige `--confirm`.
+Everything that mutates state defaults to a dry run and requires `--confirm`.
 
-## Para leer
+## Where to read
 
-| Archivo                               | Qué hay                                                                   |
-| ------------------------------------- | ------------------------------------------------------------------------- |
-| `AGENTS.md`                           | las reglas del repo: white-label, base de datos en MVP, y qué no tocar    |
-| `MODULES.md`                          | cuándo extraer un módulo y cuándo empaquetarlo                            |
-| `src/modules/image-uploads/AGENTS.md` | las 17 invariantes del módulo de imágenes                                 |
-| `odd/tasks/`                          | el registro de cada decisión: specs, alternativas descartadas y el porqué |
+| File                                  | What is in it                                                                             |
+| ------------------------------------- | ----------------------------------------------------------------------------------------- |
+| `AGENTS.md`                           | the repository's rules: white-label, the database during the MVP phase, what not to touch |
+| `MODULES.md`                          | when to extract a module and when to package it                                           |
+| `src/modules/image-uploads/AGENTS.md` | the image module's 17 invariants                                                          |
+| `odd/tasks/`                          | a record per decision: specs, discarded alternatives, and why                             |
 
-`odd/` es la parte menos habitual del repo. Cada feature dejó un documento con lo que se pidió, lo que se
-supuso, lo que la documentación de terceros decía de verdad, y las veces que nos equivocamos. Está más
-cerca de un diario de ingeniería que de un changelog.
+`odd/` is the least usual part of this repository. Every feature left a document with what was asked, what
+was assumed, what third-party documentation actually said, and the occasions we were wrong. It reads
+closer to an engineering diary than to a changelog.
 
-## Licencia
+## License
 
-MIT — ver [`LICENSE`](LICENSE). Se puede usar, modificar y redistribuir citando el aviso de copyright.
+MIT — see [`LICENSE`](LICENSE). Use it, modify it, redistribute it, keeping the copyright notice.
 
-Las imágenes de `public/autos/` son fotos de stock y **no** quedan cubiertas por esta licencia: siguen
-los términos de la licencia con la que se obtuvieron.
+The images under `public/autos/` are stock photographs and are **not** covered by this license: they keep
+the terms they came with.
