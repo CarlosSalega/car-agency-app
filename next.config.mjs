@@ -2,6 +2,19 @@
 
 const nextConfig = {
   /**
+   * `SITE_SLUG` is read at module scope by `src/site/active.ts`, and that module
+   * reaches the browser through client components. Next only inlines
+   * `NEXT_PUBLIC_*` into the client bundle on its own, so without this the
+   * browser reads `undefined`, the resolver throws, and a build that passed
+   * fails at hydration instead. Listing it under `env` inlines it on both sides
+   * from the deployment's own environment: it is a slug, not a secret, and the
+   * value still comes from whoever builds.
+   */
+  env: {
+    SITE_SLUG: process.env.SITE_SLUG,
+  },
+
+  /**
    * The catalog moved from `/autos` to `/catalogo`. The list redirects so old
    * links and indexed URLs keep working; the car detail does NOT move, because
    * `/autos/[slug]` is what search engines have indexed and what people share.

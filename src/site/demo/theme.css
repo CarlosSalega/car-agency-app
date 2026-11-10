@@ -1,0 +1,22 @@
+/*
+ * The demo client's brand tokens.
+ *
+ * These two values are the only colours that change per client. They used to be
+ * declared in `globals.css` next to the neutral ramp, which is how a resold
+ * product ends up with the previous dealership's colour in a stylesheet nobody
+ * associates with brand.
+ *
+ * `globals.css` maps them into Tailwind (`@theme inline { --color-brand: var(--brand) }`),
+ * so `.bg-brand`, `.text-brand` and `.border-brand` keep working unchanged.
+ *
+ * The pair is a measured one, not a tasteful guess. Against the page background
+ * (`--background`, `#121212`) the brand reads at 7.76:1, and `--brand-foreground`
+ * on a `--brand` fill is the same 7.76:1, so `.text-brand` on the page and text
+ * drawn on `.bg-brand` both clear WCAG AA for normal text (4.5:1). A neutral
+ * demo blue is also the safest identity: it belongs to no dealership.
+ */
+
+:root {
+  --brand: #6ea8fe;
+  --brand-foreground: #121212;
+}
